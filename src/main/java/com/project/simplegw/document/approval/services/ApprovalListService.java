@@ -1,0 +1,97 @@
+package com.project.simplegw.document.approval.services;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.project.simplegw.document.approval.dtos.send.DtosApprovalDocsMin;
+import com.project.simplegw.document.approval.helpers.ApprovalConverter;
+import com.project.simplegw.document.approval.vos.ApprovalRole;
+import com.project.simplegw.document.entities.Docs;
+import com.project.simplegw.document.vos.DocsType;
+import com.project.simplegw.system.security.LoginUser;
+
+@Slf4j
+@Service
+@Transactional(rollbackFor = Exception.class, isolation = Isolation.READ_COMMITTED)
+public class ApprovalListService {
+    private final OngoingApprovalService ongoingApprovalService;
+    private final ApprovalStatusService approvalStatusService;
+    private final ApproverService approverService;
+    private final ReferrerService referrerService;
+    private final ApprovalConverter converter;
+
+
+    public ApprovalListService(
+        OngoingApprovalService ongoingApprovalService, ApprovalStatusService approvalStatusService,
+        ApproverService approverService, ReferrerService referrerService, ApprovalConverter converter
+    ) {
+        this.ongoingApprovalService = ongoingApprovalService;
+        this.approvalStatusService = approvalStatusService;
+        this.approverService = approverService;
+        this.referrerService = referrerService;
+        this.converter = converter;
+
+        log.info("Component '" + this.getClass().getName() + "' has been created.");
+    }
+
+
+
+    public List<DtosApprovalDocsMin> getReceivedList(ApprovalRole role, LoginUser loginUser) {
+        if(role == ApprovalRole.APPROVER)
+            return ongoingApprovalService.getReceivedList(loginUser).stream().map(e -> {
+                Docs docs = e.getDocs();
+                return converter.getDtosApprovalDocsMin(approvalStatusService.getStatus(docs))
+                    .setId(docs.getId()).updateDocsType(docs.getType()).setTitle(docs.getTitle()).setCreatedDate(docs.getCreatedDate())
+                    .setWriterTeam(docs.getWriterTeam()).setWriterJobTitle(docs.getWriterJobTitle()).setWriterName(docs.getWriterName());
+            }).collect(Collectors.toList());
+
+        
+        else if(role == ApprovalRole.REFERRER)
+            return referrerService.getUncheckedReferrers(loginUser).stream().map(e -> {
+                Docs docs = e.getDocs();
+                return converter.getDtosApprovalDocsMin(approvalStatusService.getStatus(docs))
+                    .setId(docs.getId()).updateDocsType(docs.getType()).setTitle(docs.getTitle()).setCreatedDate(docs.getCreatedDate())
+                    .setWriterTeam(docs.getWriterTeam()).setWriterJobTitle(docs.getWriterJobTitle()).setWriterName(docs.getWriterName());
+            }).collect(Collectors.toList());
+        
+        
+        else
+            return new ArrayList<DtosApprovalDocsMin>();
+    }
+
+
+
+
+
+    public List<DtosApprovalDocsMin> getDocsForApprover(DocsType type, LocalDate dateStart, LocalDate dateEnd, LoginUser loginUser) {
+        return approverService.getDocsForApprover(type, dateStart, dateEnd, loginUser);
+    }
+
+
+    public List<DtosApprovalDocsMin> getDocsForReferrer(DocsType type, LocalDate dateStart, LocalDate dateEnd, LoginUser loginUser) {
+        return referrerService.getDocsForReferrer(type, dateStart, dateEnd, loginUser);
+    }
+
+
+    public List<DtosApprovalDocsMin> getApprovalDocs(Long writerId, DocsType type, LocalDate dateStart, LocalDate dateEnd, LoginUser loginUser) {
+        return approverService.getApprovalDocs(writerId, type, dateStart, dateEnd, loginUser);
+    }
+
+    
+    public List<DtosApprovalDocsMin> getProceedApprovalDocs(LoginUser loginUser) {
+        return ongoingApprovalService.getProceedList(loginUser).stream().map(e -> {
+            Docs docs = e.getDocs();
+            return converter.getDtosApprovalDocsMin(approvalStatusService.getStatus(docs))
+                .setId(docs.getId()).updateDocsType(docs.getType()).setTitle(docs.getTitle()).setCreatedDate(docs.getCreatedDate());
+        }).collect(Collectors.toList());
+    }
+}

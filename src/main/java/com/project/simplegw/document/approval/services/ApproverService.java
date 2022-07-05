@@ -1,0 +1,240 @@
+package com.project.simplegw.document.approval.services;
+
+import java.math.BigInteger;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import com.project.simplegw.document.approval.dtos.send.DtosApprovalDocsMin;
+import com.project.simplegw.document.approval.dtos.send.DtosApprover;
+import com.project.simplegw.document.approval.entities.Approver;
+import com.project.simplegw.document.approval.helpers.ApprovalConverter;
+import com.project.simplegw.document.approval.helpers.DtosApprovalDocsMinConverter;
+import com.project.simplegw.document.approval.repositories.ApproverRepo;
+import com.project.simplegw.document.approval.vos.Sign;
+import com.project.simplegw.document.entities.Docs;
+import com.project.simplegw.document.vos.DocsType;
+import com.project.simplegw.member.services.MemberService;
+import com.project.simplegw.system.security.LoginUser;
+import com.project.simplegw.system.services.MenuAuthorityService;
+import com.project.simplegw.system.vos.Menu;
+import com.project.simplegw.system.vos.ServiceMsg;
+import com.project.simplegw.system.vos.ServiceResult;
+import com.project.simplegw.system.vos.SseApprovalType;
+
+// import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Service
+@Transactional(rollbackFor = Exception.class, isolation = Isolation.READ_COMMITTED)
+public class ApproverService {
+    private final ApproverRepo repo;
+    private final MemberService memberService;
+    private final OngoingApprovalService ongoingApprovalService;
+    private final ApprovalStatusService statusService;
+    private final ApprovalCountService countService;
+    private final ApprovalConverter converter;
+
+    private final MenuAuthorityService authorityService;
+
+    // @Autowired   // framework 버전 업데이트 이후 자동설정되어 선언하지 않아도 됨.
+    public ApproverService(
+        ApproverRepo repo, MemberService memberService, OngoingApprovalService ongoingApprovalService,
+        ApprovalStatusService statusService, ApprovalCountService countService, ApprovalConverter converter,
+        MenuAuthorityService authorityService
+    ) {
+        this.repo = repo;
+        this.memberService = memberService;
+        this.ongoingApprovalService = ongoingApprovalService;
+        this.statusService = statusService;
+        this.countService = countService;
+        this.converter = converter;
+
+        this.authorityService = authorityService;
+
+        log.info("Component '" + this.getClass().getName() + "' has been created.");
+    }
+
+
+
+    // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재문서의 결재자 등록 및 수정 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
+    ServiceMsg create(Docs docs, Long[] arrApproverId, LoginUser loginUser) {
+        try {
+            List<Approver> approvers = new ArrayList<>();
+
+            List<Long> approverIds = Arrays.asList(arrApproverId);
+            approverIds.stream()
+                .filter(e -> ! e.equals( loginUser.getMember().getId() ))   // 유저가 본인을 등록한 경우 제외한다.
+                .forEach(e-> {
+                    approvers.add(
+                        Approver.builder().docs(docs).seq(approverIds.indexOf(e)).sign(Sign.PROCEED).build().setApprover( memberService.getMemberData(e) )
+                    );
+                });
+
+            List<DtosApprover> DtoApprovers = approvers.stream().map(converter::getDtosApprover).collect(Collectors.toList());
+
+            repo.saveAll(approvers);                          // 1. 결재라인 저장
+            ongoingApprovalService.create(docs, DtoApprovers);   // 2. 현재 결재자 정보 등록
+            statusService.create(docs, DtoApprovers);            // 3. 결재문서의 결재문서 상태 등록
+            
+            countService.removeApproverDocsCntCache(arrApproverId[0]);   // 첫번째 결재자의 결재 요청 카운트 캐시 업데이트
+
+            return new ServiceMsg().setResult(ServiceResult.SUCCESS);
+
+        } catch(Exception e) {
+            e.printStackTrace();
+            log.warn("create Exception.");
+            log.warn("parameters: {}, {}, user: {}", docs.toString(), arrApproverId.toString(), loginUser.getMember().getId());
+            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg("결재자 저장 에러입니다. 관리자에게 문의하세요.");
+        }
+    }
+
+    ServiceMsg update(Docs docs, Long[] arrApproverId, LoginUser loginUser) {   // update: delete and save.
+        try {
+            List<Approver> approvers = repo.findByDocsIdOrderBySeq(docs.getId());
+            if(approvers != null)
+                delete(docs, approvers);
+            
+            return create(docs, arrApproverId, loginUser);
+
+        } catch(Exception e) {
+            e.printStackTrace();
+            log.warn("update Exception.");
+            log.warn("parameters: {}, {}, user: {}", docs.toString(), arrApproverId.toString(), loginUser.getMember().getId());
+            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg("결재자 수정 에러입니다. 관리자에게 문의하세요.");
+        }
+    }
+
+    private void delete(Docs docs, List<Approver> approvers) throws Exception {
+        repo.deleteAllInBatch(approvers);
+        ongoingApprovalService.delete(docs);
+        statusService.delete(docs);
+
+        countService.removeApproverDocsCntCache(approvers.get(0).getMemberId());   // 첫번째 결재자의 결재 요청 카운트 캐시 제거
+    }
+    // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재문서의 결재자 등록 및 수정 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
+
+
+
+
+
+    // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재자 승인/반려 처리 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
+    ServiceMsg confirm(Docs docs, LoginUser loginUser) {
+        Long currentUserId = loginUser.getMember().getId();
+
+        try {
+            List<Approver> approvers = repo.findByDocsIdOrderBySeq(docs.getId());
+            Optional<Approver> target = approvers.stream().filter( e -> e.getMemberId().equals(currentUserId) ).findFirst();
+        
+            if(target.isPresent()) {
+                Approver approver = target.get();
+                repo.save( approver.confirmed() );                   // 승인
+
+                List<DtosApprover> DtoApprovers = approvers.stream().map(converter::getDtosApprover).collect(Collectors.toList());
+
+                statusService.update(docs, DtoApprovers);            // 결재문서의 결재 상태 업데이트
+                ongoingApprovalService.update(docs, DtoApprovers);   // 현재 결재자 정보 업데이트
+
+                if(approvers.lastIndexOf(approver) == (approvers.size() - 1))
+                    countService.removeProceedDocsCntCache(SseApprovalType.CONFIRMED, docs);   // 마지막 결재자가 승인을 했다면 최종 승인이므로 결재문서 등록자에게 승인 알림.
+
+                countService.removeApproverDocsCntCache( currentUserId );   // 승인 처리한 결재자의 카운트 초기화
+                return new ServiceMsg().setResult(ServiceResult.SUCCESS);
+            
+            } else {
+                return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg("결재자 정보가 없습니다.");
+            }
+
+        } catch(Exception e) {
+            e.printStackTrace();
+            log.warn("confirmed Exception.");
+            log.warn("parameters: {}, user: {}", docs.toString(), currentUserId);
+            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg("결재처리 에러입니다. 관리자에게 문의하세요");
+        }
+    }
+
+
+    ServiceMsg reject(Docs docs, LoginUser loginUser) {
+        Long currentUserId = loginUser.getMember().getId();
+
+        try {
+            List<Approver> approvers = repo.findByDocsIdOrderBySeq(docs.getId());
+            Optional<Approver> target = approvers.stream().filter( e -> e.getMemberId().equals(currentUserId) ).findFirst();
+        
+            if(target.isPresent()) {
+                Approver approver = target.get();
+                repo.save( approver.rejected() );           // 반려
+
+                List<DtosApprover> DtoApprovers = approvers.stream().map(converter::getDtosApprover).collect(Collectors.toList());
+
+                statusService.update(docs, DtoApprovers);   // 결재문서의 결재 상태 업데이트
+                ongoingApprovalService.delete(docs);        // 반려 처리이므로 결재자 정보를 제거한다.
+
+                countService.removeProceedDocsCntCache(SseApprovalType.REJECTED, docs);   // 결재문서 등록자에게 반려 알림.
+
+                countService.removeApproverDocsCntCache( currentUserId );   // 반려 처리한 결재자의 카운트 초기화
+                return new ServiceMsg().setResult(ServiceResult.SUCCESS);
+            
+            } else {
+                return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg("결재자 정보가 없습니다.");
+            }
+
+        } catch(Exception e) {
+            e.printStackTrace();
+            log.warn("rejected Exception.");
+            log.warn("parameters: {}, user: {}", docs.toString(), currentUserId);
+            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg("결재처리 에러입니다. 관리자에게 문의하세요");
+        }
+    }
+    // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재자 승인/반려 처리 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
+
+
+
+
+
+    // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재문서 view page에서 필요한 결재자 정보 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
+    List<DtosApprover> getApprovers(Docs docs) {
+        return repo.findByDocsIdOrderBySeq(docs.getId()).stream().map(e -> converter.getDtosApprover(e).setSeq( e.getSeq() + 1 )).collect(Collectors.toList());
+    }
+    // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재문서 view page에서 필요한 결재자 정보 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
+
+
+
+
+
+    // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재자로 받은 결재문서의 기간 검색 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
+    List<DtosApprovalDocsMin> getDocsForApprover(DocsType type, LocalDate dateStart, LocalDate dateEnd, LoginUser loginUser) {
+        List<Object[]> objList = repo.findForApprover(loginUser.getMember().getId(), type, dateStart, dateEnd);
+        return objList.stream().map(
+            e -> DtosApprovalDocsMinConverter.fromObjs(e, memberService.getMemberData( ((BigInteger) e[6]).longValue() ))
+        ).collect(Collectors.toList());
+    }
+    // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재자로 받은 결재문서의 기간 검색 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
+
+
+
+
+
+    // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- for admin ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
+    List<DtosApprovalDocsMin> getApprovalDocs(Long writerId, DocsType type, LocalDate dateStart, LocalDate dateEnd, LoginUser loginUser) {
+        if( ! authorityService.isAccessible(Menu.APPROVAL_SEARCH, loginUser) )
+            return null;
+
+        List<Object[]> objsList = repo.getApprovalDocs(type, dateStart, dateEnd);
+        
+        return objsList.stream().filter(
+            e -> (writerId == null || writerId.equals(Long.valueOf(0L))) ? true : writerId.equals( Long.valueOf( ((BigInteger) e[9]).longValue() ))
+        ).map(
+            e -> DtosApprovalDocsMinConverter.fromObjs( e, memberService.getMemberData(((BigInteger)e[6]).longValue()) )
+        ).collect(Collectors.toList());
+    }
+    // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- for admin ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
+}

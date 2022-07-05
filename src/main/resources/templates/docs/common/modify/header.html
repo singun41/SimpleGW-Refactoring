@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <th:block th:fragment="header">
+        <div class="card-header-icon-area align-middle"><i class="fa-solid fa-file-pen"></i></div><span class="card-header-text align-middle">문서 수정 [<span id="docsId" th:text="${docs.id}" class="px-2"></span>]</span>
+        <span class="float-end"> 
+            <button type="button" class="btn btn-outline-success btn-sm btn-icon-title" id="btnSave" onclick=""><i class="fa-solid fa-check"></i>저장</button>
+        </span>
+    </th:block>
+</html>
