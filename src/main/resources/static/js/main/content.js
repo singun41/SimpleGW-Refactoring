@@ -13,8 +13,18 @@ function receiveMsgFromParent(e) {   // main.js로부터 메시지 수신: serve
     // 전달받은 메시지 = e.data
     if(e.data === 'notice') {
         getNotices();
+
     } else if(e.data === 'freeboard') {
         getFreeBoardList();
+
+    } else if(e.data === 'approver') {
+        getApproverDocsCnt();
+
+    } else if(e.data === 'referrer') {
+        getReferrerDocsCnt();
+
+    } else if(e.data ==='confirmed' || e.data === 'rejected') {
+        getProceedDocsCnt();
     }
 }
 

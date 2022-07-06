@@ -2,6 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
     dayjs.locale('ko');
     connectSse();
 
+    notificationModal = new bootstrap.Modal(document.getElementById('notification'), { keyboard: false });
+
     alarmMessageModal = new bootstrap.Modal(document.getElementById('alarmMessage'), { keyboard: false });
     getTodayAlarms();
     setInterval(() => { showAlarm(); }, 1000 * 60);
@@ -39,8 +41,30 @@ function connectSse() {
         
         if(result.NOTICE) {
             sendMsgToChild('notice');
+
         } else if(result.FREEBOARD) {
             sendMsgToChild('freeboard');
+
+        } else if(result.APPROVER) {
+            document.getElementById('notiContent').innerHTML = '새로운 결재 요청문서가 도착했습니다.';
+            sendMsgToChild('approver');
+            notificationModal.show();
+
+        } else if(result.REFERRER) {
+            document.getElementById('notiContent').innerHTML = '새로운 결재 참조문서가 도착했습니다.';
+            sendMsgToChild('referrer');
+            notificationModal.show();
+
+        } else if(result.CONFIRMED) {
+            document.getElementById('notiContent').innerHTML = '결재문서 ' + result.title + '(' + result.type + ', No. ' + result.docsId + ') 의 결재가 <strong class="text-success">승인</strong>되었습니다.';
+            sendMsgToChild('confirmed');
+            notificationModal.show();
+
+        } else if(result.REJECTED) {
+            document.getElementById('notiContent').innerHTML = '결재문서 ' + result.title + '(' + result.type + ', No. ' + result.docsId + ') 의 결재가 <strong class="text-danger">반려</strong>되었습니다.';
+            sendMsgToChild('rejected');
+            notificationModal.show();
+
         }
     };
 }
