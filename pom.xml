@@ -14,7 +14,7 @@
 	<name>simplegw</name>
 	<description>Simple Groupware project for Spring Boot</description>
 	<properties>
-		<java.version>11</java.version>
+		<java.version>17</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -44,13 +44,13 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc -->
 		<dependency>
 			<groupId>com.microsoft.sqlserver</groupId>
 			<artifactId>mssql-jdbc</artifactId>
-			<scope>runtime</scope>
-			<version>10.2.1.jre11</version>
+			<version>10.2.1.jre17</version>
 		</dependency>
-
 
 		<!-- mapStruct는 lombok 보다 앞서 선언되어야 한다. -->
 		<dependency>
