@@ -28,8 +28,7 @@ public class SseApprovalService {
             return;
         
         switch(type) {
-            case CONFIRMED:
-            case REJECTED:
+            case CONFIRMED, REJECTED ->
                 sseService.send(
                     docs.getWriterId(),
                     Map.of(
@@ -39,9 +38,8 @@ public class SseApprovalService {
                         "title", docs.getTitle()
                     )
                 );
-                return;
-
-            default: return;
+            
+            default -> {}
         }
     }
 
@@ -54,7 +52,7 @@ public class SseApprovalService {
     }
 
 
-    public void sendToAllReferrers(Collection<Long> referrers, SseApprovalType type) {
+    public void sendToAllReferrers(Collection<Long> referrers) {
         if(referrers == null)
             return;
         

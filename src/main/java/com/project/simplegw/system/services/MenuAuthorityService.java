@@ -66,7 +66,7 @@ public class MenuAuthorityService {
 
 
                 switch(role) {
-                    case ADMIN:
+                    case ADMIN -> {
                         notice.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.RWD);
                         freeboard.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.RD);
                         suggestion.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.RD);
@@ -78,11 +78,11 @@ public class MenuAuthorityService {
 
                         approvalSearch.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
                         approvalDefault.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
-                        break;
+                    }
                     
 
 
-                    case USER:
+                    case USER -> {
                         notice.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
                         freeboard.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
                         suggestion.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
@@ -94,11 +94,11 @@ public class MenuAuthorityService {
 
                         approvalSearch.updateAccessible(false).updateRwdRole(AuthorityValue.NONE).updateRwdOther(AuthorityValue.NONE);
                         approvalDefault.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
-                        break;
+                    }
                     
 
 
-                    case MANAGER:
+                    case MANAGER -> {
                         notice.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.RWD);
                         freeboard.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
                         suggestion.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
@@ -110,11 +110,11 @@ public class MenuAuthorityService {
 
                         approvalSearch.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
                         approvalDefault.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
-                        break;
+                    }
                 
 
 
-                    case LEADER:
+                    case LEADER -> {
                         notice.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
                         freeboard.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
                         suggestion.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
@@ -126,11 +126,11 @@ public class MenuAuthorityService {
 
                         approvalSearch.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
                         approvalDefault.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
-                        break;
+                    }
                     
 
 
-                    case DIRECTOR:
+                    case DIRECTOR -> {
                         notice.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
                         freeboard.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
                         suggestion.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
@@ -142,11 +142,11 @@ public class MenuAuthorityService {
 
                         approvalSearch.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
                         approvalDefault.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
-                        break;
+                    }
                     
 
 
-                    case MASTER:
+                    case MASTER -> {
                         notice.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
                         freeboard.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
                         suggestion.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
@@ -158,7 +158,7 @@ public class MenuAuthorityService {
 
                         approvalSearch.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
                         approvalDefault.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
-                        break;
+                    }
                 }
 
                 repo.saveAll(

@@ -17,15 +17,12 @@ public class UploadPath {
 
 
     public static String get(UploadType type) {
-        switch(type) {
-            case ATTACHMENTS:
-                return new StringBuilder(Constants.ATTACHMENTS_UPLOAD_PATH).append(daily()).toString();
+        return switch(type) {
+            case ATTACHMENTS -> new StringBuilder(Constants.ATTACHMENTS_UPLOAD_PATH).append(daily()).toString();
             
-            case IMAGE:
-                return new StringBuilder(Constants.IMAGE_UPLOAD_PATH).append(daily()).toString();
+            case IMAGE -> new StringBuilder(Constants.IMAGE_UPLOAD_PATH).append(daily()).toString();
 
-            default:
-                return "";
-        }
+            default -> "";
+        };
     }
 }
