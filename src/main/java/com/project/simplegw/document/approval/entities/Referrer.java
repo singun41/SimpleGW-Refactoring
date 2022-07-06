@@ -33,7 +33,10 @@ import lombok.ToString;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)   // entity의 기본 생성자는 반드시 public or protected 이어야 한다.
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "referrer", indexes = @Index(columnList = "member_id, docs_id"))   // 수신한 결재문서를 날짜로 검색할 때 사용. index 테스트 완료.
+@Table(name = "referrer", indexes = {
+    @Index(columnList = "docs_id"),
+    @Index(columnList = "member_id, docs_id")   // 수신한 결재문서를 날짜로 검색할 때 사용. index 테스트 완료.
+})
 public class Referrer {   // 결재라인의 참조자 정보
     @Id
     @Column(name = "id", nullable = false, updatable = false)
