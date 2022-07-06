@@ -44,7 +44,7 @@ public class ApprovalStatusService {
     }
 
     void update(Docs docs, List<DtosApprover> approvers) throws Exception {   // ApproverService 에서 호출.
-        repo.save( getStatus( docs ).update(approvers) );
+        repo.save( getStatus(docs).update(approvers) );
     }
 
     void delete(Docs docs) throws Exception {   // ApproverService 에서 호출.
