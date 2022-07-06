@@ -5,6 +5,7 @@ import java.util.List;
 import com.project.simplegw.document.approval.dtos.send.DtosApprover;
 import com.project.simplegw.document.approval.entities.OngoingApproval;
 import com.project.simplegw.document.approval.repositories.OngoingApprovalRepo;
+import com.project.simplegw.document.approval.vos.Sign;
 import com.project.simplegw.document.entities.Docs;
 import com.project.simplegw.system.security.LoginUser;
 
@@ -49,7 +50,12 @@ public class OngoingApprovalService {
     }
 
     void update(Docs docs, List<DtosApprover> approvers) throws Exception {   // ApproverService 에서 호출.
-        repo.save( getOngoingApproval(docs).update(approvers) );
+        OngoingApproval entity = getOngoingApproval(docs);
+
+        if(approvers.stream().filter(e -> e.getSign() == Sign.PROCEED).findFirst().isPresent())
+            repo.save( entity.update(approvers) );
+        else
+            repo.delete(entity);
     }
 
     void delete(Docs docs) throws Exception {   // ApproverService 에서 호출.
