@@ -59,9 +59,9 @@ public class DefaultReportService {
 
 
 
-    public DtosApprovalDocs getDtosApprovalDocs(Long docsId) {
+    public DtosApprovalDocs getDtosApprovalDocs(Long docsId, LoginUser loginUser) {
         DtosDocs dto = docsService.getDtosDocs(docsId, DEFAULT);
-        return converter.getDtosApprovalDocs(dto).setLine(approvalDocsService.getDtosApprovalLinePack(docsId, DEFAULT));
+        return converter.getDtosApprovalDocs(dto).setLine(approvalDocsService.getDtosApprovalLinePack(docsId, DEFAULT, loginUser));
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 

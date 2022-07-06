@@ -193,13 +193,13 @@ public class ApprovalDocsService {
 
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재문서 view page에서 필요한 결재자 및 참조자 정보 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
-    public DtosApprovalLinePack getDtosApprovalLinePack(Long docsId, DocsType type) {
+    public DtosApprovalLinePack getDtosApprovalLinePack(Long docsId, DocsType type, LoginUser loginUser) {
         Docs docs = docsService.getDocsEntity(docsId, type);
         
         if(docs.getId() == null)
             return new DtosApprovalLinePack();
 
-        return new DtosApprovalLinePack().setApprovers(approverService.getApprovers(docs)).setReferrers(referrerService.getReferrers(docs));
+        return new DtosApprovalLinePack().setApprovers(approverService.getApprovers(docs)).setReferrers(referrerService.getReferrers(docs, loginUser));
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재문서 view page에서 필요한 결재자 및 참조자 정보 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 }
