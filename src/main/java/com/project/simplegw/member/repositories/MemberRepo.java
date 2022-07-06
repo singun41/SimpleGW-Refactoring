@@ -16,11 +16,14 @@ public interface MemberRepo extends JpaRepository<Member, Long> {
     Optional<Member> findByUserId(String userId);
 
 
-    @Query(value =
-        "select a.id, a.user_id, a.password, a.role, a.enabled " +
-        "from member a " +
-            "join member_details b on a.id = b.member_id " +
-        "where b.retired = :#{#retired}",
-    nativeQuery = true)
+    @Query(
+        value = """
+                    select a.id, a.user_id, a.password, a.role, a.enabled
+                    from member a
+                        join member_details b on a.id = b.member_id
+                    where b.retired = :#{#retired}
+                """,
+        nativeQuery = true
+    )
     List<Member> findByRetiredMember(@Param("retired") boolean retired);
 }

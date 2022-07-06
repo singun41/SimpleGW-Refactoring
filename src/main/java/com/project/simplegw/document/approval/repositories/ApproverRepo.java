@@ -16,14 +16,22 @@ public interface ApproverRepo extends JpaRepository<Approver, Long> {
 
     // 결재요청으로 받은 문서 기간 검색, 결과를 DtosApprovalDocsMin 클래스로 처리하기 위해서 List<Object[]>로 반환
     @Query(
-        value = "select b.id, b.type, b.title, b.writer_team, b.writer_job_title, b.writer_name, approver_id = c.member_id, c.sign, b.created_date " +
-                "from approver a " +
-                    "join docs b on a.docs_id = b.id " +
-                    "join approval_status c on b.id = c.docs_id " +
-                "where 1=1 " +
-                    " and a.member_id = :#{#approver_id} " +
-                    " and b.type = case when :#{#type.name()} = 'ALL' then b.type else :#{#type.name()} end " +
-                    " and b.created_date between :#{#date_start} and :#{#date_end}",
+        value = """
+                    select
+                        b.id, b.type, b.title,
+                        b.writer_team, b.writer_job_title, b.writer_name,
+                        approver_team = c.team, approver_job_title = c.job_title, approver_name = c.name,
+                        c.sign, b.created_date,
+                        b.writer_id
+                    from approver a
+                        join docs b on a.docs_id = b.id
+                        join approval_status c on b.id = c.docs_id
+                    where 1=1
+                        and a.member_id = :#{#approver_id}
+                        and b.type = case when :#{#type.name()} = 'ALL' then b.type else :#{#type.name()} end
+                        and b.created_date between :#{#date_start} and :#{#date_end}
+                    order by b.id desc
+                """,
         nativeQuery = true
     )
     List<Object[]> findForApprover(@Param("approver_id") Long approverId, @Param("type") DocsType type, @Param("date_start") LocalDate dateStart, @Param("date_end") LocalDate dateEnd);
@@ -33,12 +41,19 @@ public interface ApproverRepo extends JpaRepository<Approver, Long> {
 
     // 관리자 권한 조회 기능: 작성자 기준 결재문서 검색
     @Query(
-        value = "select a.id, a.type, a.title, a.writer_team,  a.writer_job_title, a.writer_name, b.member_id, b.sign, a.created_date, a.writer_id " +
-                "from docs a " +
-                    "join approval_status b on a.id = b.docs_id " +
-                "where 1=1 " +
-                    "and a.type = case when :#{#type.name()} = 'ALL' then a.type else :#{#type.name()} end " +
-                    "and a.created_date between :#{#date_start} and :#{#date_end}",
+        value = """
+                    select
+                        a.id, a.type, a.title,
+                        a.writer_team, a.writer_job_title, a.writer_name,
+                        approver_team = b.team, approver_job_title = b.job_title, approver_name = b.name,
+                        b.sign, a.created_date,
+                        a.writer_id
+                    from docs a
+                        join approval_status b on a.id = b.docs_id
+                    where 1=1
+                        and a.type = case when :#{#type.name()} = 'ALL' then a.type else :#{#type.name()} end
+                        and a.created_date between :#{#date_start} and :#{#date_end}
+                """,
         nativeQuery = true
     )
     List<Object[]> getApprovalDocs(@Param("type") DocsType type, @Param("date_start") LocalDate dateStart, @Param("date_end") LocalDate dateEnd);
