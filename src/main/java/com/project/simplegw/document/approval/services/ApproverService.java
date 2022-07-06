@@ -85,7 +85,7 @@ public class ApproverService {
             ongoingApprovalService.create(docs, DtoApprovers);   // 2. 현재 결재자 정보 등록
             statusService.create(docs, DtoApprovers);            // 3. 결재문서의 결재문서 상태 등록
             
-            countService.removeApproverDocsCntCache(arrApproverId[0]);   // 첫번째 결재자의 결재 요청 카운트 캐시 업데이트
+            countService.removeApproverDocsCntCache(arrApproverId[0], true);   // 첫번째 결재자의 결재 요청 카운트 캐시 업데이트
 
             return new ServiceMsg().setResult(ServiceResult.SUCCESS);
 
@@ -118,7 +118,7 @@ public class ApproverService {
         ongoingApprovalService.delete(docs);
         statusService.delete(docs);
 
-        countService.removeApproverDocsCntCache(approvers.get(0).getMemberId());   // 첫번째 결재자의 결재 요청 카운트 캐시 제거
+        countService.removeApproverDocsCntCache(approvers.get(0).getMemberId(), true);   // 첫번째 결재자의 결재 요청 카운트 캐시 제거
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재문서의 결재자 등록 및 수정 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 
@@ -143,10 +143,14 @@ public class ApproverService {
                 statusService.update(docs, DtoApprovers);            // 결재문서의 결재 상태 업데이트
                 ongoingApprovalService.update(docs, DtoApprovers);   // 현재 결재자 정보 업데이트
 
+
                 if(approvers.lastIndexOf(approver) == (approvers.size() - 1))
                     countService.removeProceedDocsCntCache(SseApprovalType.CONFIRMED, docs);   // 마지막 결재자가 승인을 했다면 최종 승인이므로 결재문서 등록자에게 승인 알림.
+                else
+                    countService.removeApproverDocsCntCache(approvers.get( approvers.indexOf(approver) + 1 ).getMemberId(), true);   // 다음 결재자에게 알림 전송.
 
-                countService.removeApproverDocsCntCache( currentUserId );   // 승인 처리한 결재자의 카운트 초기화
+
+                countService.removeApproverDocsCntCache( currentUserId, false );   // 승인 처리한 결재자의 카운트 초기화, 알림을 전송하지 않음.
                 return new ServiceMsg().setResult(ServiceResult.SUCCESS);
             
             } else {
@@ -180,7 +184,7 @@ public class ApproverService {
 
                 countService.removeProceedDocsCntCache(SseApprovalType.REJECTED, docs);   // 결재문서 등록자에게 반려 알림.
 
-                countService.removeApproverDocsCntCache( currentUserId );   // 반려 처리한 결재자의 카운트 초기화
+                countService.removeApproverDocsCntCache( currentUserId, false );   // 반려 처리한 결재자의 카운트 초기화, 알림을 전송하지 않음.
                 return new ServiceMsg().setResult(ServiceResult.SUCCESS);
             
             } else {
@@ -213,9 +217,7 @@ public class ApproverService {
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재자로 받은 결재문서의 기간 검색 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
     List<DtosApprovalDocsMin> getDocsForApprover(DocsType type, LocalDate dateStart, LocalDate dateEnd, LoginUser loginUser) {
         List<Object[]> objList = repo.findForApprover(loginUser.getMember().getId(), type, dateStart, dateEnd);
-        return objList.stream().map(
-            e -> DtosApprovalDocsMinConverter.fromObjs(e, memberService.getMemberData( ((BigInteger) e[6]).longValue() ))
-        ).collect(Collectors.toList());
+        return objList.stream().map( e -> DtosApprovalDocsMinConverter.fromObjs(e) ).collect(Collectors.toList());
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재자로 받은 결재문서의 기간 검색 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 
@@ -231,10 +233,9 @@ public class ApproverService {
         List<Object[]> objsList = repo.getApprovalDocs(type, dateStart, dateEnd);
         
         return objsList.stream().filter(
-            e -> (writerId == null || writerId.equals(Long.valueOf(0L))) ? true : writerId.equals( Long.valueOf( ((BigInteger) e[9]).longValue() ))
-        ).map(
-            e -> DtosApprovalDocsMinConverter.fromObjs( e, memberService.getMemberData(((BigInteger)e[6]).longValue()) )
-        ).collect(Collectors.toList());
+            // 작성자를 선택하지 않았으면 true로 처리해서 모두 집계, 아니면 작성자 일치하는 것만 집계, 일치하는 작성자를 위해서 nativeQuery 맨 끝에 writerId를 추가.
+            e -> (writerId == null || writerId.equals(Long.valueOf(0L))) ? true : writerId.equals( Long.valueOf( ((BigInteger) e[11]).longValue() ))
+        ).map( e -> DtosApprovalDocsMinConverter.fromObjs(e) ).collect(Collectors.toList());
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- for admin ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 }

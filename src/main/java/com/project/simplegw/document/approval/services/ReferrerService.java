@@ -1,6 +1,5 @@
 package com.project.simplegw.document.approval.services;
 
-import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,7 +66,7 @@ public class ReferrerService {
 
             repo.saveAll(referrers);
 
-            referrerIds.forEach(countService::removeReferrerDocsCntCache);   // 결재 참조받은 모든 멤버들의 참조 카운트 캐시 업데이트
+            referrerIds.forEach(e -> countService.removeReferrerDocsCntCache(e, true));   // 결재 참조받은 모든 멤버들의 참조 카운트 캐시 업데이트
 
             return new ServiceMsg().setResult(ServiceResult.SUCCESS);
 
@@ -98,7 +97,7 @@ public class ReferrerService {
     private void delete(Docs docs, List<Referrer> referrers) throws Exception {
         repo.deleteAllInBatch(referrers);
 
-        referrers.stream().mapToLong(Referrer::getMemberId).forEach(countService::removeReferrerDocsCntCache);   // 결재 참조받은 모든 멤버들의 참조 카운트 캐시 제거
+        referrers.stream().mapToLong(Referrer::getMemberId).forEach(e -> countService.removeReferrerDocsCntCache(e, true));   // 결재 참조받은 모든 멤버들의 참조 카운트 캐시 제거
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재문서의 참조자 등록 및 수정 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 
@@ -107,12 +106,28 @@ public class ReferrerService {
 
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재문서 view page에서 필요한 참조자 정보 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
-    List<DtosReferrer> getReferrers(Docs docs) {
-        return repo.findByDocsIdOrderById(docs.getId()).stream().map(
-            e -> converter.getDtosReferrer(e).setChecked(e.getCheckedDatetime() != null)
-        ).collect(Collectors.toList());
+    List<DtosReferrer> getReferrers(Docs docs, LoginUser loginUser) {
+        List<Referrer> referrers = repo.findByDocsIdOrderById(docs.getId());
+        updateChecked(referrers, loginUser);
+
+        return referrers.stream().map( e -> converter.getDtosReferrer(e).setChecked(e.getCheckedDatetime() != null) ).collect(Collectors.toList());
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재문서 view page에서 필요한 참조자 정보 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
+
+
+
+
+
+    // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 참조자 확인 시간 업데이트 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
+    private void updateChecked(List<Referrer> referrers, LoginUser loginUser) {
+        referrers.stream().filter(
+            e -> e.getMemberId().equals(loginUser.getMember().getId()) && e.getCheckedDatetime() == null
+        ).findFirst().ifPresent(e -> {
+                countService.removeReferrerDocsCntCache(loginUser.getMember().getId(), false);
+                repo.save(e.checked());
+        });
+    }
+    // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 참조자 확인 시간 업데이트 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 
 
 
@@ -135,9 +150,7 @@ public class ReferrerService {
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 참조자로 받은 결재문서의 기간 검색 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
     List<DtosApprovalDocsMin> getDocsForReferrer(DocsType type, LocalDate dateStart, LocalDate dateEnd, LoginUser loginUser) {
         List<Object[]> objList = repo.findForReferrer(loginUser.getMember().getId(), type, dateStart, dateEnd);
-        return objList.stream().map(
-            e -> DtosApprovalDocsMinConverter.fromObjs(e, memberService.getMemberData( ((BigInteger) e[6]).longValue() ))
-        ).collect(Collectors.toList());
+        return objList.stream().map( e -> DtosApprovalDocsMinConverter.fromObjs(e) ).collect(Collectors.toList());
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 참조자로 받은 결재문서의 기간 검색 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 }

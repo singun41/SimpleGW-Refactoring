@@ -28,6 +28,8 @@ public class SseService {
 
     private void send(SseEmitter sseEmitter, Map<String, String> data) {
         try {
+            // 즉시 알림을 전달하면 업데이트된 내용을 받는게 아니라 캐시된 내용을 받는 경우가 있어서 쓰레드를 잠깐 지연시킨다.
+            Thread.sleep(100L);
             sseEmitter.send(data, MediaType.APPLICATION_JSON);
         
         } catch(IOException e) {

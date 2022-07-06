@@ -62,8 +62,9 @@ public class ApprovalCountService {   // 결재 진행, 결재 요청, 결재 �
     }
 
     @CacheEvict(cacheManager = Constants.CACHE_MANAGER, cacheNames = Constants.CACHE_APPROVAL_APPROVER_COUNT, allEntries = false, key = "#memberId")
-    public void removeApproverDocsCntCache(Long memberId) {   // ApproverService.create(), delete()에서 호출.
-        sseService.sendToCurrentApprover(memberId);
+    public void removeApproverDocsCntCache(Long memberId, boolean send) {   // ApproverService.create(), delete()에서 호출.
+        if(send)
+            sseService.sendToCurrentApprover(memberId);
     }
 
 
@@ -75,8 +76,9 @@ public class ApprovalCountService {   // 결재 진행, 결재 요청, 결재 �
     }
 
     @CacheEvict(cacheManager = Constants.CACHE_MANAGER, cacheNames = Constants.CACHE_APPROVAL_REFERRER_COUNT, allEntries = false, key = "#memberId")
-    public void removeReferrerDocsCntCache(Long memberId) {   // ReferrerService.create(), delete()에서 호출.
-        sseService.sendToReferrer(memberId);
+    public void removeReferrerDocsCntCache(Long memberId, boolean send) {   // ReferrerService.create(), delete(), updateReferrerChecked()에서 호출.
+        if(send)
+            sseService.sendToReferrer(memberId);
     }
 
 
