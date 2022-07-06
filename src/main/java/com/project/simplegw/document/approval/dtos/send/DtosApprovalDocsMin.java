@@ -33,6 +33,8 @@ public class DtosApprovalDocsMin {
     private Sign sign;
     private LocalDate createdDate;
 
+    private Long writerId;   // 관리자 검색 기능: 작성자 일치하는 문서만 집계할 때 필요하여 추가함.
+
     public DtosApprovalDocsMin updateDocsType(DocsType type) {
         this.type = type;
         this.typeTitle = type.getTitle();
