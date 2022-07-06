@@ -678,22 +678,24 @@ public class ViewController {
 
     @GetMapping("/page/approval/default/{docsId}")
     public String defaultApprovalViewPage(@PathVariable Long docsId, Model model, @AuthenticationPrincipal LoginUser loginUser) {
-        DtosApprovalDocs docs = service.getDefaultReport(docsId);
+        DtosApprovalDocs docs = service.getDefaultReport(docsId, loginUser);
 
         if( ! approvalDocsReadable(docs, loginUser) )
             return Constants.ERROR_PAGE_403;
         
+        
+        boolean isOwner = docs.getWriterId().equals(loginUser.getMember().getId());
         boolean isProceed = isProceed(docs);
         boolean isUpdatable = isProceed ? false : authority.isUpdatable(Menu.APPROVAL_DEFAULT, loginUser, docs.getWriterId());
         boolean isDeletable = isProceed ? false : authority.isDeletable(Menu.APPROVAL_DEFAULT, loginUser, docs.getWriterId());
         boolean isCurrentApprover = isCurrentApprover(docs, loginUser);
-        boolean isReferrer = isReferrer(docs, loginUser);
+
 
         model.addAttribute("docs", docs)
+            .addAttribute("isOwner", isOwner)
             .addAttribute("isUpdatable", isUpdatable)
             .addAttribute("isDeletable", isDeletable)
-            .addAttribute("isCurrentApprover", isCurrentApprover)
-            .addAttribute("isReferrer", isReferrer);
+            .addAttribute("isCurrentApprover", isCurrentApprover);
         return "docs/approval/default/view";
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- approval ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
