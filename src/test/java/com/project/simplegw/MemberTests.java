@@ -9,7 +9,7 @@ import com.project.simplegw.member.dtos.receive.DtorPwChange;
 import com.project.simplegw.system.vos.Role;
 
 import org.junit.jupiter.api.Test;
-// import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -22,21 +22,22 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class MemberTests {
-    // @Autowired   // framework 버전 업데이트 이후 자동설정되어 선언하지 않아도 됨.
+
+    @Autowired
     private MockMvc mvc;
 
     @Test
     @WithUserDetails(value = "admin")
     void createMember() throws Exception {
         DtorMemberCreate dto =
-        new DtorMemberCreate().setTeam("경영기획팀").setJobTitle("대리").setName("테스터1").setId("tester1").setPw("test1212##");
+        new DtorMemberCreate().setTeam("경영기획팀").setJobTitle("대리").setName("개발자").setId("developer").setPw("developer11!!");
 
         String params = new ObjectMapper().writeValueAsString(dto);
 
         mvc
         .perform(
             MockMvcRequestBuilders
-            .post("/member")
+            .post("/user")
             .contentType(MediaType.APPLICATION_JSON)
             .content(params)
         )

@@ -1,11 +1,5 @@
 package com.project.simplegw;
 
-import java.time.LocalDate;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.simplegw.document.dtos.receive.DtorDocs;
-import com.project.simplegw.document.dtos.receive.DtorDocsOptions;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -17,10 +11,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.simplegw.document.approval.dtos.receive.docs.DtorDefaultReport;
+
 @SpringBootTest
 @AutoConfigureMockMvc
-public class NoticeTests {
-    
+public class ApprovalTest {
+
     @Autowired
     private MockMvc mvc;
 
@@ -63,6 +60,17 @@ public class NoticeTests {
         .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
+    private void patchNoParams(String urlString) throws Exception {
+        mvc
+        .perform(
+            MockMvcRequestBuilders
+            .patch(urlString)
+            .contentType(MediaType.APPLICATION_JSON)
+        )
+        .andDo(MockMvcResultHandlers.print())
+        .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
     private void delete(String urlString) throws Exception {
         mvc
         .perform(
@@ -76,52 +84,19 @@ public class NoticeTests {
 
 
 
-    @Test
-    @WithUserDetails(value = "developer")
-    void create() throws Exception {
-        DtorDocs dto = new DtorDocs().setTitle("Test notice10").setContent("test content10");
-
-        post(dto, "/notice");
-    }
-
-
-    @Test
-    @WithUserDetails(value = "admin")
-    void update() throws Exception {
-        DtorDocs dto = new DtorDocs().setTitle("Test update notice").setContent("content updated.");
-
-        patch(dto, "/notice/2");
-    }
-
-
-    @Test
-    @WithUserDetails(value = "admin")
-    void updateOptions() throws Exception {
-        DtorDocsOptions dto = new DtorDocsOptions().setUse(true).setDueDate(LocalDate.now().minusDays(1L).toString());
-        post(dto, "/notice/options/9");
-    }
-
-
 
     @Test
     @WithUserDetails(value = "developer")
-    void delete() throws Exception {
-        delete("/notice/2");
+    void approvalCreate() throws Exception {   // 결재 승인, 반려 테스트를 위한 기본 결재문서 등록
+        DtorDefaultReport dto = new DtorDefaultReport().setTitle("test").setContent("test").setArrApproverId( new Long[]{122L, 70L, 23L, 65L} );
+        post(dto, "/approval/default");
     }
 
 
-    @Test
-    @WithUserDetails(value = "developer")
-    void createTemp() throws Exception {
-        DtorDocs dto = new DtorDocs().setTitle("Test notice temp save").setContent("test content save temp");
-
-        post(dto, "/notice/temp");
-    }
-
 
     @Test
-    @WithUserDetails(value = "developer")
-    void getMainPageList() throws Exception {
-        get("/notice/main-list");
+    @WithUserDetails(value = "")
+    void approvalConfirmed() throws Exception {
+        patchNoParams("/approval/confirmed/DEFAULT/37733");
     }
 }
