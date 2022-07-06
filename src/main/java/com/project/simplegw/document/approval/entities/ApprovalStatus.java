@@ -48,7 +48,7 @@ public class ApprovalStatus {   // 결재문서의 최종 상태 엔티티
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Docs docs;
 
-    @Column(name = "member_id", nullable = false, updatable = false)
+    @Column(name = "member_id", nullable = false, updatable = true)
     private Long memberId;
 
     @Column(name = "team", nullable = false, updatable = true, columnDefinition = Constants.COLUMN_DEFINE_TEAM)
@@ -57,7 +57,7 @@ public class ApprovalStatus {   // 결재문서의 최종 상태 엔티티
     @Column(name = "job_title", nullable = false, updatable = true, columnDefinition = Constants.COLUMN_DEFINE_JOB_TITLE)
     private String jobTitle;
 
-    @Column(name = "name", nullable = false, updatable = false, columnDefinition = Constants.COLUMN_DEFINE_NAME)
+    @Column(name = "name", nullable = false, updatable = true, columnDefinition = Constants.COLUMN_DEFINE_NAME)
     private String name;
 
     @Enumerated(EnumType.STRING)
