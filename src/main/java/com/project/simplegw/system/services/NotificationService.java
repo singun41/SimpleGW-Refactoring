@@ -21,22 +21,24 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Transactional(rollbackFor = Exception.class, isolation = Isolation.READ_COMMITTED)
 public class NotificationService {   // 알림 카운트, 알림 내용 생성 및 읽기를 제공하는 공용 서비스, 디테일한 내용 생성은 XxxNotificationService 클래스에 작성하고 호출.
-    private final NotificationRepo notificationRepo;
+    private final NotificationRepo repo;
 
     // @Autowired   // framework 버전 업데이트 이후 자동설정되어 선언하지 않아도 됨.
-    public NotificationService(NotificationRepo notificationRepo) {
-        this.notificationRepo = notificationRepo;
+    public NotificationService(NotificationRepo repo) {
+        this.repo = repo;
         log.info("Component '" + this.getClass().getName() + "' has been created.");
     }
 
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- called from NotificationController ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
     public long getUncheckedNotificationsCount(LoginUser loginUser) {
-        return notificationRepo.countByMemberIdAndChecked(loginUser.getMember().getId(), false);
+        return repo.countByMemberIdAndChecked(loginUser.getMember().getId(), false);
     }
 
     public List<String> getNotifications(LoginUser loginUser) {
-        return notificationRepo.findByMemberIdOrderByIdDesc(loginUser.getMember().getId()).stream().map(Notification::getContent).collect(Collectors.toList());
+        List<Notification> notifications = repo.findByMemberIdOrderByIdDesc(loginUser.getMember().getId());
+        notifications.stream().filter(e -> ! e.isChecked()).forEach(e -> repo.save( e.updateChecked() ));
+        return notifications.stream().map(Notification::getContent).collect(Collectors.toList());
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- called from NotificationController ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 
@@ -52,7 +54,7 @@ public class NotificationService {   // 알림 카운트, 알림 내용 생성 �
         Notification notification = Notification.builder().content(content).checked(false).memberId(memberId).build();
 
         try {
-            notificationRepo.save(notification);
+            repo.save(notification);
 
         } catch(Exception e) {
             e.printStackTrace();
@@ -68,11 +70,11 @@ public class NotificationService {   // 알림 카운트, 알림 내용 생성 �
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- called from SchedulerService ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
     @Async
-    void delete() {
-        LocalDate baseDate = LocalDate.now().minusDays(Constants.NOTIFICATION_STORED_DURATION);
-        
-        notificationRepo.deleteAllInBatch(
-            notificationRepo.findAll().stream().filter(e -> e.getCreatedDate().isBefore(baseDate)).collect(Collectors.toList())
+    void removeOldNotifications() {
+        repo.deleteAllInBatch(
+            repo.findAll().stream().filter(
+                e -> e.getCreatedDate().isBefore( LocalDate.now().minusDays(Constants.NOTIFICATION_STORED_DURATION) )
+            ).collect(Collectors.toList())
         );
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- called from SchedulerService ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //

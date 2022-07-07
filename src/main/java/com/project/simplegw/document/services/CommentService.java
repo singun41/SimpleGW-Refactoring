@@ -33,15 +33,15 @@ public class CommentService {
     private final DocsService docsService;
     private final DocsConverter docsConverter;
     private final MemberService memberService;
-    private final CommentNotificationService commentNotificationService;
+    private final CommentNotificationService notiService;
 
     // @Autowired   // framework 버전 업데이트 이후 자동설정되어 선언하지 않아도 됨.
-    public CommentService(CommentRepo commentRepo, DocsService docsService, DocsConverter docsConverter, MemberService memberService, CommentNotificationService commentNotificationService) {
+    public CommentService(CommentRepo commentRepo, DocsService docsService, DocsConverter docsConverter, MemberService memberService, CommentNotificationService notiService) {
         this.commentRepo = commentRepo;
         this.docsService = docsService;
         this.docsConverter = docsConverter;
         this.memberService = memberService;
-        this.commentNotificationService = commentNotificationService;
+        this.notiService = notiService;
 
         log.info("Component '" + this.getClass().getName() + "' has been created.");
     }
@@ -68,7 +68,9 @@ public class CommentService {
 
         try {
             commentRepo.save(comment);
-            commentNotificationService.create(docs);
+            if( ! docs.getWriterId().equals( loginUser.getMember().getId() ))   // 게시글 작성자 본인이 댓글을 쓰면 알림을 주지 않는다.
+                notiService.create(docs);
+
             return new ServiceMsg().setResult(ServiceResult.SUCCESS);
 
         } catch(Exception e) {
