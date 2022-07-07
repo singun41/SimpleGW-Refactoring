@@ -36,7 +36,8 @@ import lombok.ToString;
 @Entity
 @Table(name = "docs" , indexes = {
     @Index(columnList = "created_date, type"),   // 테스트 결과 컬럼의 순서를 옵티마이저가 변경하는 경우가 있다. 두 개 모두 설정.
-    @Index(columnList = "type, created_date")
+    @Index(columnList = "type, created_date"),
+    @Index(columnList = "writer_id, created_date")   // 완결된 결재문서 찾을 때 nativeQuery에서 필요한 인덱스
 })
 public class Docs {
     @Id
