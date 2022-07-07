@@ -35,12 +35,14 @@ public class SystemScheduler {
 
     private final SseService sseService;
     private final CacheService cacheService;
+    private final NotificationService notiService;
 
 
     // @Autowired   // framework 버전 업데이트 이후 자동설정되어 선언하지 않아도 됨.
-    public SystemScheduler(SseService sseService, CacheService cacheService) {
+    public SystemScheduler(SseService sseService, CacheService cacheService, NotificationService notiService) {
         this.sseService = sseService;
         this.cacheService = cacheService;
+        this.notiService = notiService;
 
         log.info("Component '" + this.getClass().getName() + "' has been created.");
     }
@@ -71,6 +73,12 @@ public class SystemScheduler {
     private void removeAlarms() {
         log.info("execute removeAlarms");
         cacheService.removeAlarms();
+    }
+
+    @Scheduled(cron = EVERY_MIDNIGHTS)
+    private void removeOldNotifications() {
+        log.info("execute removeOldNotifications");
+        notiService.removeOldNotifications();
     }
 
 
