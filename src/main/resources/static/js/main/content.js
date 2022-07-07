@@ -1,12 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
     initializePostIt();
+
+    // notificationModal = new bootstrap.Modal(document.getElementById('notification'), { keyboard: false });
+
     getNotices();
     getFreeBoardList();
     getTempDocsCount();
     getProceedDocsCnt();
     getApproverDocsCnt();
     getReferrerDocsCnt();
+    getNotiCount();
 });
+// let notificationModal;
 
 window.addEventListener('message', receiveMsgFromParent);   // 'document'가 아니라 'window'다.
 function receiveMsgFromParent(e) {   // main.js로부터 메시지 수신: server sent event 알림 용도
@@ -25,6 +30,10 @@ function receiveMsgFromParent(e) {   // main.js로부터 메시지 수신: serve
 
     } else if(e.data ==='confirmed' || e.data === 'rejected') {
         getProceedDocsCnt();
+        getNotiCount();
+    
+    } else if(e.data === 'notification') {
+        getNotiCount();
     }
 }
 
@@ -136,11 +145,8 @@ function initializePostIt() {
     });
 }
 
-function getTodayAlarms() {
-    // alarm/list.js의 afterCreate()에서 호출함.
-    // main.js의 함수를 호출한다.
-    // getAlarms()메서드를 연속 2번 호출하므로, 캐싱하기 위해서 지연을 주기 위해 setTimeout 처리.
-    setTimeout(() => { sendMsgToParent('alarm'); }, 1000);
+function popupAlarmPage() {
+    sendMsgToParent('openAlarm');
 }
 
 async function getProceedDocsCnt() {
@@ -162,4 +168,15 @@ async function getReferrerDocsCnt() {
     let result = await response.json();
     if(response.ok)
         document.getElementById('cntReferrer').innerText = result.obj === 0 ? '' : result.obj;
+}
+
+async function getNotiCount() {
+    let response = await fetchGet('notification/count');
+    let result = await response.json();
+    if(response.ok)
+        document.getElementById('cntNotification').innerText = result.obj === 0 ? '' : result.obj;
+}
+
+function popupNotiModal() {
+    sendMsgToParent('openNoti');
 }

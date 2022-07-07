@@ -52,6 +52,18 @@
                 </li>
 
                 <li class="mb-1">
+                    <button class="btn btn-toggle align-items-center rounded collapsed" onclick="openAlarmPage()">
+                        <div class="nav-icon-area"><i class="fa-solid fa-clock"></i></div>알람 설정
+                    </button>
+                </li>
+
+                <li class="mb-1">
+                    <button class="btn btn-toggle align-items-center rounded collapsed" onclick="showNotifications()">
+                        <div class="nav-icon-area"><i class="fa-solid fa-bell"></i></div>시스템 알림
+                    </button>
+                </li>
+
+                <li class="mb-1">
                     <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#collapse-board" aria-expanded="false">
                         <div class="nav-icon-area"><i class="fa-solid fa-paste"></i></div>게시판
                         <div class="collapse-arrow"><i class="fa-solid fa-angle-right"></i></div>
@@ -91,6 +103,8 @@
                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                             <li th:if="${approvalSearch} == true"><a role="button" onclick="page('approval/list-search')" class="link-dark align-items-center rounded"><div class="nav-icon-area"><i class="fa-solid fa-magnifying-glass"></i></div>검색</a></li>
                             <li><a role="button" onclick="page('approval/received-list')" class="link-dark align-items-center rounded"><div class="nav-icon-area"><i class="fa-solid fa-file-import"></i></div>수신</a></li>
+                            <li><a role="button" onclick="page('approval/proceed-list')" class="link-dark align-items-center rounded"><div class="nav-icon-area"><i class="fa-solid fa-file-export"></i></div>진행</a></li>
+                            <li><a role="button" onclick="page('approval/finished-list')" class="link-dark align-items-center rounded"><div class="nav-icon-area"><i class="fa-solid fa-file-signature"></i></div>완결</a></li>
                         </ul>
 
                         <button class="btn btn-toggle-inner align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#collapse-approval-inner-1" aria-expanded="false">
@@ -128,6 +142,7 @@
         <!-- Modal -->
         <th:block th:replace="main/modal/password-setting :: password-setting"></th:block>
         <th:block th:replace="main/modal/alarm-message :: alarm-message"></th:block>
+        <th:block th:replace="main/modal/alarm-approval :: alarm-approval"></th:block>
         <th:block th:replace="main/modal/notification :: notification"></th:block>
 
         
@@ -136,6 +151,7 @@
         <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.2/dayjs.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.2/locale/ko.min.js"></script>
 
+        <script defer th:src="@{/js/common/open-popup.js}"></script>
         <script defer th:src="@{/js/common/fetch-custom.js}"></script>
         <script defer th:src="@{/js/main/main.js}"></script>
         <script defer th:src="@{/js/main/password-setting.js}"></script>

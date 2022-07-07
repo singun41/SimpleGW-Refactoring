@@ -2,14 +2,17 @@ document.addEventListener('DOMContentLoaded', () => {
     dayjs.locale('ko');
     connectSse();
 
+    alarmApprovalModal = new bootstrap.Modal(document.getElementById('alarmApproval'), { keyboard: false });
+    alarmMessageModal = new bootstrap.Modal(document.getElementById('alarmMessage'), { keyboard: false });
     notificationModal = new bootstrap.Modal(document.getElementById('notification'), { keyboard: false });
 
-    alarmMessageModal = new bootstrap.Modal(document.getElementById('alarmMessage'), { keyboard: false });
     getTodayAlarms();
     setInterval(() => { showAlarm(); }, 1000 * 60);
     setInterval(() => { document.getElementById('datetimeText').innerHTML = dayjs().format('YY. MM. DD. (ddd) a hh:mm:ss'); }, 1000);
 });
+let alarmApprovalModal;
 let alarmMessageModal;
+let notificationModal;
 
 window.addEventListener('beforeunload', event => {   // document가 아니라 window에서 처리해야 함.
     // 페이지를 나갈 때 sse 연결을 끊어서 서버에서 불필요한 데이터 전송을 막는다.
@@ -19,8 +22,10 @@ window.addEventListener('beforeunload', event => {   // document가 아니라 wi
 
 window.addEventListener('message', receiveMsgFromChild);
 function receiveMsgFromChild(e) {   // content.js로부터 메시지 수신
-    if(e.data === 'alarm') {
-        getTodayAlarms();
+    if(e.data === 'openAlarm') {
+        openAlarmPage()
+    } else if(e.data === 'openNoti') {
+        showNotifications();
     }
 }
 
@@ -46,31 +51,37 @@ function connectSse() {
             sendMsgToChild('freeboard');
 
         } else if(result.APPROVER) {
-            document.getElementById('notiContent').innerHTML = '새로운 결재 요청문서가 도착했습니다.';
+            document.getElementById('approvalContent').innerHTML = '새 결재 요청문서가 도착했습니다.';
             sendMsgToChild('approver');
-            notificationModal.show();
+            alarmApprovalModal.show();
 
         } else if(result.REFERRER) {
-            document.getElementById('notiContent').innerHTML = '새로운 결재 참조문서가 도착했습니다.';
+            document.getElementById('approvalContent').innerHTML = '새 결재 참조문서가 도착했습니다.';
             sendMsgToChild('referrer');
-            notificationModal.show();
+            alarmApprovalModal.show();
 
         } else if(result.CONFIRMED) {
-            document.getElementById('notiContent').innerHTML = '결재문서 ' + result.title + '(' + result.type + ', No. ' + result.docsId + ') 의 결재가 <strong class="text-success">승인</strong>되었습니다.';
+            document.getElementById('approvalContent').innerHTML = result.content;
             sendMsgToChild('confirmed');
-            notificationModal.show();
+            alarmApprovalModal.show();
 
         } else if(result.REJECTED) {
-            document.getElementById('notiContent').innerHTML = '결재문서 ' + result.title + '(' + result.type + ', No. ' + result.docsId + ') 의 결재가 <strong class="text-danger">반려</strong>되었습니다.';
+            document.getElementById('approvalContent').innerHTML = result.content;
             sendMsgToChild('rejected');
-            notificationModal.show();
+            alarmApprovalModal.show();
 
+        } else if(result.NOTIFICATION) {
+            sendMsgToChild('notification');
         }
     };
 }
 
 async function disconnectSse() {
     await fetchGet('sse/disconnect');
+}
+
+function openAlarmPage() {
+    openPopup('/page/alarm');
 }
 
 let todayAlarms = [];
@@ -93,4 +104,20 @@ function showAlarm() {
             alarmMessageModal.show();
         }
     });
+}
+
+async function showNotifications() {
+    let response = await fetchGet('notification/list');
+    let result = await response.json();
+
+    if(response.ok) {
+        let notiContent = document.getElementById('notiContent');
+        notiContent.innerHTML = '';
+
+        Array.from(result.obj).forEach(e => {
+            notiContent.innerHTML += e + '<br><br>';
+        });
+    }
+    notificationModal.show();
+    setTimeout(() => { sendMsgToChild('notification'); }, 1000 * 2);
 }
