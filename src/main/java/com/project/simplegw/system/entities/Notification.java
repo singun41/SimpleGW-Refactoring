@@ -54,4 +54,10 @@ public class Notification {
 
     @Column(name = "checked", nullable = true, updatable = true)
     private boolean checked;
+
+
+    public Notification updateChecked() {
+        this.checked = true;
+        return this;
+    }
 }
