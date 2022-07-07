@@ -15,10 +15,12 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class SseApprovalService {
     private final SseService sseService;
+    private final NotificationService notiService;
 
     // @Autowired   // framework 버전 업데이트 이후 자동설정되어 선언하지 않아도 됨.
-    public SseApprovalService(SseService sseService) {
+    public SseApprovalService(SseService sseService, NotificationService notiService) {
         this.sseService = sseService;
+        this.notiService = notiService;
         log.info("Component '" + this.getClass().getName() + "' has been created.");
     }
     
@@ -28,17 +30,29 @@ public class SseApprovalService {
             return;
         
         switch(type) {
-            case CONFIRMED, REJECTED ->
+            case CONFIRMED, REJECTED -> {
+                String content =
+                    new StringBuilder("결재문서 ").append(docs.getTitle())
+                        .append(" (")
+                        .append(docs.getType().getTitle())
+                        .append(", No. ").append(docs.getId())
+                        .append(") 의 결재가 ")
+                        .append(
+                            type == SseApprovalType.CONFIRMED ? "<strong class='text-success'>승인" : "<strong class='text-danger'>반려"
+                        ).append("</strong>")
+                        .append(" 되었습니다.")
+                    .toString();
+
+                notiService.create( docs.getWriterId(), content );
+
                 sseService.send(
                     docs.getWriterId(),
                     Map.of(
                         type.name(), "1",
-                        "docsId", docs.getId().toString(),
-                        "type", docs.getType().getTitle(),
-                        "title", docs.getTitle()
+                        "content", content
                     )
                 );
-            
+            }
             default -> {}
         }
     }
