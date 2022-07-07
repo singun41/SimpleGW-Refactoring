@@ -67,4 +67,15 @@ public class ApprovalDocsController {
     public ResponseEntity<Object> getReferrerDocsCnt(@AuthenticationPrincipal LoginUser loginUser) {
         return ResponseConverter.ok( countService.getReferrerDocsCnt(loginUser) );
     }
+
+
+
+
+
+    // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 모든 결재문서의 modify page에서 결재자/참조자 요청시 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
+    @GetMapping("/line/{docsId}/{type}")
+    public ResponseEntity<Object> getDtosApprovalLinePack(@PathVariable Long docsId, @PathVariable DocsType type, @AuthenticationPrincipal LoginUser loginUser) {
+        return ResponseConverter.ok( approvalDocsService.getDtosApprovalLinePack(docsId, type, loginUser) );
+    }
+    // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 모든 결재문서의 modify page에서 결재자/참조자 요청시 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 }

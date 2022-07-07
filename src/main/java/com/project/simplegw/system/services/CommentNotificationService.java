@@ -25,9 +25,10 @@ public class CommentNotificationService {
     @Async
     public void create(Docs docs) {
         String content =
-            new StringBuilder("문서번호: ").append(docs.getId().toString())
-            .append(", 제목: \"").append(docs.getTitle()).append("\" ")
-            .append("문서에 새로운 댓글이 달렸습니다.").toString();
+            new StringBuilder("새 댓글이 있습니다. ")
+            .append("(")
+            .append(docs.getType().getTitle()).append(", ").append(docs.getTitle())
+            .append(")").toString();
         
         notificationService.create(docs.getWriterId(), content);   // 문서 작성자에게 알려줄 알림 내용 생성.
         sseNotificationService.sendNotification(docs.getWriterId());   // 문서 작성자에게 event 전달.

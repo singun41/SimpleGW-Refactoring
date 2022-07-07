@@ -59,9 +59,12 @@ public class DefaultReportService {
 
 
 
+    public DtosDocs getDtosDocs(Long docsId, LoginUser loginUser) {   // 문서 수정시 문서 데이터만 먼저 가져오기 위해서. 결재자, 참조자는 별도로 요청한다.
+        return docsService.getDtosDocs(docsId, DEFAULT);
+    }
+
     public DtosApprovalDocs getDtosApprovalDocs(Long docsId, LoginUser loginUser) {
-        DtosDocs dto = docsService.getDtosDocs(docsId, DEFAULT);
-        return converter.getDtosApprovalDocs(dto).setLine(approvalDocsService.getDtosApprovalLinePack(docsId, DEFAULT, loginUser));
+        return converter.getDtosApprovalDocs( getDtosDocs(docsId, loginUser) ).setLine(approvalDocsService.getDtosApprovalLinePack(docsId, DEFAULT, loginUser));
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 

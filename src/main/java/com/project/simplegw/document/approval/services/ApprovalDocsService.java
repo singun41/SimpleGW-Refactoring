@@ -193,7 +193,7 @@ public class ApprovalDocsService {
 
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재문서 view page에서 필요한 결재자 및 참조자 정보 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
-    public DtosApprovalLinePack getDtosApprovalLinePack(Long docsId, DocsType type, LoginUser loginUser) {
+    public DtosApprovalLinePack getDtosApprovalLinePack(Long docsId, DocsType type, LoginUser loginUser) {   // modify page의 결재자/참조자 요청할 때에도 사용.
         Docs docs = docsService.getDocsEntity(docsId, type);
         
         if(docs.getId() == null)

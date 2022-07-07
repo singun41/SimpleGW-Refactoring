@@ -640,6 +640,14 @@ public class ViewController {
             .addAttribute("types", Arrays.asList(DocsType.values()).stream().filter(e -> e.getGroup() == DocsGroup.APPROVAL).collect(Collectors.toList()));
         return "docs/approval/list/received";
     }
+
+
+    @GetMapping("/page/approval/finished-list")
+    public String finishedApprovalListPage(Model model) {
+        model.addAttribute("pageTitle", "완결된 결재문서")
+            .addAttribute("types", Arrays.asList(DocsType.values()).stream().filter(e -> e.getGroup() == DocsGroup.APPROVAL).collect(Collectors.toList()));
+        return "docs/approval/list/finished";
+    }
     // ↑ ----- ----- ----- ----- ----- ----- ----- common ----- ----- ----- ----- ----- ----- ----- ↑ //
 
 
@@ -697,6 +705,17 @@ public class ViewController {
             .addAttribute("isDeletable", isDeletable)
             .addAttribute("isCurrentApprover", isCurrentApprover);
         return "docs/approval/default/view";
+    }
+
+    @GetMapping("/page/approval/default/{docsId}/modify")
+    public String defaultApprovalModifyPage(@PathVariable Long docsId, Model model, @AuthenticationPrincipal LoginUser loginUser) {
+        DtosDocs docs = service.getDefaultReportExceptLines(docsId, loginUser);
+
+        if( ! ( authority.isAccessible(Menu.APPROVAL_DEFAULT, loginUser) && authority.isUpdatable(Menu.APPROVAL_DEFAULT, loginUser, docs.getWriterId()) ) )
+            return Constants.ERROR_PAGE_403;
+
+        model.addAttribute("docs", docs);
+        return "docs/approval/default/modify";
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- approval ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 }
