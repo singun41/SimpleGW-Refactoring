@@ -85,4 +85,13 @@ public class ApprovalListController {
     public ResponseEntity<Object> getProceedApprovalDocs(@AuthenticationPrincipal LoginUser loginUser) {
         return ResponseConverter.ok( service.getProceedApprovalDocs(loginUser) );
     }
+
+
+    @GetMapping("/finished")
+    public ResponseEntity<Object> getFinishedDocs(
+        @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateStart, @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateEnd,    
+        @RequestParam DocsType type, @AuthenticationPrincipal LoginUser loginUser
+    ) {
+        return ResponseConverter.ok( service.getFinishedDocs(dateStart, dateEnd, type, loginUser) );
+    }
 }

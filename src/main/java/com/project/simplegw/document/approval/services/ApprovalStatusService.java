@@ -1,11 +1,17 @@
 package com.project.simplegw.document.approval.services;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.project.simplegw.document.approval.dtos.send.DtosApprovalDocsMin;
 import com.project.simplegw.document.approval.dtos.send.DtosApprover;
 import com.project.simplegw.document.approval.entities.ApprovalStatus;
+import com.project.simplegw.document.approval.helpers.DtosApprovalDocsMinConverter;
 import com.project.simplegw.document.approval.repositories.ApprovalStatusRepo;
 import com.project.simplegw.document.entities.Docs;
+import com.project.simplegw.document.vos.DocsType;
+import com.project.simplegw.system.security.LoginUser;
 
 // import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,4 +57,15 @@ public class ApprovalStatusService {
         repo.delete( getStatus(docs) );
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재문서의 결재 상태 등록 및 수정 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
+
+
+
+
+
+    // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 완결된 결재문서 조회 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
+    List<DtosApprovalDocsMin> getFinishedDocs(LocalDate dateStart, LocalDate dateEnd, DocsType type, LoginUser loginUser) {
+        return repo.findFinished(loginUser.getMember().getId(), dateStart, dateEnd, type).stream()
+            .map( DtosApprovalDocsMinConverter::fromObjs ).collect(Collectors.toList());
+    }
+    // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 완결된 결재문서 조회 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 }

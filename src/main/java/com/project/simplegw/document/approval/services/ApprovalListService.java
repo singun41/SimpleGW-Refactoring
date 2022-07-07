@@ -94,4 +94,9 @@ public class ApprovalListService {
                 .setId(docs.getId()).updateDocsType(docs.getType()).setTitle(docs.getTitle()).setCreatedDate(docs.getCreatedDate());
         }).collect(Collectors.toList());
     }
+
+
+    public List<DtosApprovalDocsMin> getFinishedDocs(LocalDate dateStart, LocalDate dateEnd, DocsType type, LoginUser loginUser) {
+        return approvalStatusService.getFinishedDocs(dateStart, dateEnd, type, loginUser);
+    }
 }
