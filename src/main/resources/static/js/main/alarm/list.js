@@ -78,6 +78,6 @@ function openEdit(id) {
 
 function afterCUD() {
     getAlarms();
-    if(opener)
-        opener.getTodayAlarms();
+    if(opener)   // getAlarms() 메서드를 연속 2번 호출하므로, 서버에서 캐싱이 완료되기 위해서 잠시 멈춘다.
+        setTimeout(() => { opener.getTodayAlarms(); }, 1000 * 2);
 }
