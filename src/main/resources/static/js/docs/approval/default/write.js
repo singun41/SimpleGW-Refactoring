@@ -1,5 +1,5 @@
 window.addEventListener('DOMContentLoaded', event => {
-    copyDefault();
+    copyCheck();
 });
 
 async function save() {
@@ -22,11 +22,11 @@ async function saveTemp() {
     
     if(docsId) {
         saveComplete = true;
-        location.href = '/page/approval/' + docsType.toLowerCase() + '/' + docsId;
+        location.href = '/page/approval/' + docsType.toLowerCase() + '/temp/' + docsId;
     }
 }
 
-function copyDefault() {
+function copyCheck() {
     let docs = JSON.parse(localStorage.getItem('docs'));
     if(docs) {
         document.getElementById('title').value = docs.title;

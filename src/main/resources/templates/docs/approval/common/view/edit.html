@@ -7,9 +7,9 @@
             </div>
             <div class="card-body">
                 <span class="d-flex justify-content-between">
-                    <button class="btn btn-outline-primary btn-sm custom-px-2" id="btnDocsCopy" th:if="${isOwner} == true" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="복사"><i class="fa-solid fa-copy"></i></button>
-                    <button class="btn btn-outline-success btn-sm custom-px-2" id="btnDocsEdit" th:if="${isUpdatable} == true" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="수정"><i class="fa-solid fa-file-pen"></i></button>
-                    <button class="btn btn-outline-danger btn-sm custom-px-2" id="btnDocsDel" th:if="${isDeletable} == true" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="삭제"><i class="fa-solid fa-trash-can"></i></button>
+                    <button class="btn btn-outline-primary btn-sm custom-px-2" th:if="${isOwner} == true" onclick="copyDocs()" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="복사"><i class="fa-solid fa-copy"></i></button>
+                    <button class="btn btn-outline-success btn-sm custom-px-2" th:if="${isUpdatable} == true" onclick="editDocs()" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="수정"><i class="fa-solid fa-file-pen"></i></button>
+                    <button class="btn btn-outline-danger btn-sm custom-px-2" th:if="${isDeletable} == true" onclick="deleteDocs()" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="삭제"><i class="fa-solid fa-trash-can"></i></button>
                 </span>
             </div>
         </div>

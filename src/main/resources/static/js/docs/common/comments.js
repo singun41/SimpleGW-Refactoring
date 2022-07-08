@@ -9,7 +9,7 @@ async function getComments() {
     while(comments.hasChildNodes())
         comments.removeChild(comments.firstChild);
 
-    let response = await fetchGet('comment/' + document.getElementById('docsId').innerText);
+    let response = await fetchGet('comment/' + docsId);
     let result = await response.json();
     if(response.ok) {
         Array.from(result.obj).forEach(e => {
@@ -48,13 +48,10 @@ async function getComments() {
 }
 
 async function saveComment() {
-    let docsId = document.getElementById('docsId').innerText;
-    let docsType = document.getElementById('docsType').innerText;
-
     let params = {
         comment: inputComment.value
     };
-    let response = await fetchPostParams('comment/' + docsType + '/' + docsId, params);
+    let response = await fetchPostParams('comment/' + docsType.toLowerCase() + '/' + docsId, params);
     let result = await response.json();
     alert(result.msg);
     inputComment.value = '';

@@ -17,7 +17,6 @@
             <div class="row mb-5">
                 <div class="col-8">
                     <div class="card shadow bg-body rounded-3">
-                        <span class="d-none" id="docsId" th:text="${docs.id}"></span>
                         <div class="card-header">
                             <th:block th:replace="docs/common/view/temp/header :: header"></th:block>
                         </div>
@@ -42,7 +41,6 @@
         <script defer th:src="@{/js/docs/common/view.js}"></script>
         <script defer th:src="@{/js/docs/board/free/view.js}"></script>
         <script defer th:src="@{/js/docs/board/common/temp/edit.js}" th:if="${isOwner} == true"></script>
-        <script defer th:src="@{/js/docs/board/free/temp/edit.js}" th:if="${isOwner} == true"></script>
         <script defer th:src="@{/js/common/tooltip-enable.js}"></script>
     </body>
 </html>

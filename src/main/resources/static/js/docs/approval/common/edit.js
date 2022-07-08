@@ -1,12 +1,14 @@
 function editDocs() {
-    location.href = document.getElementById('docsId').innerText + '/modify';
+    location.href = docsId + '/modify';
 }
 
-async function deleteDocs(type) {
+async function deleteDocs() {
     if(!confirm('문서를 삭제하시겠습니까?'))
         return;
-    let response = await fetchDelete(type + '/' + document.getElementById('docsId').innerText);
+
+    let response = await fetchDelete(docsType.toLowerCase() + '/' + docsId);
     let result = await response.json();
+
     alert(result.msg);
     if(response.ok)
         location.href = 'list';

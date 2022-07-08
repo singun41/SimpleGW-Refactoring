@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+const docsId = document.getElementById('docsId').innerText;
+const docsType = document.getElementById('docsType').innerText;
+
 function setHeaderIcon(classText) {
     let i = document.createElement('i');
     i.setAttribute('class', classText);
