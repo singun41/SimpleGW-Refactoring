@@ -1,7 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('btnSearch').setAttribute('onclick', 'search("archive")');
-
-    setTitleIcon('fa-solid fa-box-archive');
+    setHeaderIcon('fa-solid fa-box-archive');
 
     flatpickr(searchDtp, {
         mode: "range",
@@ -11,5 +9,5 @@ document.addEventListener('DOMContentLoaded', () => {
         'locale': 'ko'
     });
 
-    search('archive');
+    search();
 });

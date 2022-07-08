@@ -69,6 +69,7 @@ public class Constants {
 
     public static final String LOGIN_PAGE = "/login";
     public static final String ERROR_PAGE_403 = "error/403";
+    public static final String ERROR_PAGE_403_MODIFY = "error/403-modify";
 	public static final String ERROR_PAGE_410 = "error/410";
 
 

@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
     <th:block th:fragment="edit">
+        <!--
+            아래 스크립트를 포함시켜야 함.
+            <script defer th:src="@{/js/docs/board/common/edit.js}"></script>
+        -->
         <div class="card shadow bg-body rounded-3 mb-5">
             <div class="card-header">
                 <i class="fa-solid fa-wrench color-bs4-info me-2"></i><span class="card-header-text">편집</span>
             </div>
             <div class="card-body">
                 <span class="d-flex justify-content-between">
-                    <button class="btn btn-outline-primary btn-sm custom-px-2" id="btnDocsCopy" th:if="${isUpdatable} == true" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="복사"><i class="fa-solid fa-copy"></i></button>
-                    <button class="btn btn-outline-success btn-sm custom-px-2" id="btnDocsEdit" th:if="${isUpdatable} == true" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="수정"><i class="fa-solid fa-file-pen"></i></button>
-                    <button class="btn btn-outline-danger btn-sm custom-px-2" id="btnDocsDel" th:if="${isDeletable} == true" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="삭제"><i class="fa-solid fa-trash-can"></i></button>
+                    <button class="btn btn-outline-primary btn-sm custom-px-2" th:if="${isUpdatable} == true" onclick="copyDocs()" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="복사"><i class="fa-solid fa-copy"></i></button>
+                    <button class="btn btn-outline-success btn-sm custom-px-2" th:if="${isUpdatable} == true" onclick="editDocs()" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="수정"><i class="fa-solid fa-file-pen"></i></button>
+                    <button class="btn btn-outline-danger btn-sm custom-px-2" th:if="${isDeletable} == true" onclick="deleteDocs()" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="삭제"><i class="fa-solid fa-trash-can"></i></button>
                 </span>
             </div>
         </div>

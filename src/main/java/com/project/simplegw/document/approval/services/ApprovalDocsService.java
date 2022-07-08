@@ -130,10 +130,10 @@ public class ApprovalDocsService {
         Docs docs = docsService.getDocsEntity(docsId, type);
         OngoingApproval approval = ongoingApprovalService.getOngoingApproval( docs );
 
-        if(approval.getApproverSeq() > 1)
+        if(approval.getApproverSeq() > 0)   // 최초 결재자가 0번이고, 진행했다면 0보다 큼.
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg("결재가 진행되어 수정할 수 없습니다.");
         
-        if(approval.getApproverSeq() == 0)   // 결재문서 완결시 OngoingApproval 테이블에서 삭제되므로 기본값인 0이 리턴된다.
+        if(approval.getId() == null)   // 결재문서 완결시 OngoingApproval 테이블에서 삭제되므로 null을 리턴한다.
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg("결재가 완결되어 수정할 수 없습니다.");
         
         if(docs == null) {
@@ -163,14 +163,14 @@ public class ApprovalDocsService {
         Docs docs = docsService.getDocsEntity(docsId, type);
         OngoingApproval approval = ongoingApprovalService.getOngoingApproval( docs );
 
-        if(approval.getApproverSeq() > 1)
-            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg("결재가 진행되어 삭제할 수 없습니다.");
+        if(approval.getApproverSeq() > 0)   // 최초 결재자가 0번이고, 진행했다면 0보다 큼.
+            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg("결재가 진행되어 수정할 수 없습니다.");
         
-        if(approval.getApproverSeq() == 0)   // 결재문서 완결시 OngoingApproval 테이블에서 삭제되므로 기본값인 0이 리턴된다.
-            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg("결재가 완결되어 삭제할 수 없습니다.");
+        if(approval.getId() == null)   // 결재문서 완결시 OngoingApproval 테이블에서 삭제되므로 null을 리턴한다.
+            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg("결재가 완결되어 수정할 수 없습니다.");
         
         if(docs == null)
-            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg(new StringBuilder(type.getTitle()).append(" 수정 에러입니다. 관리자에게 문의하세요.").toString());
+            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg(new StringBuilder(type.getTitle()).append(" 삭제 에러입니다. 관리자에게 문의하세요.").toString());
 
         if( ! docsService.isOwner(docs, loginUser) )
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg(ResponseMsg.UNAUTHORIZED.getTitle());

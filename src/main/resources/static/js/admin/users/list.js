@@ -10,7 +10,7 @@ function buildDatatable() {
                 next: '<i class="fa-solid fa-chevron-right"></i>'
             }
         },
-        order: [1, 'asc'],
+        order: [4, 'asc'],   // order by names.
         ordering: true,
         columnDefs: [
             // 0 = id hidden field.

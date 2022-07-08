@@ -188,7 +188,8 @@ public class ViewController {
 
         boolean isWritable = authority.isWritable(Menu.NOTICE, loginUser);
 
-        model.addAttribute("pageTitle", DocsType.NOTICE.getTitle()).addAttribute("isWritable", isWritable);
+        model.addAttribute("pageTitle", DocsType.NOTICE.getTitle()).addAttribute("docsType", DocsType.NOTICE)
+            .addAttribute("isWritable", isWritable);
         return "docs/board/notice/list";
     }
 
@@ -199,6 +200,7 @@ public class ViewController {
             return Constants.ERROR_PAGE_403;
 
         model.addAttribute("pageTitle", DocsType.NOTICE.getTitle())
+            .addAttribute("docsType", DocsType.NOTICE)
             .addAttribute("form", service.getDocsForm(EditorDocs.NOTICE));
         return "docs/board/notice/write";
     }
@@ -290,7 +292,8 @@ public class ViewController {
 
         boolean isWritable = authority.isWritable(Menu.FREEBOARD, loginUser);
 
-        model.addAttribute("pageTitle", DocsType.FREEBOARD.getTitle()).addAttribute("isWritable", isWritable);
+        model.addAttribute("pageTitle", DocsType.FREEBOARD.getTitle()).addAttribute("docsType", DocsType.FREEBOARD)
+            .addAttribute("isWritable", isWritable);
         return "docs/board/free/list";
     }
 
@@ -301,6 +304,7 @@ public class ViewController {
             return Constants.ERROR_PAGE_403;
 
         model.addAttribute("pageTitle", DocsType.FREEBOARD.getTitle())
+            .addAttribute("docsType", DocsType.FREEBOARD)
             .addAttribute("form", service.getDocsForm(EditorDocs.FREEBOARD));
         return "docs/board/free/write";
     }
@@ -387,7 +391,8 @@ public class ViewController {
 
         boolean isWritable = authority.isWritable(Menu.SUGGESTION, loginUser);
 
-        model.addAttribute("pageTitle", DocsType.SUGGESTION.getTitle()).addAttribute("isWritable", isWritable);
+        model.addAttribute("pageTitle", DocsType.SUGGESTION.getTitle()).addAttribute("docsType", DocsType.SUGGESTION)
+            .addAttribute("isWritable", isWritable);
         return "docs/board/suggestion/list";
     }
 
@@ -398,6 +403,7 @@ public class ViewController {
             return Constants.ERROR_PAGE_403;
 
         model.addAttribute("pageTitle", DocsType.SUGGESTION.getTitle())
+            .addAttribute("docsType", DocsType.SUGGESTION)
             .addAttribute("form", service.getDocsForm(EditorDocs.SUGGESTION));
         return "docs/board/suggestion/write";
     }
@@ -484,7 +490,8 @@ public class ViewController {
 
         boolean isWritable = authority.isWritable(Menu.ARCHIVE, loginUser);
 
-        model.addAttribute("pageTitle", DocsType.ARCHIVE.getTitle()).addAttribute("isWritable", isWritable);
+        model.addAttribute("pageTitle", DocsType.ARCHIVE.getTitle()).addAttribute("docsType", DocsType.ARCHIVE)
+            .addAttribute("isWritable", isWritable);
         return "docs/board/archive/list";
     }
 
@@ -495,6 +502,7 @@ public class ViewController {
             return Constants.ERROR_PAGE_403;
 
         model.addAttribute("pageTitle", DocsType.ARCHIVE.getTitle())
+            .addAttribute("docsType", DocsType.ARCHIVE)
             .addAttribute("form", service.getDocsForm(EditorDocs.ARCHIVE));
         return "docs/board/archive/write";
     }
@@ -680,6 +688,7 @@ public class ViewController {
             return Constants.ERROR_PAGE_403;
         
         model.addAttribute("pageTitle", DocsType.DEFAULT.getTitle())
+            .addAttribute("docsType", DocsType.DEFAULT)
             .addAttribute("form", service.getDocsForm(EditorDocs.APPROVAL_DEFAULT));
         return "docs/approval/default/write";
     }
@@ -700,6 +709,7 @@ public class ViewController {
 
 
         model.addAttribute("docs", docs)
+            .addAttribute("attachmentsList", getAttachmentsList(docsId))
             .addAttribute("isOwner", isOwner)
             .addAttribute("isUpdatable", isUpdatable)
             .addAttribute("isDeletable", isDeletable)
@@ -709,13 +719,18 @@ public class ViewController {
 
     @GetMapping("/page/approval/default/{docsId}/modify")
     public String defaultApprovalModifyPage(@PathVariable Long docsId, Model model, @AuthenticationPrincipal LoginUser loginUser) {
-        DtosDocs docs = service.getDefaultReportExceptLines(docsId, loginUser);
+        DtosApprovalDocs docs = service.getDefaultReport(docsId, loginUser);
 
         if( ! ( authority.isAccessible(Menu.APPROVAL_DEFAULT, loginUser) && authority.isUpdatable(Menu.APPROVAL_DEFAULT, loginUser, docs.getWriterId()) ) )
             return Constants.ERROR_PAGE_403;
 
-        model.addAttribute("docs", docs);
+        if(isProceed(docs))
+            return Constants.ERROR_PAGE_403_MODIFY;
+
+        model.addAttribute("pageTitle", DocsType.DEFAULT.getTitle())
+            .addAttribute("docs", docs).addAttribute("attachmentsList", getAttachmentsList(docsId));
         return "docs/approval/default/modify";
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- approval ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 }
+ 

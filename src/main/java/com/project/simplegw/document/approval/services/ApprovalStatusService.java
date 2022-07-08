@@ -54,7 +54,8 @@ public class ApprovalStatusService {
     }
 
     void delete(Docs docs) throws Exception {   // ApproverService 에서 호출.
-        repo.delete( getStatus(docs) );
+        repo.findByDocsId(docs.getId()).ifPresent(repo::delete);
+        repo.flush();   // 결재문서를 수정할 때 결재라인을 삭제하고 다시 insert하는데 docs_id 필드가 Unique Key라서 flush()로 delete를 완료시켜야 한다.
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재문서의 결재 상태 등록 및 수정 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 

@@ -6,7 +6,6 @@ import com.project.simplegw.document.approval.dtos.send.DtosApprovalDocs;
 import com.project.simplegw.document.approval.helpers.ApprovalConverter;
 import com.project.simplegw.document.approval.services.ApprovalDocsService;
 import com.project.simplegw.document.dtos.receive.DtorDocs;
-import com.project.simplegw.document.dtos.send.DtosDocs;
 import com.project.simplegw.document.entities.TempDocs;
 import com.project.simplegw.document.services.DocsService;
 import com.project.simplegw.document.vos.DocsType;
@@ -57,14 +56,8 @@ public class DefaultReportService {
         return approvalDocsService.delete(docsId, DEFAULT, loginUser);
     }
 
-
-
-    public DtosDocs getDtosDocs(Long docsId, LoginUser loginUser) {   // 문서 수정시 문서 데이터만 먼저 가져오기 위해서. 결재자, 참조자는 별도로 요청한다.
-        return docsService.getDtosDocs(docsId, DEFAULT);
-    }
-
     public DtosApprovalDocs getDtosApprovalDocs(Long docsId, LoginUser loginUser) {
-        return converter.getDtosApprovalDocs( getDtosDocs(docsId, loginUser) ).setLine(approvalDocsService.getDtosApprovalLinePack(docsId, DEFAULT, loginUser));
+        return converter.getDtosApprovalDocs( docsService.getDtosDocs(docsId, DEFAULT) ).setLine( approvalDocsService.getDtosApprovalLinePack(docsId, DEFAULT, loginUser) );
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 

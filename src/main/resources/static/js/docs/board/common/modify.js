@@ -1,13 +1,33 @@
-async function updateBoard(type) {
+let saveComplete = false;
+window.addEventListener('beforeunload', event => {
+    // 페이지를 나갈 때
+    event.preventDefault();
+    if(CKEDITOR.instances.ckeditorTextarea.getData() !== '' && !saveComplete) {
+        event.returnValue = '';
+    }
+});
+
+const docsId = document.getElementById('docsId').innerText;
+const docsType = document.getElementById('docsType').innerText;
+
+async function update() {
+    let docsId = await updateBoard();
+
+    if(docsId) {
+        saveComplete = true;
+        location.href = '/page/' + docsType.toLowerCase() + '/' + docsId;
+    }
+}
+
+async function updateBoard() {
     if(!confirm('수정하시겠습니까?'))
         return 0;
-    
-    let docsId = document.getElementById('docsId').innerText;
+
     let params = {
         title: document.getElementById('title').value,
         content: CKEDITOR.instances.ckeditorTextarea.getData()
     };
-    let response = await fetchPatchParams(type + '/' + docsId, params);
+    let response = await fetchPatchParams(docsType.toLowerCase() + '/' + docsId, params);
     let result = await response.json();
 
     if(response.ok) {

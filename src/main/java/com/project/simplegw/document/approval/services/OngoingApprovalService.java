@@ -49,17 +49,20 @@ public class OngoingApprovalService {
         repo.save( OngoingApproval.builder().docs(docs).ownerId( docs.getWriterId() ).build().update(approvers) );
     }
 
+
     void update(Docs docs, List<DtosApprover> approvers) throws Exception {   // ApproverService 에서 호출.
         OngoingApproval entity = getOngoingApproval(docs);
 
         if(approvers.stream().filter(e -> e.getSign() == Sign.PROCEED).findFirst().isPresent())
             repo.save( entity.update(approvers) );
         else
-            repo.delete(entity);
+            repo.delete(entity);   // 현재 결재자가 마지막이라면 완결이므로 삭제한다.
     }
+
 
     void delete(Docs docs) throws Exception {   // ApproverService 에서 호출.
         repo.findByDocsId( docs.getId() ).ifPresent( repo::delete );
+        repo.flush();   // 결재문서를 수정할 때 결재라인을 삭제하고 다시 insert하는데 docs_id 필드가 Unique Key라서 flush()로 delete를 완료시켜야 한다.
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 현재 결재자 등록 및 수정 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 

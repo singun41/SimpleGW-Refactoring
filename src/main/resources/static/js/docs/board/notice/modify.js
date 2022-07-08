@@ -3,20 +3,13 @@ window.addEventListener('DOMContentLoaded', event => {
     getOptions();
 });
 
-let saveComplete = false;
-window.addEventListener('beforeunload', event => {
-    // 페이지를 나갈 때
-    event.preventDefault();
-    if(CKEDITOR.instances.ckeditorTextarea.getData() !== '' && !saveComplete) {
-        event.returnValue = '';
-    }
-});
 
 async function updateNotice() {
-    let docsId = await updateBoard('notice');
+    let docsId = await updateBoard();
+    
     if(docsId) {
         saveComplete = true;
         await saveOptions(docsId);
-        location.href = '/page/notice/' + docsId;
+        location.href = '/page/' + docsType.toLowerCase() + '/' + docsId;
     }
 }

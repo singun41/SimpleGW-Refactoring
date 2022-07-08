@@ -2,19 +2,10 @@ document.addEventListener('DOMContentLoaded', () => {
     setApprovalLines();
 });
 
-let saveComplete = false;
-window.addEventListener('beforeunload', event => {
-    // 페이지를 나갈 때
-    event.preventDefault();
-    if(CKEDITOR.instances.ckeditorTextarea.getData() !== '' && !saveComplete) {
-        event.returnValue = '';
-    }
-});
+const docsId = document.getElementById('docsId').innerText;
+const docsType = document.getElementById('docsType').innerText;
 
 async function setApprovalLines() {
-    let docsId = document.getElementById('docsId').innerText;
-    let docsType = document.getElementById('docsType').innerText;
-
     let response = await fetchGet('approval/line/' + docsId + '/' + docsType);
     let result = await response.json();
 
@@ -44,7 +35,7 @@ async function setApprovalLines() {
     }
 }
 
-async function updateApprovalDocs(type, params) {
+async function updateApprovalDocs(params) {
     if(!confirm('수정하시겠습니까?'))
         return 0;
 
@@ -55,9 +46,7 @@ async function updateApprovalDocs(type, params) {
     params.arrApproverId = approverIds;
     params.arrReferrerId = referrerIds;
 
-    let docsId = document.getElementById('docsId').innerText;
-
-    let response = await fetchPatchParams('approval/' + type + '/' + docsId, params);
+    let response = await fetchPatchParams('approval/' + docsType.toLowerCase() + '/' + docsId, params);
     let result = await response.json();
     
     if(response.ok) {

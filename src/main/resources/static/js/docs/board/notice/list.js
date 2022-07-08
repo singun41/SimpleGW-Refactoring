@@ -1,6 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('btnSearch').setAttribute('onclick', 'search("notice")');
-    search('notice');
-
-    setTitleIcon('fa-solid fa-clipboard-list');
+    setHeaderIcon('fa-solid fa-clipboard-list');
+    search();
 });

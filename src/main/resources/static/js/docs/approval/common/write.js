@@ -1,4 +1,8 @@
-async function saveApprovalDocs(type, params) {
+// 일반문서(board)와 달리 결재문서(approval)는 각 양식이 다를 수 있기 때문에 디테일한 핸들링은 각 문서의 js에서 처리한다.
+
+const docsType = document.getElementById('docsType').innerText;
+
+async function saveApprovalDocs(params) {
     if(!confirm('등록하시겠습니까?'))
         return 0;
     
@@ -9,7 +13,7 @@ async function saveApprovalDocs(type, params) {
     params.arrApproverId = approverIds;
     params.arrReferrerId = referrerIds;
 
-    let response = await fetchPostParams('approval/' + type, params);
+    let response = await fetchPostParams('approval/' + docsType.toLowerCase(), params);
     let result = await response.json();
 
     if(response.ok) {
@@ -35,14 +39,14 @@ async function saveApprovalDocs(type, params) {
     }
 }
 
-async function saveTempApprovalDocs(params, type) {
+async function saveTempApprovalDocs(params) {
     if(!confirm('임시저장 하시겠습니까?' + '\n' + '첨부파일과 결재라인은 저장되지 않습니다.'))
         return 0;
     
     // 모든 결재문서 임시저장 공통 파라미터: 제목
     params.title = document.getElementById('title').value;
 
-    let response = await fetchPostParams('approval/' + type + '/temp', params);
+    let response = await fetchPostParams('approval/' + docsType.toLowerCase() + '/temp', params);
     let result = await response.json();
     alert(result.msg);
 

@@ -81,7 +81,7 @@ public class ApproverService {
 
             List<DtosApprover> DtoApprovers = approvers.stream().map(converter::getDtosApprover).collect(Collectors.toList());
 
-            repo.saveAll(approvers);                          // 1. 결재라인 저장
+            repo.saveAll(approvers);                             // 1. 결재라인 저장
             ongoingApprovalService.create(docs, DtoApprovers);   // 2. 현재 결재자 정보 등록
             statusService.create(docs, DtoApprovers);            // 3. 결재문서의 결재문서 상태 등록
             

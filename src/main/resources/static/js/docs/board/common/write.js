@@ -1,4 +1,27 @@
-async function saveBoard(type) {
+window.addEventListener('DOMContentLoaded', event => {
+    copyCheck();
+});
+
+let saveComplete = false;
+window.addEventListener('beforeunload', event => {
+    // 페이지를 나갈 때
+    event.preventDefault();
+    if(CKEDITOR.instances.ckeditorTextarea.getData() !== '' && !saveComplete) {
+        event.returnValue = '';
+    }
+});
+
+const docsType = document.getElementById('docsType').innerText;
+
+async function save() {
+    let docsId = await saveBoard();
+    if(docsId) {
+        saveComplete = true;
+        location.href = docsId;
+    }
+}
+
+async function saveBoard() {
     if(!confirm('등록하시겠습니까?'))
         return 0;
 
@@ -6,7 +29,8 @@ async function saveBoard(type) {
         title: document.getElementById('title').value,
         content: CKEDITOR.instances.ckeditorTextarea.getData()
     };
-    let response = await fetchPostParams(type, params);
+
+    let response = await fetchPostParams(docsType.toLowerCase(), params);
     let result = await response.json();
 
     if(response.ok) {
@@ -32,7 +56,18 @@ async function saveBoard(type) {
     }
 }
 
-async function saveTempBoard(type) {
+
+
+async function saveTemp() {
+    let docsId = await saveTempBoard();
+
+    if(docsId) {
+        saveComplete = true;
+        location.href = '/page/' + docsType.toLowerCase() + '/temp/' + docsId;
+    }
+}
+
+async function saveTempBoard() {
     if(!confirm('임시저장 하시겠습니까?' + '\n' + '첨부파일은 저장되지 않습니다.'))
         return 0;
     
@@ -40,7 +75,8 @@ async function saveTempBoard(type) {
         title: document.getElementById('title').value,
         content: CKEDITOR.instances.ckeditorTextarea.getData()
     };
-    let response = await fetchPostParams(type + '/temp', params);
+
+    let response = await fetchPostParams(docsType.toLowerCase() + '/temp', params);
     let result = await response.json();
     alert(result.msg);
 
@@ -48,4 +84,14 @@ async function saveTempBoard(type) {
         return result.obj;
     else
         return 0;
+}
+
+
+function copyCheck() {
+    let docs = JSON.parse(localStorage.getItem('docs'));
+    if(docs) {
+        document.getElementById('title').value = docs.title;
+        CKEDITOR.instances.ckeditorTextarea.setData(docs.content);
+        localStorage.removeItem('docs');
+    }
 }

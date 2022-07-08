@@ -13,6 +13,8 @@
             <script defer th:src="@{/js/docs/board/common/list-search.js}"></script>
         -->
         <div class="card-header-icon-area" id="listSearchIconArea"></div><span class="text-secondary align-middle" th:text="${pageTitle}"></span>
+        <span class="d-none" id="docsType" th:text="${docsType}"></span>
+
         <span class="float-end">
             <div class="dtpicker-search-long me-2">
                 <div class="input-group input-group-sm">
@@ -21,7 +23,7 @@
                 </div>
             </div>
 
-            <button type="button" class="btn btn-outline-primary btn-sm btn-icon" id="btnSearch" onclick=""><i class="fa-solid fa-magnifying-glass"></i></button>
+            <button type="button" class="btn btn-outline-primary btn-sm btn-icon" id="btnSearch" onclick="search()"><i class="fa-solid fa-magnifying-glass"></i></button>
             <a role="button" href="write" th:if="${isWritable}" class="btn btn-outline-success btn-sm btn-icon"><i class="fa-solid fa-file-pen"></i></a>
         </span>
     </th:block>

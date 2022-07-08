@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 const searchDtp = document.getElementById('searchDtp');
 
-async function search(type) {
+async function search() {
     if(!searchDtp.value) {
         alert('기간을 선택하세요.');
         return;
@@ -30,7 +30,9 @@ async function search(type) {
         dateStart: dtFrom,
         dateEnd: dtTo
     };
-    let response = await fetchGetParams(type + '/list', params);
+
+    let docsType = document.getElementById('docsType').innerText;
+    let response = await fetchGetParams(docsType.toLowerCase() + '/list', params);
     let result = await response.json();
 
     destroyDataTable();
@@ -73,7 +75,7 @@ async function search(type) {
     buildDatatable();
 }
 
-function setTitleIcon(classText) {
+function setHeaderIcon(classText) {
     let i = document.createElement('i');
     i.setAttribute('class', classText);
     document.getElementById('listSearchIconArea').append(i);

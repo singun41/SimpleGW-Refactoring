@@ -1,41 +1,32 @@
 window.addEventListener('DOMContentLoaded', event => {
-    copyDefaultReport();
-    document.getElementById('btnTemp').setAttribute('onclick', 'saveTempDefaultReport()');
-    document.getElementById('btnSave').setAttribute('onclick', 'saveDefaultReport()');
+    copyDefault();
 });
 
-let saveComplete = false;
-window.addEventListener('beforeunload', event => {
-    // 페이지를 나갈 때
-    event.preventDefault();
-    if(CKEDITOR.instances.ckeditorTextarea.getData() !== '' && !saveComplete) {
-        event.returnValue = '';
-    }
-});
-
-async function saveDefaultReport() {
+async function save() {
     let params = {
         content: CKEDITOR.instances.ckeditorTextarea.getData()
     };
-    let docsId = await saveApprovalDocs('default', params);
+    let docsId = await saveApprovalDocs(params);
+
     if(docsId) {
         saveComplete = true;
-        location.href = '/page/approval/default/' + docsId;
+        location.href = '/page/approval/' + docsType.toLowerCase() + '/' + docsId;
     }
 }
 
-async function saveTempDefaultReport() {
+async function saveTemp() {
     let params = {
         content: CKEDITOR.instances.ckeditorTextarea.getData()
     };
-    let docsId = await saveTempApprovalDocs(params, type);
+    let docsId = await saveTempApprovalDocs(params);
+    
     if(docsId) {
         saveComplete = true;
-        location.href = '/page/approval/default/temp/' + docsId;
+        location.href = '/page/approval/' + docsType.toLowerCase() + '/' + docsId;
     }
 }
 
-function copyDefaultReport() {
+function copyDefault() {
     let docs = JSON.parse(localStorage.getItem('docs'));
     if(docs) {
         document.getElementById('title').value = docs.title;

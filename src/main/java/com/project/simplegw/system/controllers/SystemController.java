@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.project.simplegw.system.vos.Constants;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -30,6 +32,11 @@ public class SystemController {
 
     @GetMapping("/error/403")
     public void forbidden() { }
+
+    @GetMapping("/error/403-modify")
+    public String fobiddenModify() {
+        return Constants.ERROR_PAGE_403_MODIFY;
+    }
     
     @GetMapping("/error/404")
     public void notFound() { }
