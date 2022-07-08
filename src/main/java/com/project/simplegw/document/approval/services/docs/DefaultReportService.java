@@ -6,6 +6,7 @@ import com.project.simplegw.document.approval.dtos.send.DtosApprovalDocs;
 import com.project.simplegw.document.approval.helpers.ApprovalConverter;
 import com.project.simplegw.document.approval.services.ApprovalDocsService;
 import com.project.simplegw.document.dtos.receive.DtorDocs;
+import com.project.simplegw.document.dtos.send.DtosDocs;
 import com.project.simplegw.document.entities.TempDocs;
 import com.project.simplegw.document.services.DocsService;
 import com.project.simplegw.document.vos.DocsType;
@@ -102,6 +103,11 @@ public class DefaultReportService {
         } else {
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg(ResponseMsg.UNAUTHORIZED.getTitle());
         }
+    }
+
+
+    public DtosDocs getTemp(Long docsId) {
+        return docsService.getDtosDocsFromTempDocs(docsId, DEFAULT);
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- temp docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 }

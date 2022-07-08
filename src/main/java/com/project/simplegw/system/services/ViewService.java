@@ -181,7 +181,11 @@ public class ViewService {   // ViewController에서 필요한 데이터들을 �
 
 
 
-    public DtosApprovalDocs getDefaultReport(Long docsId, LoginUser loginUser) {
+    public DtosApprovalDocs getDefaultApproval(Long docsId, LoginUser loginUser) {
         return defaultReportService.getDtosApprovalDocs(docsId, loginUser);
+    }
+
+    public DtosDocs getTempDefaultApproval(Long docsId) {
+        return defaultReportService.getTemp(docsId);
     }
 }

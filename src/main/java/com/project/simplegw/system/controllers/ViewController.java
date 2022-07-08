@@ -682,6 +682,7 @@ public class ViewController {
     // 결재문서는 각 메뉴별 list 페이지를 만들지 않고, 하나의 리스트 페이지에서 모두 보여준다.
 
 
+    // ↓ ----- ----- ----- ----- ----- ----- ----- default ----- ----- ----- ----- ----- ----- ----- ↓ //
     @GetMapping("/page/approval/default/write")
     public String defaultApprovalWritePage(Model model, @AuthenticationPrincipal LoginUser loginUser) {
         if( ! ( authority.isAccessible(Menu.APPROVAL_DEFAULT, loginUser) && authority.isWritable(Menu.APPROVAL_DEFAULT, loginUser) ) )
@@ -695,18 +696,16 @@ public class ViewController {
 
     @GetMapping("/page/approval/default/{docsId}")
     public String defaultApprovalViewPage(@PathVariable Long docsId, Model model, @AuthenticationPrincipal LoginUser loginUser) {
-        DtosApprovalDocs docs = service.getDefaultReport(docsId, loginUser);
+        DtosApprovalDocs docs = service.getDefaultApproval(docsId, loginUser);
 
         if( ! approvalDocsReadable(docs, loginUser) )
             return Constants.ERROR_PAGE_403;
-        
         
         boolean isOwner = docs.getWriterId().equals(loginUser.getMember().getId());
         boolean isProceed = isProceed(docs);
         boolean isUpdatable = isProceed ? false : authority.isUpdatable(Menu.APPROVAL_DEFAULT, loginUser, docs.getWriterId());
         boolean isDeletable = isProceed ? false : authority.isDeletable(Menu.APPROVAL_DEFAULT, loginUser, docs.getWriterId());
         boolean isCurrentApprover = isCurrentApprover(docs, loginUser);
-
 
         model.addAttribute("docs", docs)
             .addAttribute("attachmentsList", getAttachmentsList(docsId))
@@ -719,7 +718,7 @@ public class ViewController {
 
     @GetMapping("/page/approval/default/{docsId}/modify")
     public String defaultApprovalModifyPage(@PathVariable Long docsId, Model model, @AuthenticationPrincipal LoginUser loginUser) {
-        DtosApprovalDocs docs = service.getDefaultReport(docsId, loginUser);
+        DtosApprovalDocs docs = service.getDefaultApproval(docsId, loginUser);
 
         if( ! ( authority.isAccessible(Menu.APPROVAL_DEFAULT, loginUser) && authority.isUpdatable(Menu.APPROVAL_DEFAULT, loginUser, docs.getWriterId()) ) )
             return Constants.ERROR_PAGE_403;
@@ -731,6 +730,43 @@ public class ViewController {
             .addAttribute("docs", docs).addAttribute("attachmentsList", getAttachmentsList(docsId));
         return "docs/approval/default/modify";
     }
+
+
+    // ↓ ----- ----- ----- ----- ----- temp ----- ----- ----- ----- ----- ↓ //
+    @GetMapping("/page/approval/default/temp/{docsId}")
+    public String defaultApprovalTempViewPage(@PathVariable Long docsId, Model model, @AuthenticationPrincipal LoginUser loginUser) {
+        DtosDocs docs = service.getTempDefaultApproval(docsId);
+        boolean isOwner = loginUser.getMember().getId().equals( docs.getWriterId() );
+
+        if(docs.getId() == null)
+            return Constants.ERROR_PAGE_410;
+        if( ! isOwner )
+            return Constants.ERROR_PAGE_403;
+        
+        model.addAttribute("docs", docs).addAttribute("isOwner", isOwner);
+        return "docs/approval/default/temp/view";
+    }
+
+
+    @GetMapping("/page/approval/default/temp/{docsId}/modify")
+    public String defaultApprovalTempModifyPage(@PathVariable Long docsId, Model model, @AuthenticationPrincipal LoginUser loginUser) {
+        if( ! ( authority.isAccessible(Menu.APPROVAL_DEFAULT, loginUser) && authority.isWritable(Menu.APPROVAL_DEFAULT, loginUser) ) )
+            return Constants.ERROR_PAGE_403;
+
+        DtosDocs docs = service.getTempDefaultApproval(docsId);
+        boolean isOwner = loginUser.getMember().getId().equals( docs.getWriterId() );
+
+        if(docs.getId() == null)
+            return Constants.ERROR_PAGE_410;
+        if( ! isOwner )
+            return Constants.ERROR_PAGE_403;
+
+        model.addAttribute("docs", docs);
+        return "docs/approval/default/temp/modify";
+    }
+    // ↑ ----- ----- ----- ----- ----- temp ----- ----- ----- ----- ----- ↑ //
+    // ↑ ----- ----- ----- ----- ----- ----- ----- default ----- ----- ----- ----- ----- ----- ----- ↑ //
+
+
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- approval ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 }
- 
