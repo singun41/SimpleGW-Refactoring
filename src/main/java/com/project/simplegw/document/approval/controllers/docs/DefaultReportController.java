@@ -81,7 +81,7 @@ public class DefaultReportController {
             return ResponseConverter.badRequest(result);
         
         return ResponseConverter.message(
-            service.updateTemp(docsId, dto, loginUser), ResponseMsg.INSERTED
+            service.updateTemp(docsId, dto, loginUser), ResponseMsg.UPDATED
         );
     }
 

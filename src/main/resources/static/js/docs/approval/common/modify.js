@@ -31,7 +31,7 @@ async function setApprovalLines() {
         };
         localStorage.setItem('approverLineData', JSON.stringify(approverLineData));
 
-        setLine();   // docs/approval/common/write/approvers.js 의 함수 setLine() 호출.
+        setLine();   // docs/approval/common/approvers-write.js 의 함수 setLine() 호출.
     }
 }
 

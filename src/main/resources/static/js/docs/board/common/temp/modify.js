@@ -16,7 +16,7 @@ async function save() {
 
     if(docsId) {
         saveComplete = true;
-        deleteTempFreeboard();   // 정상 등록하면 임시저장 문서를 삭제할 지 묻는다.
+        deleteTemp();   // 정상 등록하면 임시저장 문서를 삭제할 지 묻는다.
         location.href = '/page/' + docsType.toLowerCase() + '/' + docsId;
     }
 }
