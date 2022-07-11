@@ -15,6 +15,7 @@ import com.project.simplegw.document.services.DocsFormService;
 import com.project.simplegw.document.services.FreeboardService;
 import com.project.simplegw.document.services.NoticeService;
 import com.project.simplegw.document.services.SuggestionService;
+import com.project.simplegw.document.vos.DocsType;
 import com.project.simplegw.document.vos.EditorDocs;
 import com.project.simplegw.member.data.MemberData;
 import com.project.simplegw.member.dtos.admin.send.DtosMember;
@@ -181,11 +182,11 @@ public class ViewService {   // ViewController에서 필요한 데이터들을 �
 
 
 
-    public DtosApprovalDocs getDefaultApproval(Long docsId, LoginUser loginUser) {
-        return defaultReportService.getDtosApprovalDocs(docsId, loginUser);
+    public DtosApprovalDocs getDefaultApproval(DocsType docsType, Long docsId, LoginUser loginUser) {
+        return defaultReportService.getDtosApprovalDocs(docsType, docsId, loginUser);
     }
 
-    public DtosDocs getTempDefaultApproval(Long docsId) {
-        return defaultReportService.getTemp(docsId);
+    public DtosDocs getTempDefaultApproval(DocsType docsType, Long docsId) {
+        return defaultReportService.getTemp(docsType, docsId);
     }
 }

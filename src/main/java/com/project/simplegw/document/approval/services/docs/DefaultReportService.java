@@ -29,7 +29,6 @@ public class DefaultReportService {
     private final ApprovalDocsService approvalDocsService;
     private final DocsService docsService;
     private final ApprovalConverter converter;
-    private static final DocsType DEFAULT = DocsType.DEFAULT;
 
     // @Autowired   // framework 버전 업데이트 이후 자동설정되어 선언하지 않아도 됨.
     public DefaultReportService(ApprovalDocsService approvalDocsService, DocsService docsService, ApprovalConverter converter) {
@@ -43,22 +42,22 @@ public class DefaultReportService {
 
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
-    public ServiceMsg create(DtorDefaultReport dto, LoginUser loginUser) {
+    public ServiceMsg create(DocsType docsType, DtorDefaultReport dto, LoginUser loginUser) {
         DtorDocs dtorDocs = new DtorDocs().setTitle(dto.getTitle()).setContent(dto.getContent());
-        return approvalDocsService.create(dtorDocs, DEFAULT, dto.getArrApproverId(), dto.getArrReferrerId(), loginUser);
+        return approvalDocsService.create(dtorDocs, docsType, dto.getArrApproverId(), dto.getArrReferrerId(), loginUser);
     }
 
-    public ServiceMsg update(Long docsId, DtorDefaultReport dto, LoginUser loginUser) {
+    public ServiceMsg update(DocsType docsType, Long docsId, DtorDefaultReport dto, LoginUser loginUser) {
         DtorDocs dtorDocs = new DtorDocs().setTitle(dto.getTitle()).setContent(dto.getContent());
-        return approvalDocsService.update(docsId, dtorDocs, DEFAULT, dto.getArrApproverId(), dto.getArrReferrerId(), loginUser);
+        return approvalDocsService.update(docsId, dtorDocs, docsType, dto.getArrApproverId(), dto.getArrReferrerId(), loginUser);
     }
 
-    public ServiceMsg delete(Long docsId, LoginUser loginUser) {
-        return approvalDocsService.delete(docsId, DEFAULT, loginUser);
+    public ServiceMsg delete(DocsType docsType, Long docsId, LoginUser loginUser) {
+        return approvalDocsService.delete(docsId, docsType, loginUser);
     }
 
-    public DtosApprovalDocs getDtosApprovalDocs(Long docsId, LoginUser loginUser) {
-        return converter.getDtosApprovalDocs( docsService.getDtosDocs(docsId, DEFAULT) ).setLine( approvalDocsService.getDtosApprovalLinePack(docsId, DEFAULT, loginUser) );
+    public DtosApprovalDocs getDtosApprovalDocs(DocsType docsType, Long docsId, LoginUser loginUser) {
+        return converter.getDtosApprovalDocs( docsService.getDtosDocs(docsId, docsType) ).setLine( approvalDocsService.getDtosApprovalLinePack(docsId, docsType, loginUser) );
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 
@@ -67,33 +66,33 @@ public class DefaultReportService {
 
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- temp docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
-    public ServiceMsg createTemp(DtorTempDefaultReport dto, LoginUser loginUser) {
-        Long docsId = docsService.createTemp(converter.getDtorDocs(dto), DEFAULT, loginUser).getId();
+    public ServiceMsg createTemp(DocsType docsType, DtorTempDefaultReport dto, LoginUser loginUser) {
+        Long docsId = docsService.createTemp(converter.getDtorDocs(dto), docsType, loginUser).getId();
 
         if(docsId == null)
-            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg( new StringBuilder(DEFAULT.getTitle()).append(" 임시저장 에러입니다. 관리자에게 문의하세요.").toString() );
+            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg( new StringBuilder(docsType.getTitle()).append(" 임시저장 에러입니다. 관리자에게 문의하세요.").toString() );
         
         else
             return new ServiceMsg().setResult(ServiceResult.SUCCESS).setReturnObj(docsId);
     }
 
 
-    public ServiceMsg updateTemp(Long docsId, DtorTempDefaultReport dto, LoginUser loginUser) {
-        TempDocs tempDocs = docsService.getTempDocsEntity(docsId, DEFAULT);
+    public ServiceMsg updateTemp(DocsType docsType, Long docsId, DtorTempDefaultReport dto, LoginUser loginUser) {
+        TempDocs tempDocs = docsService.getTempDocsEntity(docsId, docsType);
 
         if( ! docsService.isOwner(tempDocs, loginUser) )   // 수정은 본인만 가능.
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg(ResponseMsg.UNAUTHORIZED.getTitle());
 
-        docsService.updateTemp(docsId, converter.getDtorDocs(dto), DEFAULT);
+        docsService.updateTemp(docsId, converter.getDtorDocs(dto), docsType);
         return new ServiceMsg().setResult(ServiceResult.SUCCESS);
     }
 
 
-    public ServiceMsg deleteTemp(Long docsId, LoginUser loginUser) {
-        TempDocs tempDocs = docsService.getTempDocsEntity(docsId, DEFAULT);
+    public ServiceMsg deleteTemp(DocsType docsType, Long docsId, LoginUser loginUser) {
+        TempDocs tempDocs = docsService.getTempDocsEntity(docsId, docsType);
 
-        if( DEFAULT != tempDocs.getType() )
-            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg( new StringBuilder("삭제 대상 문서가 ").append(DEFAULT.getTitle()).append("문서가 아닙니다.").toString() );
+        if( docsType != tempDocs.getType() )
+            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg( new StringBuilder("삭제 대상 문서가 ").append(docsType.getTitle()).append("문서가 아닙니다.").toString() );
 
 
         if( docsService.isOwner(tempDocs, loginUser) ) {
@@ -106,8 +105,8 @@ public class DefaultReportService {
     }
 
 
-    public DtosDocs getTemp(Long docsId) {
-        return docsService.getDtosDocsFromTempDocs(docsId, DEFAULT);
+    public DtosDocs getTemp(DocsType docsType, Long docsId) {
+        return docsService.getDtosDocsFromTempDocs(docsId, docsType);
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- temp docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 }

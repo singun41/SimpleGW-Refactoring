@@ -63,6 +63,7 @@ public class MenuAuthorityService {
                 
                 MenuAuthority approvalSearch = MenuAuthority.builder().menu(Menu.APPROVAL_SEARCH).role(role).build();
                 MenuAuthority approvalDefault = MenuAuthority.builder().menu(Menu.APPROVAL_DEFAULT).role(role).build();
+                MenuAuthority approvalCooperation = MenuAuthority.builder().menu(Menu.APPROVAL_COOPERATION).role(role).build();
 
 
                 switch(role) {
@@ -78,6 +79,7 @@ public class MenuAuthorityService {
 
                         approvalSearch.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
                         approvalDefault.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
+                        approvalCooperation.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
                     }
                     
 
@@ -94,6 +96,7 @@ public class MenuAuthorityService {
 
                         approvalSearch.updateAccessible(false).updateRwdRole(AuthorityValue.NONE).updateRwdOther(AuthorityValue.NONE);
                         approvalDefault.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
+                        approvalCooperation.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
                     }
                     
 
@@ -110,6 +113,7 @@ public class MenuAuthorityService {
 
                         approvalSearch.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
                         approvalDefault.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
+                        approvalCooperation.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
                     }
                 
 
@@ -126,6 +130,7 @@ public class MenuAuthorityService {
 
                         approvalSearch.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
                         approvalDefault.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
+                        approvalCooperation.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
                     }
                     
 
@@ -142,6 +147,7 @@ public class MenuAuthorityService {
 
                         approvalSearch.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
                         approvalDefault.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
+                        approvalCooperation.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
                     }
                     
 
@@ -158,13 +164,14 @@ public class MenuAuthorityService {
 
                         approvalSearch.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
                         approvalDefault.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
+                        approvalCooperation.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
                     }
                 }
 
                 repo.saveAll(
                     Arrays.asList(
                         notice, freeboard, suggestion, archive,
-                        workRecord, workRecordTeam, workRecordList, approvalSearch, approvalDefault
+                        workRecord, workRecordTeam, workRecordList, approvalSearch, approvalDefault, approvalCooperation
                     )
                 );
             });

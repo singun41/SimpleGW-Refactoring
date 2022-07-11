@@ -9,7 +9,7 @@ public enum Menu {
     
     APPROVAL_SEARCH("결재문서 검색"),
     APPROVAL_RECEIVED("수신 문서"),
-    APPROVAL_DEFAULT("기안서")
+    APPROVAL_DEFAULT("기안서"), APPROVAL_COOPERATION("업무협조전")
     ;
 
     private String title;

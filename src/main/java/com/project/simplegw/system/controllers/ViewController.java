@@ -57,10 +57,16 @@ public class ViewController {
         boolean workRecordList = authority.isAccessible(Menu.WORK_RECORD_LIST, loginUser);
         boolean approvalSearch = authority.isAccessible(Menu.APPROVAL_SEARCH, loginUser);
         boolean approvalDefault = authority.isAccessible(Menu.APPROVAL_DEFAULT, loginUser);
+        boolean approvalCooperation = authority.isAccessible(Menu.APPROVAL_COOPERATION, loginUser);
 
         model.addAttribute("user", service.getMyInfo(loginUser))
-            .addAttribute("workRecord", workRecord).addAttribute("workRecordTeam", workRecordTeam).addAttribute("workRecordList", workRecordList)
-            .addAttribute("approvalSearch", approvalSearch).addAttribute("approvalDefault", approvalDefault)
+            .addAttribute("workRecord", workRecord)
+            .addAttribute("workRecordTeam", workRecordTeam)
+            .addAttribute("workRecordList", workRecordList)
+
+            .addAttribute("approvalSearch", approvalSearch)
+            .addAttribute("approvalDefault", approvalDefault)
+            .addAttribute("approvalCooperation", approvalCooperation)
             ;
         return "main/main";
     }
@@ -683,28 +689,36 @@ public class ViewController {
 
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- default ----- ----- ----- ----- ----- ----- ----- ↓ //
-    @GetMapping("/page/approval/default/write")
-    public String defaultApprovalWritePage(Model model, @AuthenticationPrincipal LoginUser loginUser) {
-        if( ! ( authority.isAccessible(Menu.APPROVAL_DEFAULT, loginUser) && authority.isWritable(Menu.APPROVAL_DEFAULT, loginUser) ) )
+    // 기본 양식의 결재문서는 DocsType을 문자열로 받은뒤 Enum으로 변환해 서비스로 전달한다.
+    @GetMapping("/page/approval/{type}/write")
+    public String defaultApprovalWritePage(@PathVariable String type, Model model, @AuthenticationPrincipal LoginUser loginUser) {
+        DocsType docsType = DocsType.valueOf(type.toUpperCase());
+        Menu menu = docsType.getMenu();
+        EditorDocs editorDocs = EditorDocs.valueOf(menu.name());
+
+        if( ! ( authority.isAccessible(menu, loginUser) && authority.isWritable(menu, loginUser) ) )
             return Constants.ERROR_PAGE_403;
-        
-        model.addAttribute("pageTitle", DocsType.DEFAULT.getTitle())
-            .addAttribute("docsType", DocsType.DEFAULT)
-            .addAttribute("form", service.getDocsForm(EditorDocs.APPROVAL_DEFAULT));
+
+        model.addAttribute("pageTitle", menu.getTitle())
+            .addAttribute("docsType", docsType)
+            .addAttribute("form", service.getDocsForm(editorDocs));
         return "docs/approval/default/write";
     }
 
-    @GetMapping("/page/approval/default/{docsId}")
-    public String defaultApprovalViewPage(@PathVariable Long docsId, Model model, @AuthenticationPrincipal LoginUser loginUser) {
-        DtosApprovalDocs docs = service.getDefaultApproval(docsId, loginUser);
+    @GetMapping("/page/approval/{type}/{docsId}")
+    public String defaultApprovalViewPage(@PathVariable String type, @PathVariable Long docsId, Model model, @AuthenticationPrincipal LoginUser loginUser) {
+        DocsType docsType = DocsType.valueOf(type.toUpperCase());
+        Menu menu = docsType.getMenu();
+
+        DtosApprovalDocs docs = service.getDefaultApproval(docsType, docsId, loginUser);
 
         if( ! approvalDocsReadable(docs, loginUser) )
             return Constants.ERROR_PAGE_403;
         
         boolean isOwner = docs.getWriterId().equals(loginUser.getMember().getId());
         boolean isProceed = isProceed(docs);
-        boolean isUpdatable = isProceed ? false : authority.isUpdatable(Menu.APPROVAL_DEFAULT, loginUser, docs.getWriterId());
-        boolean isDeletable = isProceed ? false : authority.isDeletable(Menu.APPROVAL_DEFAULT, loginUser, docs.getWriterId());
+        boolean isUpdatable = isProceed ? false : authority.isUpdatable(menu, loginUser, docs.getWriterId());
+        boolean isDeletable = isProceed ? false : authority.isDeletable(menu, loginUser, docs.getWriterId());
         boolean isCurrentApprover = isCurrentApprover(docs, loginUser);
 
         model.addAttribute("docs", docs)
@@ -716,26 +730,30 @@ public class ViewController {
         return "docs/approval/default/view";
     }
 
-    @GetMapping("/page/approval/default/{docsId}/modify")
-    public String defaultApprovalModifyPage(@PathVariable Long docsId, Model model, @AuthenticationPrincipal LoginUser loginUser) {
-        DtosApprovalDocs docs = service.getDefaultApproval(docsId, loginUser);
+    @GetMapping("/page/approval/{type}/{docsId}/modify")
+    public String defaultApprovalModifyPage(@PathVariable String type, @PathVariable Long docsId, Model model, @AuthenticationPrincipal LoginUser loginUser) {
+        DocsType docsType = DocsType.valueOf(type.toUpperCase());
+        Menu menu = docsType.getMenu();
 
-        if( ! ( authority.isAccessible(Menu.APPROVAL_DEFAULT, loginUser) && authority.isUpdatable(Menu.APPROVAL_DEFAULT, loginUser, docs.getWriterId()) ) )
+        DtosApprovalDocs docs = service.getDefaultApproval(docsType, docsId, loginUser);
+
+        if( ! ( authority.isAccessible(menu, loginUser) && authority.isUpdatable(menu, loginUser, docs.getWriterId()) ) )
             return Constants.ERROR_PAGE_403;
 
         if(isProceed(docs))
             return Constants.ERROR_PAGE_403_MODIFY;
 
-        model.addAttribute("pageTitle", DocsType.DEFAULT.getTitle())
+        model.addAttribute("pageTitle", menu.getTitle())
             .addAttribute("docs", docs).addAttribute("attachmentsList", getAttachmentsList(docsId));
         return "docs/approval/default/modify";
     }
 
 
     // ↓ ----- ----- ----- ----- ----- temp ----- ----- ----- ----- ----- ↓ //
-    @GetMapping("/page/approval/default/temp/{docsId}")
-    public String defaultApprovalTempViewPage(@PathVariable Long docsId, Model model, @AuthenticationPrincipal LoginUser loginUser) {
-        DtosDocs docs = service.getTempDefaultApproval(docsId);
+    @GetMapping("/page/approval/{type}/temp/{docsId}")
+    public String defaultApprovalTempViewPage(@PathVariable String type, @PathVariable Long docsId, Model model, @AuthenticationPrincipal LoginUser loginUser) {
+        DocsType docsType = DocsType.valueOf(type.toUpperCase());
+        DtosDocs docs = service.getTempDefaultApproval(docsType, docsId);
         boolean isOwner = loginUser.getMember().getId().equals( docs.getWriterId() );
 
         if(docs.getId() == null)
@@ -748,12 +766,10 @@ public class ViewController {
     }
 
 
-    @GetMapping("/page/approval/default/temp/{docsId}/modify")
-    public String defaultApprovalTempModifyPage(@PathVariable Long docsId, Model model, @AuthenticationPrincipal LoginUser loginUser) {
-        if( ! ( authority.isAccessible(Menu.APPROVAL_DEFAULT, loginUser) && authority.isWritable(Menu.APPROVAL_DEFAULT, loginUser) ) )
-            return Constants.ERROR_PAGE_403;
-
-        DtosDocs docs = service.getTempDefaultApproval(docsId);
+    @GetMapping("/page/approval/{type}/temp/{docsId}/modify")
+    public String defaultApprovalTempModifyPage(@PathVariable String type, @PathVariable Long docsId, Model model, @AuthenticationPrincipal LoginUser loginUser) {
+        DocsType docsType = DocsType.valueOf(type.toUpperCase());
+        DtosDocs docs = service.getTempDefaultApproval(docsType, docsId);
         boolean isOwner = loginUser.getMember().getId().equals( docs.getWriterId() );
 
         if(docs.getId() == null)
@@ -766,6 +782,7 @@ public class ViewController {
     }
     // ↑ ----- ----- ----- ----- ----- temp ----- ----- ----- ----- ----- ↑ //
     // ↑ ----- ----- ----- ----- ----- ----- ----- default ----- ----- ----- ----- ----- ----- ----- ↑ //
+
 
 
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- approval ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //

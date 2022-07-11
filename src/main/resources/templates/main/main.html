@@ -114,7 +114,7 @@
                         <div class="collapse" id="collapse-approval-inner-1">
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small ms-4 btn-toggle-inner-li">
                                 <li th:if="${approvalDefault} == true"><a role="button" onclick="page('approval/default/write')" class="link-dark rounded align-items-center">기안서</a></li>
-                                <li><a role="button" onclick="page('approval/cooperation/write')" class="link-dark rounded align-items-center">업무 협조전</a></li>
+                                <li th:if="${approvalCooperation} == true"><a role="button" onclick="page('approval/cooperation/write')" class="link-dark rounded align-items-center">업무협조전</a></li>
                             </ul>
                         </div>
 

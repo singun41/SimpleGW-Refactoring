@@ -3,6 +3,7 @@ package com.project.simplegw.document.approval.controllers.docs;
 import com.project.simplegw.document.approval.dtos.receive.docs.DtorDefaultReport;
 import com.project.simplegw.document.approval.dtos.receive.docs.DtorTempDefaultReport;
 import com.project.simplegw.document.approval.services.docs.DefaultReportService;
+import com.project.simplegw.document.vos.DocsType;
 import com.project.simplegw.system.helpers.ResponseConverter;
 import com.project.simplegw.system.security.LoginUser;
 import com.project.simplegw.system.vos.ResponseMsg;
@@ -24,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
-@RequestMapping("/approval/default")
+@RequestMapping("/approval")
 public class DefaultReportController {
     private final DefaultReportService service;
 
@@ -35,27 +36,31 @@ public class DefaultReportController {
     }
 
 
+    // 기본 결재문서 형식으로 사용하는 공통 컨트롤러, DocsType을 String으로 url에 포함시켜 받고 Enum으로 전환해서 서비스로 넘긴다.
 
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
-    @PostMapping
-    public ResponseEntity<Object> create(@Validated @RequestBody DtorDefaultReport dto, BindingResult result, @AuthenticationPrincipal LoginUser loginUser) {
+    @PostMapping("/{type}")
+    public ResponseEntity<Object> create(@PathVariable String type, @Validated @RequestBody DtorDefaultReport dto, BindingResult result, @AuthenticationPrincipal LoginUser loginUser) {
         if(result.hasErrors())
             return ResponseConverter.badRequest(result);
         
         return ResponseConverter.message(
-            service.create(dto, loginUser), ResponseMsg.INSERTED
+            service.create(DocsType.valueOf(type.toUpperCase()), dto, loginUser), ResponseMsg.INSERTED
         );
     }
 
 
-    @PatchMapping("/{docsId}")
-    public ResponseEntity<Object> update(@PathVariable Long docsId, @Validated @RequestBody DtorDefaultReport dto, BindingResult result, @AuthenticationPrincipal LoginUser loginUser) {
+    @PatchMapping("/{type}/{docsId}")
+    public ResponseEntity<Object> update(
+        @PathVariable String type, @PathVariable Long docsId,
+        @Validated @RequestBody DtorDefaultReport dto, BindingResult result, @AuthenticationPrincipal LoginUser loginUser
+    ) {
         if(result.hasErrors())
             return ResponseConverter.badRequest(result);
         
         return ResponseConverter.message(
-            service.update(docsId, dto, loginUser), ResponseMsg.UPDATED
+            service.update(DocsType.valueOf(type.toUpperCase()), docsId, dto, loginUser), ResponseMsg.UPDATED
         );
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
@@ -65,30 +70,33 @@ public class DefaultReportController {
 
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- temp docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
-    @PostMapping("/temp")
-    public ResponseEntity<Object> createTemp(@Validated @RequestBody DtorTempDefaultReport dto, BindingResult result, @AuthenticationPrincipal LoginUser loginUser) {
+    @PostMapping("/{type}/temp")
+    public ResponseEntity<Object> createTemp(@PathVariable String type, @Validated @RequestBody DtorTempDefaultReport dto, BindingResult result, @AuthenticationPrincipal LoginUser loginUser) {
         if(result.hasErrors())
             return ResponseConverter.badRequest(result);
         
         return ResponseConverter.message(
-            service.createTemp(dto, loginUser), ResponseMsg.INSERTED
+            service.createTemp(DocsType.valueOf(type.toUpperCase()), dto, loginUser), ResponseMsg.INSERTED
         );
     }
 
-    @PatchMapping("/temp/{docsId}")
-    public ResponseEntity<Object> updateTemp(@PathVariable Long docsId, @Validated @RequestBody DtorTempDefaultReport dto, BindingResult result, @AuthenticationPrincipal LoginUser loginUser) {
+    @PatchMapping("/{type}/temp/{docsId}")
+    public ResponseEntity<Object> updateTemp(
+        @PathVariable String type, @PathVariable Long docsId,
+        @Validated @RequestBody DtorTempDefaultReport dto, BindingResult result, @AuthenticationPrincipal LoginUser loginUser
+    ) {
         if(result.hasErrors())
             return ResponseConverter.badRequest(result);
         
         return ResponseConverter.message(
-            service.updateTemp(docsId, dto, loginUser), ResponseMsg.UPDATED
+            service.updateTemp(DocsType.valueOf(type.toUpperCase()), docsId, dto, loginUser), ResponseMsg.UPDATED
         );
     }
 
-    @DeleteMapping("/temp/{docsId}")
-    public ResponseEntity<Object> deleteTemp(@PathVariable Long docsId, @AuthenticationPrincipal LoginUser loginUser) {
+    @DeleteMapping("/{type}/temp/{docsId}")
+    public ResponseEntity<Object> deleteTemp(@PathVariable String type, @PathVariable Long docsId, @AuthenticationPrincipal LoginUser loginUser) {
         return ResponseConverter.message(
-            service.deleteTemp(docsId, loginUser), ResponseMsg.DELETED
+            service.deleteTemp(DocsType.valueOf(type.toUpperCase()), docsId, loginUser), ResponseMsg.DELETED
         );
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- temp docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //

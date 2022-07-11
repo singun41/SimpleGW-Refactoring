@@ -5,17 +5,23 @@ import com.project.simplegw.system.vos.Menu;
 public enum EditorDocs {
     // WYSWYG 에디터를 사용하는 문서 리스트를 작성한다.
 
-    NOTICE(Menu.NOTICE.getTitle()), FREEBOARD(Menu.FREEBOARD.getTitle()), SUGGESTION(Menu.SUGGESTION.getTitle()), ARCHIVE(Menu.ARCHIVE.getTitle()),
+    NOTICE(Menu.NOTICE), FREEBOARD(Menu.FREEBOARD), SUGGESTION(Menu.SUGGESTION), ARCHIVE(Menu.ARCHIVE),
 
-    MEETING_MINUTES(Menu.MEETING_MINUTES.getTitle()),
+    MEETING_MINUTES(Menu.MEETING_MINUTES),
     
-    APPROVAL_DEFAULT(Menu.APPROVAL_DEFAULT.getTitle())
+    APPROVAL_DEFAULT(Menu.APPROVAL_DEFAULT), APPROVAL_COOPERATION(Menu.APPROVAL_COOPERATION)
     ;
 
-
+    private Menu menu;
     private String title;
-    private EditorDocs(String title) {
-        this.title = title;
+
+    private EditorDocs(Menu menu) {
+        this.menu = menu;
+        this.title = menu.getTitle();
+    }
+
+    public Menu getMenu() {
+        return this.menu;
     }
 
     public String getTitle() {
