@@ -104,3 +104,8 @@ div.dtpicker-search {
     padding-left: 0.05rem;
     padding-right: 0.05rem;
 }
+
+/* ckeditor에서 등록한 테이블의 css가 다른 css에 핸들링 되지 않도록 추가. */
+.ckeditor-tables tbody, .ckeditor-tables tbody tr, .ckeditor-tables tbody tr td {
+    border: inherit !important;
+}
