@@ -29,11 +29,11 @@ async function getSavedLines() {
         let savedLines = Array.from(result.obj);
         
         if(savedLines.length === 0) {
-            defaultOpt.text = '저장된 결재라인 없음..';
+            defaultOpt.text = '저장된 결재라인 없음.';
             lines.append(defaultOpt);
         
         } else {
-            defaultOpt.text = '선택..';
+            defaultOpt.text = '선택...';
             lines.append(defaultOpt);
 
             savedLines.forEach(e => {
@@ -45,7 +45,7 @@ async function getSavedLines() {
         }
         
     } else {
-        defaultOpt.text = '결재라인 로드 실패..';
+        defaultOpt.text = '결재라인 로드 실패.';
         lines.append(opt);
     }
 }

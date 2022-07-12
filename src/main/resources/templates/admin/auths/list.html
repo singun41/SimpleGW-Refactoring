@@ -25,7 +25,7 @@
                             <span class="float-end">
                                 <div class="align-middle d-inline-block me-2">
                                     <select class="form-select form-select-sm" id="menu" onchange="getAuths()">
-                                        <option value="" selected disabled>Menus..</option>
+                                        <option value="" selected disabled>Menus...</option>
                                         <option th:each="menu : ${menus}" th:value="${menu.name()}" th:text="${menu.getTitle()}"></option>
                                     </select>
                                 </div>
