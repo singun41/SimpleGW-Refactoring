@@ -5,6 +5,7 @@ import java.util.List;
 import com.project.simplegw.alarm.dtos.send.DtosAlarm;
 import com.project.simplegw.alarm.services.AlarmService;
 import com.project.simplegw.code.dtos.send.DtosBasecode;
+import com.project.simplegw.code.dtos.send.DtosCodeValue;
 import com.project.simplegw.code.services.BasecodeService;
 import com.project.simplegw.code.vos.BasecodeType;
 import com.project.simplegw.document.approval.dtos.send.DtosApprovalDocs;
@@ -89,14 +90,17 @@ public class ViewService {   // ViewController에서 필요한 데이터들을 �
 
 
 
-
-    
+    // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- alarm ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
     public DtosAlarm getAlarm(Long id) {
         return alarmService.getAlarm(id);
     }
+    // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- alarm ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 
 
 
+
+
+    // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- member ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
     public MemberData getMyInfo(LoginUser loginUser) {
         return memberService.getMemberData(loginUser);
     }
@@ -114,7 +118,13 @@ public class ViewService {   // ViewController에서 필요한 데이터들을 �
     public DtosMember getMember(Long memberId) {
         return memberAdminService.getMember(memberId);
     }
+    // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- member ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 
+
+
+
+
+    // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- codes ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
     public List<BasecodeType> getBasecodeTypes() {
         return basecodeService.getAllTypes();
     }
@@ -131,20 +141,30 @@ public class ViewService {   // ViewController에서 필요한 데이터들을 �
         return memberService.getTeams();
     }
 
+    public List<DtosCodeValue> getDayoffCodes() {
+        return basecodeService.getDayoffCodes();
+    }
+    // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- codes ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 
 
+
+
+
+    // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- docs common ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
     public String getDocsForm(EditorDocs docs) {
         return formService.getForm(docs);
     }
 
-
-
     public List<DtosAttachements> getAttachmentsList(Long docsId) {
         return attachmentsService.getAttachmentsList(docsId);
     }
+    // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- docs common ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 
 
 
+
+
+    // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- board ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
     public DtosDocs getNotice(Long docsId) {
         return noticeService.getNotice(docsId);
     }
@@ -152,7 +172,6 @@ public class ViewService {   // ViewController에서 필요한 데이터들을 �
     public DtosDocs getTempNotice(Long docsId) {
         return noticeService.getTempNotice(docsId);
     }
-
 
 
     public DtosDocs getFreeboard(Long docsId) {
@@ -164,7 +183,6 @@ public class ViewService {   // ViewController에서 필요한 데이터들을 �
     }
 
 
-
     public DtosDocs getSuggestion(Long docsId) {
         return suggestionService.getSuggestion(docsId);
     }
@@ -174,14 +192,16 @@ public class ViewService {   // ViewController에서 필요한 데이터들을 �
     }
 
 
-
     public DtosDocs getArchive(Long docsId) {   // 자료실은 임시저장 기능을 제공하지 않는다.
         return archiveService.getArchive(docsId);
     }
+    // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- board ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 
 
 
 
+
+    // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- approval ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
     public DtosApprovalDocs getDefaultApproval(DocsType docsType, Long docsId, LoginUser loginUser) {
         return defaultReportService.getDtosApprovalDocs(docsType, docsId, loginUser);
     }
@@ -189,4 +209,5 @@ public class ViewService {   // ViewController에서 필요한 데이터들을 �
     public DtosDocs getTempDefaultApproval(DocsType docsType, Long docsId) {
         return defaultReportService.getTemp(docsType, docsId);
     }
+    // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- approval ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 }

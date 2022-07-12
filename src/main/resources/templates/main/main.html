@@ -113,8 +113,8 @@
                         </button>
                         <div class="collapse" id="collapse-approval-inner-1">
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small ms-4 btn-toggle-inner-li">
-                                <li th:if="${approvalDefault} == true"><a role="button" onclick="page('approval/default/write')" class="link-dark rounded align-items-center">기안서</a></li>
-                                <li th:if="${approvalCooperation} == true"><a role="button" onclick="page('approval/cooperation/write')" class="link-dark rounded align-items-center">업무협조전</a></li>
+                                <li th:if="${approvalDefault} == true"><a role="button" onclick="page('approval/forms/default/write')" class="link-dark rounded align-items-center">기안서</a></li>
+                                <li th:if="${approvalCooperation} == true"><a role="button" onclick="page('approval/forms/cooperation/write')" class="link-dark rounded align-items-center">업무협조전</a></li>
                             </ul>
                         </div>
 
@@ -124,8 +124,8 @@
                         </button>
                         <div class="collapse" id="collapse-approval-inner-2">
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small ms-4 btn-toggle-inner-li">
-                                <li><a href="#" class="link-dark rounded align-items-center">휴가 신청서</a></li>
-                                <li><a href="#" class="link-dark rounded align-items-center">연장 근무 신청서</a></li>
+                                <li th:if="${approvalDefault} == true"><a role="button" onclick="page('approval/dayoff/write')" class="link-dark rounded align-items-center">휴가 신청서</a></li>
+                                <li th:if="${approvalDefault} == true"><a role="button" onclick="page('approval/dayoff/write')" class="link-dark rounded align-items-center">연장 근무 신청서</a></li>
                             </ul>
                         </div>
 

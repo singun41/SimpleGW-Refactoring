@@ -55,9 +55,12 @@ public class ViewController {
         boolean workRecord = authority.isAccessible(Menu.WORK_RECORD, loginUser);
         boolean workRecordTeam = authority.isAccessible(Menu.WORK_RECORD_TEAM, loginUser);
         boolean workRecordList = authority.isAccessible(Menu.WORK_RECORD_LIST, loginUser);
+
         boolean approvalSearch = authority.isAccessible(Menu.APPROVAL_SEARCH, loginUser);
         boolean approvalDefault = authority.isAccessible(Menu.APPROVAL_DEFAULT, loginUser);
         boolean approvalCooperation = authority.isAccessible(Menu.APPROVAL_COOPERATION, loginUser);
+        boolean approvalDayoff = authority.isAccessible(Menu.APPROVAL_DAYOFF, loginUser);
+
 
         model.addAttribute("user", service.getMyInfo(loginUser))
             .addAttribute("workRecord", workRecord)
@@ -67,6 +70,7 @@ public class ViewController {
             .addAttribute("approvalSearch", approvalSearch)
             .addAttribute("approvalDefault", approvalDefault)
             .addAttribute("approvalCooperation", approvalCooperation)
+            .addAttribute("approvalDayoff", approvalDayoff)
             ;
         return "main/main";
     }
@@ -666,6 +670,8 @@ public class ViewController {
 
 
 
+
+
     // ↓ ----- ----- ----- ----- ----- ----- ----- auth ----- ----- ----- ----- ----- ----- ----- ↓ //
     @GetMapping("/page/approval/list-search")
     public String approvalDocsSearchPage(Model model) {
@@ -675,6 +681,8 @@ public class ViewController {
         return "docs/approval/list/list-search";
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- auth ----- ----- ----- ----- ----- ----- ----- ↑ //
+
+
 
 
 
@@ -690,7 +698,7 @@ public class ViewController {
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- default ----- ----- ----- ----- ----- ----- ----- ↓ //
     // 기본 양식의 결재문서는 DocsType을 문자열로 받은뒤 Enum으로 변환해 서비스로 전달한다.
-    @GetMapping("/page/approval/{type}/write")
+    @GetMapping("/page/approval/forms/{type}/write")
     public String defaultApprovalWritePage(@PathVariable String type, Model model, @AuthenticationPrincipal LoginUser loginUser) {
         DocsType docsType = DocsType.valueOf(type.toUpperCase());
         Menu menu = docsType.getMenu();
@@ -705,7 +713,7 @@ public class ViewController {
         return "docs/approval/default/write";
     }
 
-    @GetMapping("/page/approval/{type}/{docsId}")
+    @GetMapping("/page/approval/forms/{type}/{docsId}")
     public String defaultApprovalViewPage(@PathVariable String type, @PathVariable Long docsId, Model model, @AuthenticationPrincipal LoginUser loginUser) {
         DocsType docsType = DocsType.valueOf(type.toUpperCase());
         Menu menu = docsType.getMenu();
@@ -730,7 +738,7 @@ public class ViewController {
         return "docs/approval/default/view";
     }
 
-    @GetMapping("/page/approval/{type}/{docsId}/modify")
+    @GetMapping("/page/approval/forms/{type}/{docsId}/modify")
     public String defaultApprovalModifyPage(@PathVariable String type, @PathVariable Long docsId, Model model, @AuthenticationPrincipal LoginUser loginUser) {
         DocsType docsType = DocsType.valueOf(type.toUpperCase());
         Menu menu = docsType.getMenu();
@@ -750,7 +758,7 @@ public class ViewController {
 
 
     // ↓ ----- ----- ----- ----- ----- temp ----- ----- ----- ----- ----- ↓ //
-    @GetMapping("/page/approval/{type}/temp/{docsId}")
+    @GetMapping("/page/approval/forms/{type}/temp/{docsId}")
     public String defaultApprovalTempViewPage(@PathVariable String type, @PathVariable Long docsId, Model model, @AuthenticationPrincipal LoginUser loginUser) {
         DocsType docsType = DocsType.valueOf(type.toUpperCase());
         DtosDocs docs = service.getTempDefaultApproval(docsType, docsId);
@@ -766,7 +774,7 @@ public class ViewController {
     }
 
 
-    @GetMapping("/page/approval/{type}/temp/{docsId}/modify")
+    @GetMapping("/page/approval/forms/{type}/temp/{docsId}/modify")
     public String defaultApprovalTempModifyPage(@PathVariable String type, @PathVariable Long docsId, Model model, @AuthenticationPrincipal LoginUser loginUser) {
         DocsType docsType = DocsType.valueOf(type.toUpperCase());
         DtosDocs docs = service.getTempDefaultApproval(docsType, docsId);
@@ -784,6 +792,21 @@ public class ViewController {
     // ↑ ----- ----- ----- ----- ----- ----- ----- default ----- ----- ----- ----- ----- ----- ----- ↑ //
 
 
+    
+    // 여기서부터 별도양식 결재문서 페이지
 
+    // ↓ ----- ----- ----- ----- ----- ----- ----- dayoff ----- ----- ----- ----- ----- ----- ----- ↓ //
+    @GetMapping("/page/approval/dayoff/write")
+    public String dayoffApprovalWritePage(Model model, @AuthenticationPrincipal LoginUser loginUser) {
+        if( ! ( authority.isAccessible(Menu.APPROVAL_DAYOFF, loginUser) && authority.isWritable(Menu.APPROVAL_DAYOFF, loginUser) ) )
+            return Constants.ERROR_PAGE_403;
+
+        model.addAttribute("pageTitle", Menu.APPROVAL_DAYOFF.getTitle())
+            .addAttribute("docsType", DocsType.DAYOFF)
+            .addAttribute("codes", service.getDayoffCodes());
+
+        return "docs/approval/dayoff/write";
+    }
+    // ↑ ----- ----- ----- ----- ----- ----- ----- dayoff ----- ----- ----- ----- ----- ----- ----- ↑ //
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- approval ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 }

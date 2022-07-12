@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 import com.project.simplegw.code.dtos.receive.DtorBasecode;
 import com.project.simplegw.code.dtos.send.DtosBasecode;
+import com.project.simplegw.code.dtos.send.DtosCodeValue;
 import com.project.simplegw.code.entities.Basecode;
 import com.project.simplegw.code.helper.BasecodeConverter;
 import com.project.simplegw.code.repositories.BasecodeRepo;
@@ -111,5 +112,9 @@ public class BasecodeService {
 
     public List<String> getJobTitles() {
         return getCodeStream(BasecodeType.JOB_TITLE).map(Basecode::getValue).collect(Collectors.toList());
+    }
+
+    public List<DtosCodeValue> getDayoffCodes() {
+        return getCodeStream(BasecodeType.DAYOFF).map(converter::getDtosCodeValue).collect(Collectors.toList());
     }
 }
