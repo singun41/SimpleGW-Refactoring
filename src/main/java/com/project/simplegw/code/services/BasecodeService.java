@@ -1,5 +1,6 @@
 package com.project.simplegw.code.services;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -13,9 +14,12 @@ import com.project.simplegw.code.entities.Basecode;
 import com.project.simplegw.code.helper.BasecodeConverter;
 import com.project.simplegw.code.repositories.BasecodeRepo;
 import com.project.simplegw.code.vos.BasecodeType;
+import com.project.simplegw.system.vos.Constants;
 import com.project.simplegw.system.vos.ServiceMsg;
 import com.project.simplegw.system.vos.ServiceResult;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 // import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -43,24 +47,29 @@ public class BasecodeService {
         return repo.findByType(type).stream().sorted(Comparator.comparing(Basecode::getSeq));
     }
 
+
+
+    public List<BasecodeType> getAllTypes() {
+        return Arrays.stream(BasecodeType.values()).sorted(Comparator.comparing(BasecodeType::getTitle)).toList();   // 불변 List를 리턴해도 된다.
+    }
+
+    @Cacheable(cacheManager = Constants.CACHE_MANAGER, cacheNames = Constants.CACHE_BASECODE, key = "#type.name()")
     public List<DtosBasecode> getCodes(BasecodeType type) {
         return getCodeStream(type).map(converter::getDtosBasecode).collect(Collectors.toList());
     }
 
-    public List<BasecodeType> getAllTypes() {
-        return repo.findAll().stream().map(Basecode::getType).distinct().sorted(Comparator.comparing(BasecodeType::getTitle)).collect(Collectors.toList());
-    }
-
+    @Cacheable(cacheManager = Constants.CACHE_MANAGER, cacheNames = Constants.CACHE_BASECODE, key = "#id")
     public DtosBasecode getCode(Long id) {
         return converter.getDtosBasecode( repo.findById(id).get() );
     }
 
 
 
-
     private boolean isDuplicated(BasecodeType type, String code) {
         return getCodeStream(type).filter(e -> e.getCode().equals(code)).findAny().isPresent();
     }
+
+    @CacheEvict(cacheManager = Constants.CACHE_MANAGER, cacheNames = {Constants.CACHE_BASECODE, Constants.CACHE_JOB_TITLES, Constants.CACHE_DAYOFF_CODES}, allEntries = true)
     public ServiceMsg create(BasecodeType type, DtorBasecode dto) {
         try {
             if(isDuplicated(type, dto.getCode())) {
@@ -80,7 +89,7 @@ public class BasecodeService {
         }
     }
 
-
+    @CacheEvict(cacheManager = Constants.CACHE_MANAGER, cacheNames = {Constants.CACHE_BASECODE, Constants.CACHE_JOB_TITLES, Constants.CACHE_DAYOFF_CODES}, allEntries = true)
     public ServiceMsg update(Long id, DtorBasecode dto) {
         try {
             Optional<Basecode> findCode = repo.findById(id);
@@ -109,11 +118,13 @@ public class BasecodeService {
     }
 
 
-
+    
+    @Cacheable(cacheManager = Constants.CACHE_MANAGER, cacheNames = Constants.CACHE_JOB_TITLES)
     public List<String> getJobTitles() {
         return getCodeStream(BasecodeType.JOB_TITLE).map(Basecode::getValue).collect(Collectors.toList());
     }
 
+    @Cacheable(cacheManager = Constants.CACHE_MANAGER, cacheNames = Constants.CACHE_DAYOFF_CODES)
     public List<DtosCodeValue> getDayoffCodes() {
         return getCodeStream(BasecodeType.DAYOFF).map(converter::getDtosCodeValue).collect(Collectors.toList());
     }

@@ -109,6 +109,10 @@ public class Constants {
 
     public static final String CACHE_MANAGER = "cacheManager";
 
+    public static final String CACHE_BASECODE = "basecode";
+    public static final String CACHE_JOB_TITLES = "jobTitles";
+    public static final String CACHE_DAYOFF_CODES = "dayoffCodes";
+
     public static final String CACHE_NOTICE = "notice";
     public static final String CACHE_FREEBOARD = "freeboard";
     public static final String CACHE_POST_IT = "postIt";
