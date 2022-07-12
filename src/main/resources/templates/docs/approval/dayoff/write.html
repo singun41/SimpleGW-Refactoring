@@ -25,10 +25,9 @@
                         <div class="card-body">
                             <th:block th:replace="docs/common/write/title :: title"></th:block>
 
-                            <div class="row mb-3"></div>
-                            <div class="row mb-4">
+                            <div class="row mb-2"></div>
+                            <div class="row mb-2">
                                 <div class="col-12">
-                                    <span class="text-secondary custom-fs-8">기간 선택시 주말은 포함되지 않습니다.</span>
                                     <span class="float-end">
                                         <button type="button" class="btn btn-outline-primary btn-sm btn-icon" onclick="addRow()"><i class="fa-solid fa-plus"></i></button>
                                         <button type="button" class="btn btn-outline-secondary btn-sm btn-icon" onclick="deleteRow()"><i class="fa-solid fa-trash-can"></i></button>
@@ -38,23 +37,17 @@
 
                             <div id="rowGroup">
                                 <div class="row mb-3 data-row" id="defaultRow">
-                                    <div class="col-3">
+                                    <div class="col-5">
                                         <select class="form-select" id="code">
-                                            <option value="" selected disabled>선택..</option>
+                                            <option value="" selected disabled>선택...</option>
                                             <option th:each="code : ${codes}" th:value="${code.getKey()}" th:text="${code.getValue()}"></option>
                                         </select>
                                     </div>
-                                    <div class="col-5">
+                                    <div class="col-7">
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
                                             <input type="text" class="form-control text-center input-date" autocomplete="off">
                                         </div>
-                                    </div>
-                                    <div class="col-2">
-                                        <input type="text" class="form-control text-center" readonly>
-                                    </div>
-                                    <div class="col-2">
-                                        <input type="text" class="form-control text-center" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -69,6 +62,7 @@
                 </div>
 
                 <div class="col-4">
+                    <th:block th:replace="docs/approval/dayoff/count :: count"></th:block>
                     <th:block th:replace="docs/common/write/attachments :: attachments"></th:block>
                     <th:block th:replace="docs/approval/common/write/approvers :: approvers"></th:block>
                 </div>
