@@ -10,7 +10,7 @@ async function save() {
 
     if(docsId) {
         saveComplete = true;
-        location.href = '/page/approval/' + docsType.toLowerCase() + '/' + docsId;
+        location.href = '/page/approval/forms/' + docsType.toLowerCase() + '/' + docsId;
     }
 }
 
@@ -22,7 +22,7 @@ async function saveTemp() {
     
     if(docsId) {
         saveComplete = true;
-        location.href = '/page/approval/' + docsType.toLowerCase() + '/temp/' + docsId;
+        location.href = '/page/approval/forms/' + docsType.toLowerCase() + '/temp/' + docsId;
     }
 }
 

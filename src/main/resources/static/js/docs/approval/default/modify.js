@@ -5,6 +5,6 @@ async function update() {
     let docsId = await updateApprovalDocs(params);
     if(docsId) {
         saveComplete = true;
-        location.href = '/page/approval/' + docsType.toLowerCase() + '/' + docsId;
+        location.href = '/page/approval/forms/' + docsType.toLowerCase() + '/' + docsId;
     }
 }
