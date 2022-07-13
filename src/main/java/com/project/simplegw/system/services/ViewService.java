@@ -8,7 +8,7 @@ import com.project.simplegw.code.dtos.send.DtosBasecode;
 import com.project.simplegw.code.dtos.send.DtosCodeValue;
 import com.project.simplegw.code.services.BasecodeService;
 import com.project.simplegw.code.vos.BasecodeType;
-import com.project.simplegw.document.approval.dtos.send.DtosDefaultReport;
+import com.project.simplegw.document.approval.dtos.send.DtosApprovalDocsCommon;
 import com.project.simplegw.document.approval.services.DefaultReportService;
 import com.project.simplegw.document.dtos.send.DtosDocs;
 import com.project.simplegw.document.services.ArchiveService;
@@ -202,7 +202,7 @@ public class ViewService {   // ViewController에서 필요한 데이터들을 �
 
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- approval ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
-    public DtosDefaultReport getDefaultApproval(DocsType docsType, Long docsId, LoginUser loginUser) {
+    public DtosApprovalDocsCommon getDefaultApproval(DocsType docsType, Long docsId, LoginUser loginUser) {
         return defaultReportService.getDocs(docsType, docsId, loginUser);
     }
 

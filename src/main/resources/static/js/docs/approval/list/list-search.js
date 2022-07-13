@@ -100,17 +100,19 @@ async function search() {
             type.textContent = e.typeTitle;
             writer.textContent = e.writerJobTitle + ' ' + e.writerName;
 
+            let link = e.useEditors ? '/page/approval/forms/' + e.type.toLowerCase() + '/' + e.id : '/page/approval/' + e.type.toLowerCase() + '/' + e.id;
+
             let btn = document.createElement('button');
             let i = document.createElement('i');
             btn.setAttribute('type', 'button');
-            btn.setAttribute('onclick', ('openPopup("/page/approval/' + e.type.toLowerCase() + '/' + e.id + '")'));
+            btn.setAttribute('onclick', ('openPopup("' + link + '")'));
             btn.classList.add('btn', 'btn-outline-secondary', 'btn-sm', 'me-3');
             i.classList.add('fa-solid', 'fa-arrow-up-right-from-square');
             btn.append(i);
             title.append(btn);
 
             let a = document.createElement('a');
-            a.setAttribute('href', '/page/approval/' + e.type.toLowerCase() + '/' + e.id);
+            a.setAttribute('href', link);
             a.innerText = e.title;
             a.classList.add('text-decoration-none', 'text-dark');
 

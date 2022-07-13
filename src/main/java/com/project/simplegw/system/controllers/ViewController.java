@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import com.project.simplegw.code.vos.BasecodeType;
 import com.project.simplegw.document.approval.dtos.send.DtosApprovalDocsCommon;
 import com.project.simplegw.document.approval.dtos.send.DtosApprover;
-import com.project.simplegw.document.approval.dtos.send.DtosDefaultReport;
 import com.project.simplegw.document.approval.vos.ApprovalRole;
 import com.project.simplegw.document.approval.vos.Sign;
 import com.project.simplegw.document.dtos.send.DtosDocs;
@@ -719,7 +718,7 @@ public class ViewController {
         DocsType docsType = DocsType.valueOf(type.toUpperCase());
         Menu menu = docsType.getMenu();
 
-        DtosDefaultReport docs = service.getDefaultApproval(docsType, docsId, loginUser);
+        DtosApprovalDocsCommon docs = service.getDefaultApproval(docsType, docsId, loginUser);
 
         if( ! approvalDocsReadable(docs, loginUser) )
             return Constants.ERROR_PAGE_403;
@@ -744,7 +743,7 @@ public class ViewController {
         DocsType docsType = DocsType.valueOf(type.toUpperCase());
         Menu menu = docsType.getMenu();
 
-        DtosDefaultReport docs = service.getDefaultApproval(docsType, docsId, loginUser);
+        DtosApprovalDocsCommon docs = service.getDefaultApproval(docsType, docsId, loginUser);
 
         if( ! ( authority.isAccessible(menu, loginUser) && authority.isUpdatable(menu, loginUser, docs.getWriterId()) ) )
             return Constants.ERROR_PAGE_403;

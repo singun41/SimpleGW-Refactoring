@@ -2,8 +2,7 @@ package com.project.simplegw.document.approval.services;
 
 import com.project.simplegw.document.approval.dtos.receive.DtorDefaultReport;
 import com.project.simplegw.document.approval.dtos.receive.DtorTempDefaultReport;
-import com.project.simplegw.document.approval.dtos.send.DtosDefaultReport;
-import com.project.simplegw.document.approval.helpers.ApprovalConverter;
+import com.project.simplegw.document.approval.dtos.send.DtosApprovalDocsCommon;
 import com.project.simplegw.document.dtos.receive.DtorDocs;
 import com.project.simplegw.document.dtos.send.DtosDocs;
 import com.project.simplegw.document.entities.TempDocs;
@@ -27,14 +26,11 @@ import lombok.extern.slf4j.Slf4j;
 public class DefaultReportService {
     private final ApprovalDocsService approvalDocsService;
     private final TempDocsService tempDocsService;
-    private final ApprovalConverter converter;
 
     // @Autowired   // framework 버전 업데이트 이후 자동설정되어 선언하지 않아도 됨.
-    public DefaultReportService(ApprovalDocsService approvalDocsService, TempDocsService tempDocsService, ApprovalConverter converter) {
+    public DefaultReportService(ApprovalDocsService approvalDocsService, TempDocsService tempDocsService) {
         this.approvalDocsService = approvalDocsService;
         this.tempDocsService = tempDocsService;
-        this.converter = converter;
-
         log.info("Component '" + this.getClass().getName() + "' has been created.");
     }
 
@@ -56,8 +52,8 @@ public class DefaultReportService {
         return approvalDocsService.delete(docsId, type, loginUser);
     }
 
-    public DtosDefaultReport getDocs(DocsType type, Long docsId, LoginUser loginUser) {
-        return (DtosDefaultReport) approvalDocsService.getDocs(docsId, type, loginUser);
+    public DtosApprovalDocsCommon getDocs(DocsType type, Long docsId, LoginUser loginUser) {
+        return approvalDocsService.getDocs(docsId, type, loginUser);
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 
@@ -67,7 +63,7 @@ public class DefaultReportService {
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- temp docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
     public ServiceMsg createTemp(DocsType type, DtorTempDefaultReport dto, LoginUser loginUser) {
-        Long docsId = tempDocsService.create(converter.getDtorDocs(dto), type, loginUser).getId();
+        Long docsId = tempDocsService.create(new DtorDocs().setTitle(dto.getTitle()).setContent(dto.getContent()), type, loginUser).getId();
 
         if(docsId == null)
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg( new StringBuilder(type.getTitle()).append(" 임시저장 에러입니다. 관리자에게 문의하세요.").toString() );
@@ -83,7 +79,7 @@ public class DefaultReportService {
         if( ! tempDocsService.isOwner(tempDocs, loginUser) )   // 수정은 본인만 가능.
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg(ResponseMsg.UNAUTHORIZED.getTitle());
 
-        tempDocsService.update(docsId, converter.getDtorDocs(dto), type);
+        tempDocsService.update(docsId, new DtorDocs().setTitle(dto.getTitle()).setContent(dto.getContent()), type);
         return new ServiceMsg().setResult(ServiceResult.SUCCESS);
     }
 

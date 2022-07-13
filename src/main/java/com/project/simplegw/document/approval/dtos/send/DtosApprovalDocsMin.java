@@ -20,6 +20,7 @@ public class DtosApprovalDocsMin {
     private Long id;
     private DocsType type;
     private String typeTitle;
+    private boolean useEditors;
     private String title;
 
     private String writerTeam;
@@ -38,6 +39,7 @@ public class DtosApprovalDocsMin {
     public DtosApprovalDocsMin updateDocsType(DocsType type) {
         this.type = type;
         this.typeTitle = type.getTitle();
+        this.useEditors = type.useEditors();
         return this;
     }
 }

@@ -19,6 +19,7 @@ public class DtosTempDocs {   // 임시저장한 문서 리스트를 보여줄 �
     private Long id;
     private DocsType type;
     private DocsGroup group;
+    private boolean useEditors;
     private String typeTitle;
     private String title;
     private LocalDate createdDate;
@@ -26,6 +27,7 @@ public class DtosTempDocs {   // 임시저장한 문서 리스트를 보여줄 �
 
     public DtosTempDocs updateGroup() {
         this.group = type.getGroup();
+        this.useEditors = type.useEditors();
         return this;
     }
 }

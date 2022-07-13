@@ -19,7 +19,11 @@ async function getTempDocs() {
             let type = document.createElement('td');
             let createdDate = document.createElement('td');
 
-            let link = e.group === 'APPROVAL' ? ('/page/approval/' + e.type.toLowerCase() + '/temp/' + e.id ) : ('/page/' + e.type.toLowerCase() + '/temp/' + e.id);
+            let link = (
+                e.group === 'APPROVAL' ? (
+                    e.useEditors ? ('/page/approval/forms/' + e.type.toLowerCase() + '/temp/' + e.id ) : ('/page/approval/' + e.type.toLowerCase() + '/temp/' + e.id )
+                ) : ('/page/' + e.type.toLowerCase() + '/temp/' + e.id)
+            );
 
             let btn = document.createElement('button');
             let i = document.createElement('i');
