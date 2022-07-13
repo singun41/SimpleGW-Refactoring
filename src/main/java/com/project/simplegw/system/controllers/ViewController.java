@@ -6,8 +6,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.project.simplegw.code.vos.BasecodeType;
-import com.project.simplegw.document.approval.dtos.send.DtosApprovalDocs;
+import com.project.simplegw.document.approval.dtos.send.DtosApprovalDocsCommon;
 import com.project.simplegw.document.approval.dtos.send.DtosApprover;
+import com.project.simplegw.document.approval.dtos.send.DtosDefaultReport;
 import com.project.simplegw.document.approval.vos.ApprovalRole;
 import com.project.simplegw.document.approval.vos.Sign;
 import com.project.simplegw.document.dtos.send.DtosDocs;
@@ -607,7 +608,7 @@ public class ViewController {
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- approval ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
     // ↓ ----- ----- ----- ----- ----- ----- ----- common ----- ----- ----- ----- ----- ----- ----- ↓ //
-    private boolean approvalDocsReadable(DtosApprovalDocs docs, LoginUser loginUser) {   // 문서 작성자 or 결재 or 참조로 포함된 경우 볼 수 있음.
+    private boolean approvalDocsReadable(DtosApprovalDocsCommon docs, LoginUser loginUser) {   // 문서 작성자 or 결재 or 참조로 포함된 경우 볼 수 있음.
         Long userId = loginUser.getMember().getId();
 
         return docs.getWriterId().equals(userId) ||
@@ -616,11 +617,11 @@ public class ViewController {
             authority.isAccessible(Menu.APPROVAL_SEARCH, loginUser);   // 결재문서 검색 메뉴 권한이 있으면 다른 결재문서를 볼 수 있다.
     }
 
-    private boolean isProceed(DtosApprovalDocs docs) {
+    private boolean isProceed(DtosApprovalDocsCommon docs) {
         return docs.getLine().getApprovers().stream().filter(e -> e.getSign() == Sign.CONFIRMED || e.getSign() == Sign.REJECTED).findFirst().isPresent();
     }
 
-    private boolean isCurrentApprover(DtosApprovalDocs docs, LoginUser loginUser) {
+    private boolean isCurrentApprover(DtosApprovalDocsCommon docs, LoginUser loginUser) {
         Optional<DtosApprover> target = docs.getLine().getApprovers().stream().filter(e -> e.getSign() == Sign.PROCEED).findFirst();
         if(target.isPresent())
             return target.get().getMemberId().equals( loginUser.getMember().getId() );
@@ -628,7 +629,7 @@ public class ViewController {
         return false;
     }
 
-    private boolean isReferrer(DtosApprovalDocs docs, LoginUser loginUser) {
+    private boolean isReferrer(DtosApprovalDocsCommon docs, LoginUser loginUser) {
         return docs.getLine().getReferrers().stream().filter(e -> e.getMemberId().equals( loginUser.getMember().getId() )).findFirst().isPresent();
     }
 
@@ -718,7 +719,7 @@ public class ViewController {
         DocsType docsType = DocsType.valueOf(type.toUpperCase());
         Menu menu = docsType.getMenu();
 
-        DtosApprovalDocs docs = service.getDefaultApproval(docsType, docsId, loginUser);
+        DtosDefaultReport docs = service.getDefaultApproval(docsType, docsId, loginUser);
 
         if( ! approvalDocsReadable(docs, loginUser) )
             return Constants.ERROR_PAGE_403;
@@ -743,7 +744,7 @@ public class ViewController {
         DocsType docsType = DocsType.valueOf(type.toUpperCase());
         Menu menu = docsType.getMenu();
 
-        DtosApprovalDocs docs = service.getDefaultApproval(docsType, docsId, loginUser);
+        DtosDefaultReport docs = service.getDefaultApproval(docsType, docsId, loginUser);
 
         if( ! ( authority.isAccessible(menu, loginUser) && authority.isUpdatable(menu, loginUser, docs.getWriterId()) ) )
             return Constants.ERROR_PAGE_403;

@@ -1,7 +1,5 @@
 package com.project.simplegw.document.approval.dtos.send;
 
-import com.project.simplegw.document.dtos.send.DtosDocs;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -11,6 +9,6 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 @ToString(callSuper = true)
-public class DtosApprovalDocs extends DtosDocs {
-    private DtosApprovalLinePack line;
+public class DtosDefaultReport extends DtosApprovalDocsCommon {
+    // 디테일이 없는 기본 문서이므로 그대로 전달.
 }

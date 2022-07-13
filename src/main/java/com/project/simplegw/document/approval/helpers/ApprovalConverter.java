@@ -1,7 +1,7 @@
 package com.project.simplegw.document.approval.helpers;
 
 import com.project.simplegw.document.approval.dtos.receive.DtorTempDefaultReport;
-import com.project.simplegw.document.approval.dtos.send.DtosApprovalDocs;
+import com.project.simplegw.document.approval.dtos.send.DtosApprovalDocsCommon;
 import com.project.simplegw.document.approval.dtos.send.DtosApprovalDocsMin;
 import com.project.simplegw.document.approval.dtos.send.DtosApprover;
 import com.project.simplegw.document.approval.dtos.send.DtosMember;
@@ -24,9 +24,7 @@ public interface ApprovalConverter {
 
     DtosMember getDto(MemberData memberData);
 
-    DtorDocs getDtorDocs(DtorTempDefaultReport dto);
-
-    DtosApprovalDocs getDtosApprovalDocs(DtosDocs dto);
+    DtosApprovalDocsCommon getDtosApprovalDocs(DtosDocs dto);
 
     DtosApprover getDtosApprover(Approver entity);
     DtosReferrer getDtosReferrer(Referrer entity);
@@ -36,4 +34,7 @@ public interface ApprovalConverter {
     @Mapping(source = "jobTitle", target = "approverJobTitle")
     @Mapping(source = "name", target = "approverName")
     DtosApprovalDocsMin getDtosApprovalDocsMin(ApprovalStatus entity);
+
+
+    DtorDocs getDtorDocs(DtorTempDefaultReport dto);
 }

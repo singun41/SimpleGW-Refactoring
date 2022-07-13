@@ -7,9 +7,12 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import java.util.function.Function;
 
+import com.project.simplegw.document.approval.dtos.send.DtosApprovalDocsCommon;
 import com.project.simplegw.document.approval.dtos.send.DtosApprovalLinePack;
 import com.project.simplegw.document.approval.entities.OngoingApproval;
+import com.project.simplegw.document.approval.helpers.ApprovalConverter;
 import com.project.simplegw.document.dtos.receive.DtorDocs;
+import com.project.simplegw.document.dtos.send.DtosDocs;
 import com.project.simplegw.document.entities.Docs;
 import com.project.simplegw.document.services.DocsService;
 import com.project.simplegw.document.vos.DocsType;
@@ -30,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ApprovalDocsService {
     private final MemberService memberService;
     private final DocsService docsService;
+    private final ApprovalConverter converter;
     private final OngoingApprovalService ongoingApprovalService;
     private final ApproverService approverService;
     private final ReferrerService referrerService;
@@ -37,12 +41,13 @@ public class ApprovalDocsService {
 
     // @Autowired   // framework 버전 업데이트 이후 자동설정되어 선언하지 않아도 됨.
     public ApprovalDocsService(
-        MemberService memberService, DocsService docsService, ApprovalCountService countService,
+        MemberService memberService, DocsService docsService, ApprovalConverter converter, ApprovalCountService countService,
         OngoingApprovalService ongoingApprovalService, ApproverService approverService, ReferrerService referrerService
     ) {
         this.memberService = memberService;
-
         this.docsService = docsService;
+        this.converter = converter;
+
         this.ongoingApprovalService = ongoingApprovalService;
         this.approverService = approverService;
         this.referrerService = referrerService;
@@ -193,7 +198,15 @@ public class ApprovalDocsService {
 
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재문서 view page에서 필요한 결재자 및 참조자 정보 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
-    public DtosApprovalLinePack getDtosApprovalLinePack(Long docsId, DocsType type, LoginUser loginUser) {   // modify page의 결재자/참조자 요청할 때에도 사용.
+    public DtosApprovalDocsCommon getDocs(Long docsId, DocsType type, LoginUser loginUser) {
+        return converter.getDtosApprovalDocs( getDtosDocs(docsId, type) ).setLine( getDtosApprovalLinePack(docsId, type, loginUser) );
+    }
+
+    private DtosDocs getDtosDocs(Long docsId, DocsType type) {
+        return docsService.getDtosDocs(docsId, type);
+    }
+
+    private DtosApprovalLinePack getDtosApprovalLinePack(Long docsId, DocsType type, LoginUser loginUser) {   // modify page의 결재자/참조자 요청할 때에도 사용.
         Docs docs = docsService.getDocsEntity(docsId, type);
         
         if(docs.getId() == null)
