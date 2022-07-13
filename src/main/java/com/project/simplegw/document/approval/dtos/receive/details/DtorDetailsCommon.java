@@ -1,8 +1,9 @@
-package com.project.simplegw.document.approval.dtos.receive.docs;
+package com.project.simplegw.document.approval.dtos.receive.details;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import com.project.simplegw.document.approval.dtos.receive.DtorLineCommon;
 import com.project.simplegw.system.vos.Constants;
 
 import lombok.Getter;
@@ -13,16 +14,11 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-@ToString(exclude = "content")
-public class DtorTempDefaultReport {
-    // DtorDocs 객체를 직접 멤버변수로 사용하면 컨트롤러에서 @Validated로 체크가 안 된다.
-
-    @NotBlank(message = "제목을 작성하세요.")
+@ToString(callSuper = true)
+public class DtorDetailsCommon extends DtorLineCommon {
+    // 결재문서 공통 양식: 제목, 결재자, 참조자
+    // 각종 결재문서 전용 DTO에서 이 클래스를 상속하여 사용.
+    @NotBlank(message = "제목을 입력하세요.")
     @Size(max = Constants.COLUMN_LENGTH_DOCU_TITLE, message = "제목을 " + Constants.COLUMN_LENGTH_DOCU_TITLE + " 자 이하로 작성하세요.")
     private String title;
-
-    @NotBlank(message = "내용을 입력하세요.")
-    private String content;
-
-    // 임시저장은 결재라인을 저장하지 않는다.
 }

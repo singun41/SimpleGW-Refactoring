@@ -1,8 +1,8 @@
-package com.project.simplegw.document.approval.controllers.docs;
+package com.project.simplegw.document.approval.controllers;
 
-import com.project.simplegw.document.approval.dtos.receive.docs.DtorDefaultReport;
-import com.project.simplegw.document.approval.dtos.receive.docs.DtorTempDefaultReport;
-import com.project.simplegw.document.approval.services.docs.DefaultReportService;
+import com.project.simplegw.document.approval.dtos.receive.DtorDefaultReport;
+import com.project.simplegw.document.approval.dtos.receive.DtorTempDefaultReport;
+import com.project.simplegw.document.approval.services.DefaultReportService;
 import com.project.simplegw.document.vos.DocsType;
 import com.project.simplegw.system.helpers.ResponseConverter;
 import com.project.simplegw.system.security.LoginUser;
@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
-@RequestMapping("/approval")
+@RequestMapping("/approval/forms")
 public class DefaultReportController {
     private final DefaultReportService service;
 
