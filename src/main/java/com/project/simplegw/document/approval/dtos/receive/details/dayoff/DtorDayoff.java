@@ -24,10 +24,4 @@ public class DtorDayoff extends DtorDetailsCommon {
     @Size(min = 1, message = "휴가 데이터를 추가하세요.")
     @NotNull(message = "휴가 데이터를 추가하세요.")
     private List<DtorDayoffDetails> detailList;
-
-    public DtorDayoff updateListSeq() {
-        if(this.detailList.size() > 0)
-            detailList.forEach(e -> e.setSeq( detailList.indexOf(e) ));
-        return this;
-    }
 }

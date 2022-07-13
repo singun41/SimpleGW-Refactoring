@@ -107,6 +107,11 @@ public class ApprovalDocsService {
 
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- common ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
+    public Docs getDocsEntity(Long docsId, DocsType type) {   // detail을 가지는 결재문서 entity의 docs를 바인딩하기 위해.
+        return docsService.getDocsEntity(docsId, type);
+    }
+
+
     public ServiceMsg create(DtorDocs dto, DocsType type, Long[] arrApproverId, Long[] arrReferrerId, LoginUser loginUser) {
         Docs docs = docsService.create(dto, type, loginUser);
         
