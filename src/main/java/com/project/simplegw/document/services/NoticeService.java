@@ -40,6 +40,7 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(rollbackFor = Exception.class, isolation = Isolation.READ_COMMITTED)
 public class NoticeService {
     private final DocsService docsService;
+    private final TempDocsService tempDocsService;
     private final DocsConverter docsConverter;
     private final SseDocsService sseDocsService;
 
@@ -48,8 +49,9 @@ public class NoticeService {
     private static final DocsType NOTICE = DocsType.NOTICE;
 
     // @Autowired   // framework 버전 업데이트 이후 자동설정되어 선언하지 않아도 됨.
-    public NoticeService(DocsService docsService, DocsConverter docsConverter, SseDocsService sseDocsService, MenuAuthorityService authorityService) {
+    public NoticeService(DocsService docsService, TempDocsService tempDocsService, DocsConverter docsConverter, SseDocsService sseDocsService, MenuAuthorityService authorityService) {
         this.docsService = docsService;
+        this.tempDocsService = tempDocsService;
         this.docsConverter = docsConverter;
         this.sseDocsService = sseDocsService;
         this.authorityService = authorityService;
@@ -172,7 +174,7 @@ public class NoticeService {
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- temp docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
     public ServiceMsg createTemp(DtorDocs dto, LoginUser loginUser) {
-        Long docsId = docsService.createTemp(dto, NOTICE, loginUser).getId();
+        Long docsId = tempDocsService.create(dto, NOTICE, loginUser).getId();
 
         if( ! authorityService.isWritable(Menu.NOTICE, loginUser) )
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg( ResponseMsg.UNAUTHORIZED.getTitle() );
@@ -185,21 +187,21 @@ public class NoticeService {
     }
 
     public ServiceMsg updateTemp(Long docsId, DtorDocs dto, LoginUser loginUser) {
-        TempDocs tempDocs = docsService.getTempDocsEntity(docsId, NOTICE);
+        TempDocs tempDocs = tempDocsService.getTempDocsEntity(docsId, NOTICE);
 
         if( ! authorityService.isUpdatable(Menu.NOTICE, loginUser, tempDocs.getWriterId()) )
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg( ResponseMsg.UNAUTHORIZED.getTitle() );
 
-        if( ! docsService.isOwner(tempDocs, loginUser) )   // 임시저장 문서는 본인만 수정 가능.
+        if( ! tempDocsService.isOwner(tempDocs, loginUser) )   // 임시저장 문서는 본인만 수정 가능.
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg(ResponseMsg.UNAUTHORIZED.getTitle());
 
-        docsService.updateTemp(docsId, dto, NOTICE);
+        tempDocsService.update(docsId, dto, NOTICE);
         return new ServiceMsg().setResult(ServiceResult.SUCCESS);
     }
 
 
     public ServiceMsg deleteTemp(Long docsId, LoginUser loginUser) {
-        TempDocs tempDocs = docsService.getTempDocsEntity(docsId, NOTICE);
+        TempDocs tempDocs = tempDocsService.getTempDocsEntity(docsId, NOTICE);
 
         if( ! authorityService.isDeletable(Menu.NOTICE, loginUser, tempDocs.getWriterId()) )
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg( ResponseMsg.UNAUTHORIZED.getTitle() );
@@ -208,8 +210,8 @@ public class NoticeService {
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg( new StringBuilder("삭제 대상 문서가 ").append(NOTICE.getTitle()).append("문서가 아닙니다.").toString() );
 
         
-        if( docsService.isOwner(tempDocs, loginUser) ) {   // 임시저장 문서는 본인만 삭제 가능.
-            docsService.deleteTemp(tempDocs, loginUser);
+        if( tempDocsService.isOwner(tempDocs, loginUser) ) {   // 임시저장 문서는 본인만 삭제 가능.
+            tempDocsService.delete(tempDocs, loginUser);
             return new ServiceMsg().setResult(ServiceResult.SUCCESS);
             
         } else {
@@ -220,7 +222,7 @@ public class NoticeService {
 
 
     public DtosDocs getTempNotice(Long docsId) {
-        return docsService.getDtosDocsFromTempDocs(docsId, NOTICE);
+        return tempDocsService.getDtosDocsFromTempDocs(docsId, NOTICE);
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- temp docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 }

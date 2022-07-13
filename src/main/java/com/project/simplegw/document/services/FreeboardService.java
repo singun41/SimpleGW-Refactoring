@@ -34,14 +34,16 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(rollbackFor = Exception.class, isolation = Isolation.READ_COMMITTED)
 public class FreeboardService {
     private final DocsService docsService;
+    private final TempDocsService tempDocsService;
     private final DocsConverter docsConverter;
     private final SseDocsService sseDocsService;
 
     private static final DocsType FREEBOARD = DocsType.FREEBOARD;
 
     // @Autowired   // framework 버전 업데이트 이후 자동설정되어 선언하지 않아도 됨.
-    public FreeboardService(DocsService docsService, DocsConverter docsConverter, SseDocsService sseDocsService) {
+    public FreeboardService(DocsService docsService, TempDocsService tempDocsService, DocsConverter docsConverter, SseDocsService sseDocsService) {
         this.docsService = docsService;
+        this.tempDocsService = tempDocsService;
         this.docsConverter = docsConverter;
         this.sseDocsService = sseDocsService;
 
@@ -139,7 +141,7 @@ public class FreeboardService {
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- temp docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
     public ServiceMsg createTemp(DtorDocs dto, LoginUser loginUser) {
-        Long docsId = docsService.createTemp(dto, FREEBOARD, loginUser).getId();
+        Long docsId = tempDocsService.create(dto, FREEBOARD, loginUser).getId();
 
         if(docsId == null)
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg( new StringBuilder(FREEBOARD.getTitle()).append(" 임시저장 에러입니다. 관리자에게 문의하세요.").toString() );
@@ -150,25 +152,25 @@ public class FreeboardService {
 
 
     public ServiceMsg updateTemp(Long docsId, DtorDocs dto, LoginUser loginUser) {
-        TempDocs tempDocs = docsService.getTempDocsEntity(docsId, FREEBOARD);
+        TempDocs tempDocs = tempDocsService.getTempDocsEntity(docsId, FREEBOARD);
 
-        if( ! docsService.isOwner(tempDocs, loginUser) )   // 수정은 본인만 가능.
+        if( ! tempDocsService.isOwner(tempDocs, loginUser) )   // 수정은 본인만 가능.
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg(ResponseMsg.UNAUTHORIZED.getTitle());
 
-        docsService.updateTemp(docsId, dto, FREEBOARD);
+        tempDocsService.update(docsId, dto, FREEBOARD);
         return new ServiceMsg().setResult(ServiceResult.SUCCESS);
     }
 
 
     public ServiceMsg deleteTemp(Long docsId, LoginUser loginUser) {
-        TempDocs tempDocs = docsService.getTempDocsEntity(docsId, FREEBOARD);
+        TempDocs tempDocs = tempDocsService.getTempDocsEntity(docsId, FREEBOARD);
 
         if( FREEBOARD != tempDocs.getType() )
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg( new StringBuilder("삭제 대상 문서가 ").append(FREEBOARD.getTitle()).append("문서가 아닙니다.").toString() );
 
 
-        if( docsService.isOwner(tempDocs, loginUser) ) {
-            docsService.deleteTemp(tempDocs, loginUser);
+        if( tempDocsService.isOwner(tempDocs, loginUser) ) {
+            tempDocsService.delete(tempDocs, loginUser);
             return new ServiceMsg().setResult(ServiceResult.SUCCESS);
             
         } else {
@@ -179,7 +181,7 @@ public class FreeboardService {
     
 
     public DtosDocs getTempFreeboard(Long docsId) {
-        return docsService.getDtosDocsFromTempDocs(docsId, FREEBOARD);
+        return tempDocsService.getDtosDocsFromTempDocs(docsId, FREEBOARD);
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- temp docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 }

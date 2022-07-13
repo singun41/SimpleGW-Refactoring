@@ -2,7 +2,7 @@ package com.project.simplegw.document.controllers;
 
 import com.project.simplegw.document.dtos.admin.receive.DtorEditorForm;
 import com.project.simplegw.document.services.DocsFormService;
-import com.project.simplegw.document.services.DocsService;
+import com.project.simplegw.document.services.TempDocsService;
 import com.project.simplegw.document.vos.EditorDocs;
 import com.project.simplegw.system.helpers.ResponseConverter;
 import com.project.simplegw.system.security.LoginUser;
@@ -25,24 +25,24 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/docs")
 public class DocsController {   // 페이지를 띄우는 건 ViewController 클래스가 담당한다.
-    private final DocsService docsService;
+    private final TempDocsService tempDocsService;
     private final DocsFormService formService;
 
     // @Autowired   // framework 버전 업데이트 이후 자동설정되어 선언하지 않아도 됨.
-    public DocsController(DocsService docsService, DocsFormService formService) {
-        this.docsService = docsService;
+    public DocsController(TempDocsService tempDocsService, DocsFormService formService) {
+        this.tempDocsService = tempDocsService;
         this.formService = formService;
         log.info("Component '" + this.getClass().getName() + "' has been created.");
     }
 
     @GetMapping("/temp/list")
     public ResponseEntity<Object> getTempDocs(@AuthenticationPrincipal LoginUser loginUser) {
-        return ResponseConverter.ok( docsService.getTempDocs(loginUser) );
+        return ResponseConverter.ok( tempDocsService.getTempDocs(loginUser) );
     }
 
     @GetMapping("/temp/count")
     public ResponseEntity<Object> getTempDocsCount(@AuthenticationPrincipal LoginUser loginUser) {
-        return ResponseConverter.ok( docsService.getTempDocsCount(loginUser) );
+        return ResponseConverter.ok( tempDocsService.getTempDocsCount(loginUser) );
     }
 
 

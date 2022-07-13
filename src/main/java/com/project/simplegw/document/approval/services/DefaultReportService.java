@@ -8,6 +8,7 @@ import com.project.simplegw.document.dtos.receive.DtorDocs;
 import com.project.simplegw.document.dtos.send.DtosDocs;
 import com.project.simplegw.document.entities.TempDocs;
 import com.project.simplegw.document.services.DocsService;
+import com.project.simplegw.document.services.TempDocsService;
 import com.project.simplegw.document.vos.DocsType;
 import com.project.simplegw.system.security.LoginUser;
 import com.project.simplegw.system.vos.ResponseMsg;
@@ -27,13 +28,16 @@ import lombok.extern.slf4j.Slf4j;
 public class DefaultReportService {
     private final ApprovalDocsService approvalDocsService;
     private final DocsService docsService;
+    private final TempDocsService tempDocsService;
     private final ApprovalConverter converter;
 
     // @Autowired   // framework 버전 업데이트 이후 자동설정되어 선언하지 않아도 됨.
-    public DefaultReportService(ApprovalDocsService approvalDocsService, DocsService docsService, ApprovalConverter converter) {
+    public DefaultReportService(ApprovalDocsService approvalDocsService, DocsService docsService, TempDocsService tempDocsService, ApprovalConverter converter) {
         this.approvalDocsService = approvalDocsService;
         this.docsService = docsService;
+        this.tempDocsService = tempDocsService;
         this.converter = converter;
+
         log.info("Component '" + this.getClass().getName() + "' has been created.");
     }
 
@@ -66,7 +70,7 @@ public class DefaultReportService {
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- temp docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
     public ServiceMsg createTemp(DocsType docsType, DtorTempDefaultReport dto, LoginUser loginUser) {
-        Long docsId = docsService.createTemp(converter.getDtorDocs(dto), docsType, loginUser).getId();
+        Long docsId = tempDocsService.create(converter.getDtorDocs(dto), docsType, loginUser).getId();
 
         if(docsId == null)
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg( new StringBuilder(docsType.getTitle()).append(" 임시저장 에러입니다. 관리자에게 문의하세요.").toString() );
@@ -77,25 +81,25 @@ public class DefaultReportService {
 
 
     public ServiceMsg updateTemp(DocsType docsType, Long docsId, DtorTempDefaultReport dto, LoginUser loginUser) {
-        TempDocs tempDocs = docsService.getTempDocsEntity(docsId, docsType);
+        TempDocs tempDocs = tempDocsService.getTempDocsEntity(docsId, docsType);
 
-        if( ! docsService.isOwner(tempDocs, loginUser) )   // 수정은 본인만 가능.
+        if( ! tempDocsService.isOwner(tempDocs, loginUser) )   // 수정은 본인만 가능.
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg(ResponseMsg.UNAUTHORIZED.getTitle());
 
-        docsService.updateTemp(docsId, converter.getDtorDocs(dto), docsType);
+        tempDocsService.update(docsId, converter.getDtorDocs(dto), docsType);
         return new ServiceMsg().setResult(ServiceResult.SUCCESS);
     }
 
 
     public ServiceMsg deleteTemp(DocsType docsType, Long docsId, LoginUser loginUser) {
-        TempDocs tempDocs = docsService.getTempDocsEntity(docsId, docsType);
+        TempDocs tempDocs = tempDocsService.getTempDocsEntity(docsId, docsType);
 
         if( docsType != tempDocs.getType() )
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg( new StringBuilder("삭제 대상 문서가 ").append(docsType.getTitle()).append("문서가 아닙니다.").toString() );
 
 
-        if( docsService.isOwner(tempDocs, loginUser) ) {
-            docsService.deleteTemp(tempDocs, loginUser);
+        if( tempDocsService.isOwner(tempDocs, loginUser) ) {
+            tempDocsService.delete(tempDocs, loginUser);
             return new ServiceMsg().setResult(ServiceResult.SUCCESS);
             
         } else {
@@ -105,7 +109,7 @@ public class DefaultReportService {
 
 
     public DtosDocs getTemp(DocsType docsType, Long docsId) {
-        return docsService.getDtosDocsFromTempDocs(docsId, docsType);
+        return tempDocsService.getDtosDocsFromTempDocs(docsId, docsType);
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- temp docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 }
