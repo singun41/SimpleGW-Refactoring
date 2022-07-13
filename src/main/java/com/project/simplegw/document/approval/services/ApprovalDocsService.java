@@ -206,7 +206,7 @@ public class ApprovalDocsService {
         return docsService.getDtosDocs(docsId, type);
     }
 
-    private DtosApprovalLinePack getDtosApprovalLinePack(Long docsId, DocsType type, LoginUser loginUser) {   // modify page의 결재자/참조자 요청할 때에도 사용.
+    public DtosApprovalLinePack getDtosApprovalLinePack(Long docsId, DocsType type, LoginUser loginUser) {   // modify page의 결재자/참조자 요청할 때에도 사용해야 하므로 public으로 선언
         Docs docs = docsService.getDocsEntity(docsId, type);
         
         if(docs.getId() == null)
