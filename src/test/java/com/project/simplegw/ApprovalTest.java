@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.simplegw.document.approval.dtos.receive.docs.DtorDefaultReport;
+import com.project.simplegw.document.approval.dtos.receive.DtorDefaultReport;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -88,7 +88,7 @@ public class ApprovalTest {
     @Test
     @WithUserDetails(value = "developer")
     void approvalCreate() throws Exception {   // 결재 승인, 반려 테스트를 위한 기본 결재문서 등록
-        DtorDefaultReport dto = new DtorDefaultReport().setTitle("test").setContent("test").setArrApproverId( new Long[]{122L, 70L, 23L, 65L} );
+        DtorDefaultReport dto = (DtorDefaultReport) new DtorDefaultReport().setTitle("test").setContent("test").setArrApproverId( new Long[]{122L, 70L, 23L, 65L} );
         post(dto, "/approval/default");
     }
 
