@@ -1,6 +1,6 @@
 package com.project.simplegw.document.approval.helpers;
 
-import com.project.simplegw.document.approval.dtos.receive.docs.DtorTempDefaultReport;
+import com.project.simplegw.document.approval.dtos.receive.DtorTempDefaultReport;
 import com.project.simplegw.document.approval.dtos.send.DtosApprovalDocs;
 import com.project.simplegw.document.approval.dtos.send.DtosApprovalDocsMin;
 import com.project.simplegw.document.approval.dtos.send.DtosApprover;

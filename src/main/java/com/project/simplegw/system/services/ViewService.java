@@ -9,7 +9,7 @@ import com.project.simplegw.code.dtos.send.DtosCodeValue;
 import com.project.simplegw.code.services.BasecodeService;
 import com.project.simplegw.code.vos.BasecodeType;
 import com.project.simplegw.document.approval.dtos.send.DtosApprovalDocs;
-import com.project.simplegw.document.approval.services.docs.DefaultReportService;
+import com.project.simplegw.document.approval.services.DefaultReportService;
 import com.project.simplegw.document.dtos.send.DtosDocs;
 import com.project.simplegw.document.services.ArchiveService;
 import com.project.simplegw.document.services.DocsFormService;
