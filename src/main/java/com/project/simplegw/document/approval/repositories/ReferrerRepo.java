@@ -6,10 +6,12 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import com.project.simplegw.document.approval.entities.Referrer;
 import com.project.simplegw.document.vos.DocsType;
 
+@Repository
 public interface ReferrerRepo extends JpaRepository<Referrer, Long> {
     List<Referrer> findByDocsIdOrderById(Long docsId);
     List<Referrer> findByMemberIdOrderById(Long memberId);

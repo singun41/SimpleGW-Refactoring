@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import com.project.simplegw.document.approval.entities.OngoingApproval;
 
+@Repository
 public interface OngoingApprovalRepo extends JpaRepository<OngoingApproval, Long> {
     Optional<OngoingApproval> findByDocsId(Long docsId);
     List<OngoingApproval> findByOwnerId(Long ownerId);
