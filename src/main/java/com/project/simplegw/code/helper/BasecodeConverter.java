@@ -15,4 +15,6 @@ public interface BasecodeConverter {
 
     @Mapping(target = "key", source = "code")
     DtosCodeValue getDtosCodeValue(Basecode entity);
+
+    Basecode getEntity(DtorBasecode dto);
 }
