@@ -1,5 +1,11 @@
 package com.project.simplegw;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -12,7 +18,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.project.simplegw.document.approval.dtos.receive.DtorDefaultReport;
+import com.project.simplegw.document.approval.dtos.receive.details.dayoff.DtorDayoff;
+import com.project.simplegw.document.approval.dtos.receive.details.dayoff.DtorDayoffDetails;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -33,7 +42,11 @@ public class ApprovalTest {
     }
 
     private void post(Object paramObj, String urlString) throws Exception {
-        String params = new ObjectMapper().writeValueAsString(paramObj);
+        // String params = new ObjectMapper().writeValueAsString(paramObj);
+
+        ObjectMapper objMapper = new ObjectMapper();
+        objMapper.registerModule( new JavaTimeModule() );   // LocalDate, LocalTime, LocalDateTime 객체를 매핑하기 위해서 JavaTimeModule을 등록해야 함.
+        String params = objMapper.writeValueAsString(paramObj);
 
         mvc
         .perform(
@@ -45,6 +58,25 @@ public class ApprovalTest {
         .andDo(MockMvcResultHandlers.print())
         .andExpect(MockMvcResultMatchers.status().isOk());
     }
+
+    private void postFail(Object paramObj, String urlString) throws Exception {
+        // String params = new ObjectMapper().writeValueAsString(paramObj);
+
+        ObjectMapper objMapper = new ObjectMapper();
+        objMapper.registerModule( new JavaTimeModule() );   // LocalDate, LocalTime, LocalDateTime 객체를 매핑하기 위해서 JavaTimeModule을 등록해야 함.
+        String params = objMapper.writeValueAsString(paramObj);
+
+        mvc
+        .perform(
+            MockMvcRequestBuilders
+            .post(urlString)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(params)
+        )
+        .andDo(MockMvcResultHandlers.print())
+        .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
 
     private void patch(Object paramObj, String urlString) throws Exception {
         String params = new ObjectMapper().writeValueAsString(paramObj);
@@ -98,5 +130,25 @@ public class ApprovalTest {
     @WithUserDetails(value = "")
     void approvalConfirmed() throws Exception {
         patchNoParams("/approval/confirmed/DEFAULT/37733");
+    }
+
+
+
+
+    // dayoff details validation test
+    @Test
+    @WithUserDetails(value = "20131004")
+    void approvalDayoffCreate() throws Exception {
+        
+        DtorDayoffDetails e1 = new DtorDayoffDetails().setCode(null).setDateStart(LocalDate.parse("2022-07-15", DateTimeFormatter.ISO_DATE)).setDateEnd(LocalDate.parse("2022-07-15", DateTimeFormatter.ISO_DATE));
+        DtorDayoffDetails e2 = new DtorDayoffDetails().setCode("100").setDateStart(LocalDate.parse("2022-08-12", DateTimeFormatter.ISO_DATE)).setDateEnd(LocalDate.parse("2022-08-14", DateTimeFormatter.ISO_DATE));
+        List<DtorDayoffDetails> details = Arrays.asList(e1, e2);
+
+        Long[] approvers = {122L, 70L};
+        Long[] referrers = {46L, 171L};
+
+        DtorDayoff dayoffDto = (DtorDayoff) new DtorDayoff().setContent("test").setDetails(details).setTitle("test").setArrApproverId(approvers).setArrReferrerId(referrers);
+
+        postFail(dayoffDto, "/approval/dayoff");
     }
 }
