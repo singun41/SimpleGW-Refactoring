@@ -1,4 +1,4 @@
-window.addEventListener('DOMContentLoaded', event => {
+window.addEventListener('DOMContentLoaded', () => {
     copyCheck();
 });
 const docsType = document.getElementById('docsType').innerText;

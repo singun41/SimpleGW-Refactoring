@@ -22,7 +22,7 @@ async function search() {
     let dtTo;
 
     if(dt.length === 1)
-        dtTo = dt[0].substr(0, 10).replaceAll('.', '-');
+        dtTo = dtFrom;
     else
         dtTo = dt[1].substr(0, 10).replaceAll('.', '-');
 

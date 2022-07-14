@@ -1,4 +1,4 @@
-window.addEventListener('DOMContentLoaded', event => {
+window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btnSave').setAttribute('onclick', 'updateNotice()');
     getOptions();
 });
