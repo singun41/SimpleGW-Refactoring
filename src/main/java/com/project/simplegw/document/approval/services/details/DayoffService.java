@@ -29,7 +29,6 @@ public class DayoffService {
     private final ApprovalDocsService approvalDocsService;
 
     private final DocsType DAYOFF = DocsType.DAYOFF;
-    
 
     public DayoffService(DayoffRepo repo, DayoffConverter converter, ApprovalDocsService approvalDocsService) {
         this.repo = repo;
@@ -41,9 +40,7 @@ public class DayoffService {
 
 
     private List<Dayoff> createEntities(DtorDayoff dto, Docs docs) {
-        List<Dayoff> entities = dto.getDetailList().stream().map(converter::getEntity).collect(Collectors.toList());
-        entities.forEach(e -> e.updateDocs(docs).updateSeq( entities.indexOf(e) ));
-        return entities;
+        return dto.getDetails().stream().map(e -> converter.getEntity(e).bindDocs(docs).updateSeq(dto.getDetails().indexOf(e)).updateDuration()).collect(Collectors.toList());
     }
     
 
@@ -66,6 +63,7 @@ public class DayoffService {
 
                 return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg( new StringBuilder(DAYOFF.getTitle()).append(" 디테일 등록 에러입니다. 관리자에게 문의하세요.").toString() );
             }
+
         } else {
             return result;
         }
@@ -78,7 +76,9 @@ public class DayoffService {
         if(result.getResult() == ServiceResult.SUCCESS) {
             try {
                 List<Dayoff> oldEntities = repo.findByDocsId(docsId);
-                repo.deleteAllInBatch(oldEntities);   // flush를 명시하지 않았기 때문에 saveAll 한 다음에 oldEntities를 삭제.
+                repo.deleteAllInBatch(oldEntities);
+
+                // flush를 명시하지 않았기 때문에 saveAll 한 다음에 oldEntities를 삭제.
                 repo.saveAll( createEntities(dto, approvalDocsService.getDocsEntity(docsId, DAYOFF)) );
 
                 return new ServiceMsg().setResult(ServiceResult.SUCCESS).setReturnObj(docsId);
@@ -96,10 +96,8 @@ public class DayoffService {
     }
     
 
-    public ServiceMsg delete(Long docsId, LoginUser loginUser) {
-        return approvalDocsService.delete(docsId, DAYOFF, loginUser);   // docs가 삭제되면 cascade로 dayoff entity들은 자동 삭제됨.
-    }
 
+    // docs가 삭제되면 cascade로 dayoff entity들은 자동 삭제되므로 delete 메서드는 필요하지 않음.
 
 
 

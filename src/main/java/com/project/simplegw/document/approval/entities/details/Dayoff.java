@@ -1,20 +1,13 @@
 package com.project.simplegw.document.approval.entities.details;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.Period;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Index;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import com.project.simplegw.document.entities.Docs;
 import com.project.simplegw.system.vos.Constants;
@@ -28,26 +21,18 @@ import lombok.ToString;
 
 @Getter
 @Builder
-@ToString(exclude = {"docs"})   // lazy loading 이기 때문에 제외하지 않으면 no session 에러가 난다.
+@ToString(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PUBLIC)   // entity의 기본 생성자는 반드시 public or protected 이어야 한다.
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "approval_dayoff", indexes = @Index(columnList = "docs_id"))
-public class Dayoff {
-    @Id
-    @Column(name = "id", nullable = false, updatable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "docs_id", nullable = false, updatable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Docs docs;
+public class Dayoff extends DetailsCommon <Dayoff> {
+    // update는 삭제 후 insert로 처리하므로 updatable을 false로 설정.
 
     @Column(name = "seq", nullable = false, updatable = false)
     private int seq;
 
-    @Column(name = "code", nullable = false, updatable = true, length = Constants.COLUMN_LENGTH_BASECODE_CODE)
+    @Column(name = "code", nullable = false, updatable = false, length = Constants.COLUMN_LENGTH_BASECODE_CODE)
     private String code;
 
     @Column(name = "date_start", nullable = false, updatable = false, columnDefinition = Constants.COLUMN_DEFINE_DATE)
@@ -65,14 +50,37 @@ public class Dayoff {
     private double count;
 
 
-
-    public Dayoff updateDocs(Docs docs) {
+    @Override
+    public Dayoff bindDocs(Docs docs) {   // 연관관계 매핑 메서드는 bind엔티티명 으로 작성한다.
         this.docs = docs;
         return this;
     }
 
     public Dayoff updateSeq(int seq) {
         this.seq = seq;
+        return this;
+    }
+
+    public Dayoff updateDuration() {
+        this.duration = Period.between(this.dateStart, this.dateEnd).getDays() + 1;   // end가 제외되어 +1 해준다.
+        this.count = this.duration;
+
+        LocalDate dt = LocalDate.from(this.dateStart);
+        while(dt.isBefore(this.dateEnd) || dt.isEqual(this.dateEnd)) {   // dateEnd 포함.
+            // from ~ to 사이의 주말은 제외한다.
+            if(dt.getDayOfWeek() == DayOfWeek.SATURDAY || dt.getDayOfWeek() == DayOfWeek.SUNDAY)
+                this.count--;
+            
+            dt = dt.plusDays(1L);
+        }
+
+        return updateCount();
+    }
+
+    private Dayoff updateCount() {
+        // BasecodeService에서 등록하는 반차 코드, 반차는 하루당 연차 0.5개
+        if(this.code.equals("110") || this.code.equals("120"))
+            this.count = this.count / 2.0;
         return this;
     }
 }

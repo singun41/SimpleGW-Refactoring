@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     datePickerInit();
 });
 const rowGroup = document.getElementById('rowGroup');
-const defaultRow = document.getElementById('defaultRow').cloneNode(true);
+const defaultRow = document.getElementsByClassName('data-row')[0].cloneNode(true);
 
 function datePickerInit() {
     let pickr = document.getElementsByClassName('input-date');

@@ -36,9 +36,9 @@
                             </div>
 
                             <div id="rowGroup">
-                                <div class="row mb-3 data-row" id="defaultRow">
+                                <div class="row mb-3 data-row">
                                     <div class="col-5">
-                                        <select class="form-select" id="code">
+                                        <select class="form-select dayoff-code">
                                             <option value="" selected disabled>선택...</option>
                                             <option th:each="code : ${codes}" th:value="${code.getKey()}" th:text="${code.getValue()}"></option>
                                         </select>
@@ -54,7 +54,7 @@
 
                             <div class="row mb-3">
                                 <div class="col-12">
-                                    <textarea class="form-control" rows="4" placeholder="내용을 작성하세요."></textarea>
+                                    <textarea class="form-control" rows="4" placeholder="내용을 작성하세요." id="content"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -83,5 +83,6 @@
         <script defer th:src="@{/js/docs/approval/common/approvers-write.js}"></script>
         <script defer th:src="@{/js/docs/approval/common/write.js}"></script>
         <script defer th:src="@{/js/docs/approval/dayoff/common.js}"></script>
+        <script defer th:src="@{/js/docs/approval/dayoff/write.js}"></script>
     </body>
 </html>
