@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // getAuths();
     buildDatatable();
 });
 
@@ -32,7 +31,7 @@ function buildDatatable() {
 
 async function getAuths() {
     let menu = document.getElementById('menu').value;
-    let response = await fetchGet('auths/' + menu);
+    let response = await fetchGet(`auths/${menu}`);
     let result = await response.json();
     
     destroyDataTable();
@@ -53,7 +52,7 @@ async function getAuths() {
             let btn = document.createElement('button');
             btn.classList.add('btn', 'btn-outline-secondary', 'btn-sm');
             btn.innerHTML = '<i class="fa-solid fa-up-right-from-square"></i>';
-            btn.setAttribute('onclick', 'openEdit("' + e.id + '")');
+            btn.setAttribute('onclick', `openEdit("${e.id}")`);
             edit.append(btn);
 
             id.innerText = e.id;
@@ -87,5 +86,5 @@ async function getAuths() {
 
 function openEdit(id) {
     let option = "width=500, height=350";
-    window.open('auths/edit/' + id, '', option);
+    window.open(`auths/edit/${id}`, '', option);
 }

@@ -51,7 +51,7 @@ async function getSavedLines() {
 }
 
 async function getLineDetails() {
-    let response = await fetchGet('approver-line/' + lines.value);
+    let response = await fetchGet(`approver-line/${lines.value}`);
     let result = await response.json();
     if(response.ok) {
         resetLines();
@@ -59,11 +59,11 @@ async function getLineDetails() {
         let referrers = result.obj.referrers;
 
         approvers.forEach(e => {
-            pushApprover(e.id, e.jobTitle + ' ' + e.name);
+            pushApprover(e.id, `${e.jobTitle} ${e.name}`);
         });
 
         referrers.forEach(e => {
-            pushReferrer(e.id, e.jobTitle + ' ' + e.name);
+            pushReferrer(e.id, `${e.jobTitle} ${e.name}`);
         });
     }
 }
@@ -98,7 +98,7 @@ function buildDatatable() {
 
 async function getTeamMembers() {
     let team = document.getElementById('team').value;
-    let response = await fetchGet('user/' + team + '/without-me');
+    let response = await fetchGet(`user/${team}/without-me`);
     let result = await response.json();
     
     destroyDataTable();
@@ -113,7 +113,7 @@ async function getTeamMembers() {
             id.classList.add('d-none');
 
             let name = document.createElement('td');
-            name.innerText = e.jobTitle + ' ' + e.name;
+            name.innerText = `${e.jobTitle} ${e.name}`;
 
             let approver = document.createElement('td');
             let referrer = document.createElement('td');
@@ -172,7 +172,7 @@ function pushApprover(approverId, approverName) {
 
     let name = document.createElement('td');
     name.setAttribute('colspan', '2');
-    name.innerText = (approverLine.childNodes.length + 1) + '. ' + approverName;
+    name.innerText = `${approverLine.childNodes.length + 1}. ${approverName}`;
 
     tr.append(id, name);
     approverLine.append(tr);
@@ -273,7 +273,7 @@ async function save() {
             arrApproverId: approverIds,
             arrReferrerId: referrerIds
         };
-        response = await fetchPatchParams('approver-line/' + lineId, params);
+        response = await fetchPatchParams(`approver-line/${lineId}`, params);
 
 
     } else {   // new
@@ -305,7 +305,7 @@ async function del() {
     if(!confirm('삭제하시겠습니까?'))
         return;
     
-    let response = await fetchDelete('approver-line/' + lines.value);
+    let response = await fetchDelete(`approver-line/${lines.value}`);
     let result = await response.json();
     alert(result.msg);
 

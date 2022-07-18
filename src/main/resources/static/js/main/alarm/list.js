@@ -49,7 +49,7 @@ async function getAlarms() {
 
             let btn = document.createElement('button');
             btn.classList.add('btn', 'btn-outline-secondary', 'btn-sm');
-            btn.setAttribute('onclick', 'openEdit("' + e.id + '")');
+            btn.setAttribute('onclick', `openEdit("${e.id}")`);
             btn.innerHTML = '<i class="fa-solid fa-up-right-from-square"></i>';
             edit.append(btn);
 
@@ -73,7 +73,7 @@ function openNew() {
 
 function openEdit(id) {
     let option = "width=800, height=450";
-    window.open('alarm/' + id, '', option);
+    window.open(`alarm/${id}`, '', option);
 }
 
 function afterCUD() {

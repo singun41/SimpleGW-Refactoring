@@ -35,7 +35,7 @@ function writerSearch() {
 }
 
 async function getTeamMember() {
-    let response = await fetchGet('user/' + team.value);
+    let response = await fetchGet(`user/${team.value}`);
     let result = await response.json();
 
     if(response.ok) {
@@ -44,7 +44,7 @@ async function getTeamMember() {
         Array.from(result.obj).forEach(e => {
             let opt = document.createElement('option');
             opt.value = e.id;
-            opt.textContent = e.jobTitle + ' ' + e.name;
+            opt.textContent = `${e.jobTitle} ${e.name}`;
             user.append(opt);
         });
     }
@@ -98,14 +98,14 @@ async function search() {
 
             id.textContent = e.id;
             type.textContent = e.typeTitle;
-            writer.textContent = e.writerJobTitle + ' ' + e.writerName;
+            writer.textContent = `${e.writerJobTitle} ${e.writerName}`;
 
-            let link = e.useEditors ? '/page/approval/forms/' + e.type.toLowerCase() + '/' + e.id : '/page/approval/' + e.type.toLowerCase() + '/' + e.id;
+            let link = e.useEditors ? `/page/approval/forms/${e.type.toLowerCase()}/${e.id}` : `/page/approval/${e.type.toLowerCase()}/${e.id}`;
 
             let btn = document.createElement('button');
             let i = document.createElement('i');
             btn.setAttribute('type', 'button');
-            btn.setAttribute('onclick', ('openPopup("' + link + '")'));
+            btn.setAttribute('onclick', `openPopup("${link}")`);
             btn.classList.add('btn', 'btn-outline-secondary', 'btn-sm', 'me-3');
             i.classList.add('fa-solid', 'fa-arrow-up-right-from-square');
             btn.append(i);
@@ -123,7 +123,7 @@ async function search() {
                                 e.sign === 'CONFIRMED' ? '<i class="fa-solid fa-check text-success"></i>'
                                                         : '<i class="fa-solid fa-ban text-danger"></i>';
 
-            approver.textContent = e.approverJobTitle + ' ' + e.approverName;
+            approver.textContent = `${e.approverJobTitle} ${e.approverName}`;
             createdDate.textContent = dayjs(e.createdDate).format('YY. MM. DD.');
 
             tr.append(id, type, writer, title, status, approver, createdDate);

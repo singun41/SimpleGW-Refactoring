@@ -14,7 +14,7 @@ const searchDtp = document.getElementById('searchDtp');
 
 async function getData() {
     let dateVal = searchDtp.value.replaceAll(' ', '').split('.');
-    let response = await fetchGet('work-record/personal/' + dateVal[0] + '/' + dateVal[1] + '/' + dateVal[2]);
+    let response = await fetchGet(`work-record/personal/${dateVal[0]}/${dateVal[1]}/${dateVal[2]}`);
     let result = await response.json();
     
     if(response.ok) {

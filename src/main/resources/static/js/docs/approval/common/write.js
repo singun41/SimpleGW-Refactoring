@@ -13,7 +13,7 @@ async function saveApprovalDocs(params) {
     params.arrApproverId = approverIds;
     params.arrReferrerId = referrerIds;
 
-    let response = await fetchPostParams('approval/' + docsType.toLowerCase(), params);
+    let response = await fetchPostParams(`approval/${docsType.toLowerCase()}`, params);
     let result = await response.json();
 
     if(response.ok) {
@@ -40,13 +40,13 @@ async function saveApprovalDocs(params) {
 }
 
 async function saveTempApprovalDocs(params) {
-    if(!confirm('임시저장 하시겠습니까?' + '\n' + '첨부파일과 결재라인은 저장되지 않습니다.'))
+    if(!confirm('임시저장 하시겠습니까?\n첨부파일과 결재라인은 저장되지 않습니다.'))
         return 0;
     
     // 모든 결재문서 임시저장 공통 파라미터: 제목
     params.title = document.getElementById('title').value;
 
-    let response = await fetchPostParams('approval/' + docsType.toLowerCase() + '/temp', params);
+    let response = await fetchPostParams(`approval/${docsType.toLowerCase()}/temp`, params);
     let result = await response.json();
     alert(result.msg);
 

@@ -9,18 +9,18 @@ async function getComments() {
     while(comments.hasChildNodes())
         comments.removeChild(comments.firstChild);
 
-    let response = await fetchGet('comment/' + docsId);
+    let response = await fetchGet(`comment/${docsId}`);
     let result = await response.json();
     if(response.ok) {
         Array.from(result.obj).forEach(e => {
             let writer = document.createElement('span');
             writer.classList.add('custom-fs-8');
-            writer.innerText = e.writerTeam + ' ' + e.writerJobTitle + ' ' + e.writerName;
+            writer.innerText = `${e.writerTeam} ${e.writerJobTitle} ${e.writerName}`;
             
             let btnDel = document.createElement('a');
             btnDel.classList.add('text-decoration-none', 'text-secondary', 'ms-3');
             btnDel.setAttribute('role', 'button');
-            btnDel.setAttribute('onclick', 'deleteComment("' + e.id + '")');
+            btnDel.setAttribute('onclick', `deleteComment("${e.id}")`);
             btnDel.innerHTML = 'X';
 
             let cdt = document.createElement('span');
@@ -51,7 +51,7 @@ async function saveComment() {
     let params = {
         comment: inputComment.value
     };
-    let response = await fetchPostParams('comment/' + docsType.toLowerCase() + '/' + docsId, params);
+    let response = await fetchPostParams(`comment/${docsType.toLowerCase()}/${docsId}`, params);
     let result = await response.json();
     alert(result.msg);
     inputComment.value = '';
@@ -62,7 +62,7 @@ async function deleteComment(id) {
     if(!confirm('댓글을 삭제하시겠습니까?'))
         return;
 
-    let response = await fetchDelete('comment/' + id);
+    let response = await fetchDelete(`comment/${id}`);
     let result = await response.json();
     alert(result.msg);
 

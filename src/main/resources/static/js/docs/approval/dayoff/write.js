@@ -38,13 +38,8 @@ async function save() {
     };
 
     let docsId = await saveApprovalDocs(params);
-
-    console.log(docsId);
-    alert('문서번호:' + docsId + '/n' + 'view 화면 이동 처리부터 계속...');
-    return;
-
     if(docsId)
-        location.href = '/page/approval/' + docsType.toLowerCase() + '/' + docsId;
+        location.href = `/page/approval/${docsType.toLowerCase()}/${docsId}`;
 }
 
 async function saveTemp() {

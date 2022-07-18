@@ -10,7 +10,7 @@ async function update() {
         enabled: (document.getElementById('enabled').value === '1' ? true : false)
     };
 
-    let response = await fetchPatchParams('basecode/' + document.getElementById('id').value, params);
+    let response = await fetchPatchParams(`basecode/${document.getElementById('id').value}`, params);
     let result = await response.json();
     alert(result.msg);
 

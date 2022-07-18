@@ -26,7 +26,7 @@ async function update() {
     };
 
     let alarmId = document.getElementById('alarmId').innerText;
-    let response = await fetchPatchParams('alarm/' + alarmId, params);
+    let response = await fetchPatchParams(`alarm/${alarmId}`, params);
     let result = await response.json();
     alert(result.msg);
     if(response.ok) {
@@ -41,7 +41,7 @@ async function del() {
         return;
     
     let alarmId = document.getElementById('alarmId').innerText;
-    let response = await fetchDelete('alarm/' + alarmId);
+    let response = await fetchDelete(`alarm/${alarmId}`);
     let result = await response.json();
     alert(result.msg);
     if(response.ok) {

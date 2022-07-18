@@ -1,9 +1,9 @@
 function getApiUrl(url)  {
-    return location.protocol + '//' + location.host + '/' + url;
+    return `${location.protocol}//${location.host}/${url}`;
 }
 
 function getQueryString(url, params) {
-    return getApiUrl(url) + '?' + new URLSearchParams(params);
+    return `${getApiUrl(url)}?${new URLSearchParams(params)}`;
 }
 
 function getFetchOptions(params, methodType) {

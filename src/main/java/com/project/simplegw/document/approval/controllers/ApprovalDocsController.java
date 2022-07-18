@@ -10,6 +10,7 @@ import com.project.simplegw.system.vos.ResponseMsg;
 // import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,16 +37,16 @@ public class ApprovalDocsController {
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재자 승인/반려 처리 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
     @PatchMapping("/confirmed/{type}/{docsId}")
-    public ResponseEntity<Object> confirmed(@PathVariable DocsType type, @PathVariable Long docsId, @AuthenticationPrincipal LoginUser loginUser) {
+    public ResponseEntity<Object> confirmed(@PathVariable String type, @PathVariable Long docsId, @AuthenticationPrincipal LoginUser loginUser) {
         return ResponseConverter.message(
-            approvalDocsService.confirmed(type, docsId, loginUser), ResponseMsg.CONFIRMED
+            approvalDocsService.confirmed(DocsType.valueOf(type.toUpperCase()), docsId, loginUser), ResponseMsg.CONFIRMED
         );
     }
 
     @PatchMapping("/rejected/{type}/{docsId}")
-    public ResponseEntity<Object> rejected(@PathVariable DocsType type, @PathVariable Long docsId, @AuthenticationPrincipal LoginUser loginUser) {
+    public ResponseEntity<Object> rejected(@PathVariable String type, @PathVariable Long docsId, @AuthenticationPrincipal LoginUser loginUser) {
         return ResponseConverter.message(
-            approvalDocsService.rejected(type, docsId, loginUser), ResponseMsg.REJECTED
+            approvalDocsService.rejected(DocsType.valueOf(type.toUpperCase()), docsId, loginUser), ResponseMsg.REJECTED
         );
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재자 승인/반려 처리 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
@@ -71,11 +72,21 @@ public class ApprovalDocsController {
 
 
 
+    // 삭제 처리: 모든 결재 문서 공통
+    @DeleteMapping("/{type}/{docsId}")
+    public ResponseEntity<Object> deleteApprovalDocs(@PathVariable Long docsId, @PathVariable String type, @AuthenticationPrincipal LoginUser loginUser) {
+        return ResponseConverter.message(
+            approvalDocsService.delete(docsId, DocsType.valueOf(type.toUpperCase()), loginUser), ResponseMsg.DELETED
+        );
+    }
+
+
+
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 모든 결재문서의 modify page에서 결재자/참조자 요청시 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
     @GetMapping("/line/{docsId}/{type}")
-    public ResponseEntity<Object> getDtosApprovalLinePack(@PathVariable Long docsId, @PathVariable DocsType type, @AuthenticationPrincipal LoginUser loginUser) {
-        return ResponseConverter.ok( approvalDocsService.getDtosApprovalLinePack(docsId, type, loginUser) );
+    public ResponseEntity<Object> getDtosApprovalLinePack(@PathVariable Long docsId, @PathVariable String type, @AuthenticationPrincipal LoginUser loginUser) {
+        return ResponseConverter.ok( approvalDocsService.getDtosApprovalLinePack(docsId, DocsType.valueOf(type.toUpperCase()), loginUser) );
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 모든 결재문서의 modify page에서 결재자/참조자 요청시 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 }

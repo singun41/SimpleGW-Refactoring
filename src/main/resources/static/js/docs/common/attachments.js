@@ -35,14 +35,14 @@ async function uploadFiles(docsId) {
         formData.append('files', e);
     });
 
-    return await fetchFormData('attachments/' + docsId, formData);
+    return await fetchFormData(`attachments/${docsId}`, formData);
 }
 
 async function deleteFile(url, e) {
     if(!confirm('파일을 삭제하시겠습니까?'))
         return;
     
-    let response = await fetchDelete('attachments/' + url);
+    let response = await fetchDelete(`attachments/${url}`);
     let result = await response.json();
     alert(result.msg);
     if(response.ok)

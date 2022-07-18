@@ -21,14 +21,14 @@ async function getTempDocs() {
 
             let link = (
                 e.group === 'APPROVAL' ? (
-                    e.useEditors ? ('/page/approval/forms/' + e.type.toLowerCase() + '/temp/' + e.id ) : ('/page/approval/' + e.type.toLowerCase() + '/temp/' + e.id )
-                ) : ('/page/' + e.type.toLowerCase() + '/temp/' + e.id)
+                    e.useEditors ? `/page/approval/forms/${e.type.toLowerCase()}/temp/${e.id}` : `/page/approval/${e.type.toLowerCase()}/temp/${e.id}`
+                ) : `/page/${e.type.toLowerCase()}/temp/${e.id}`
             );
 
             let btn = document.createElement('button');
             let i = document.createElement('i');
             btn.setAttribute('type', 'button');
-            btn.setAttribute('onclick', ('openPopup("' + link + '")'));
+            btn.setAttribute('onclick', `openPopup("${link}")`);
             btn.classList.add('btn', 'btn-outline-secondary', 'btn-sm', 'me-3');
             i.classList.add('fa-solid', 'fa-arrow-up-right-from-square');
             btn.append(i);
@@ -42,7 +42,7 @@ async function getTempDocs() {
             id.textContent = e.id;
             title.append(a);
             type.textContent = e.typeTitle;
-            createdDate.textContent = dayjs(e.createdDate).format('YY. MM. DD.') + ' ' + e.createdTime.substr(0, 5);
+            createdDate.textContent = `${dayjs(e.createdDate).format('YY. MM. DD.')} ${e.createdTime.substr(0, 5)}`;
 
             title.classList.add('text-start', 'align-middle');
 

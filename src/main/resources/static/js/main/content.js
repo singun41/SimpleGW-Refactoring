@@ -81,7 +81,7 @@ async function getNotices() {
         let a = document.createElement('a');
 
         a.setAttribute('role', 'button');
-        a.setAttribute('onclick', 'openPopup("/page/notice/' + e.id + '")');
+        a.setAttribute('onclick', `openPopup("/page/notice/${e.id}")`);
         a.classList.add('text-decoration-none', 'text-dark');
         a.innerText = e.title;
         
@@ -115,7 +115,7 @@ async function getFreeBoardList() {
         let a = document.createElement('a');
         
         a.setAttribute('role', 'button');
-        a.setAttribute('onclick', 'openPopup("/page/freeboard/' + e.id + '")');
+        a.setAttribute('onclick', `openPopup("/page/freeboard/${e.id}")`);
         a.classList.add('text-decoration-none', 'text-dark');
         a.innerText = e.title;
         

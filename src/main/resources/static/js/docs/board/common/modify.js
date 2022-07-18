@@ -15,7 +15,7 @@ async function update() {
 
     if(docsId) {
         saveComplete = true;
-        location.href = '/page/' + docsType.toLowerCase() + '/' + docsId;
+        location.href = `/page/${docsType.toLowerCase()}/${docsId}`;
     }
 }
 
@@ -27,7 +27,7 @@ async function updateBoard() {
         title: document.getElementById('title').value,
         content: CKEDITOR.instances.ckeditorTextarea.getData()
     };
-    let response = await fetchPatchParams(docsType.toLowerCase() + '/' + docsId, params);
+    let response = await fetchPatchParams(`${docsType.toLowerCase()}/${docsId}`, params);
     let result = await response.json();
 
     if(response.ok) {

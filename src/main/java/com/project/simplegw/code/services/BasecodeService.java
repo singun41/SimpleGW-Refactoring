@@ -247,11 +247,11 @@ public class BasecodeService {
     
     @Cacheable(cacheManager = Constants.CACHE_MANAGER, cacheNames = Constants.CACHE_JOB_TITLES)
     public List<String> getJobTitles() {
-        return getCodeStream(BasecodeType.JOB_TITLE).map(Basecode::getValue).collect(Collectors.toList());
+        return getCodeStream(BasecodeType.JOB_TITLE).filter(Basecode::isEnabled).map(Basecode::getValue).collect(Collectors.toList());
     }
 
     @Cacheable(cacheManager = Constants.CACHE_MANAGER, cacheNames = Constants.CACHE_DAYOFF_CODES)
     public List<DtosCodeValue> getDayoffCodes() {
-        return getCodeStream(BasecodeType.DAYOFF).map(converter::getDtosCodeValue).collect(Collectors.toList());
+        return getCodeStream(BasecodeType.DAYOFF).filter(Basecode::isEnabled).map(converter::getDtosCodeValue).collect(Collectors.toList());
     }
 }

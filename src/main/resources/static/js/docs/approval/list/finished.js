@@ -55,12 +55,12 @@ async function search() {
             id.textContent = e.id;
             type.textContent = e.typeTitle;
 
-            let link = e.useEditors ? '/page/approval/forms/' + e.type.toLowerCase() + '/' + e.id : '/page/approval/' + e.type.toLowerCase() + '/' + e.id;
+            let link = e.useEditors ? `/page/approval/forms/${e.type.toLowerCase()}/${e.id}` : `/page/approval/${e.type.toLowerCase()}/${e.id}`;
 
             let btn = document.createElement('button');
             let i = document.createElement('i');
             btn.setAttribute('type', 'button');
-            btn.setAttribute('onclick', ('openPopup("' + link + '")'));
+            btn.setAttribute('onclick', `openPopup("${link}")`);
             btn.classList.add('btn', 'btn-outline-secondary', 'btn-sm', 'me-3');
             i.classList.add('fa-solid', 'fa-arrow-up-right-from-square');
             btn.append(i);
@@ -74,7 +74,7 @@ async function search() {
             title.append(a)
             title.classList.add('text-start', 'align-middle');
 
-            approver.textContent = e.approverJobTitle + ' ' + e.approverName;
+            approver.textContent = `${e.approverJobTitle} ${e.approverName}`;
 
             if(e.sign === 'CONFIRMED') {
                 status.innerHTML = '<i class="fa-solid fa-check text-success"></i>';

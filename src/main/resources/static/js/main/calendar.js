@@ -76,7 +76,7 @@ async function getHolidays() {
     let year = calendar.getDate().getFullYear();
     let month = calendar.getDate().getMonth() + 1;
 
-    let response = await fetchGet('api/calendar/holidays/' + year + '/' + month);
+    let response = await fetchGet(`api/calendar/holidays/${year}/${month}`);
     let result = await response.json();
     if(response.ok)
         Array.from(result).forEach(e => { addEvent(e.index, e.title, e.dateStart, e.dateEnd, e.holiday); });

@@ -8,6 +8,6 @@ async function saveNotice() {   // saveOptions() 때문에 공통함수 save()�
         saveComplete = true;
         await saveOptions(docsId);
         deleteTemp();   // 정상 등록하면 임시저장 문서를 삭제할 지 묻는다.
-        location.href = '/page/' + docsType.toLowerCase() + '/' + docsId;
+        location.href = `/page/${docsType.toLowerCase()}/${docsId}`;
     }
 }

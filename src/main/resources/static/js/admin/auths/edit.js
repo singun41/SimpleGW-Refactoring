@@ -9,7 +9,7 @@ async function update() {
     };
 
     let id = document.getElementById('id').innerText;
-    let response = await fetchPatchParams('auths/' + id, params);
+    let response = await fetchPatchParams(`auths/${id}`, params);
     let result = await response.json();
     alert(result.msg);
 

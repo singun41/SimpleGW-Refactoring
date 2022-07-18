@@ -41,7 +41,7 @@ async function getCodes() {
         return;
     }
 
-    let response = await fetchGet('basecode/' + type);
+    let response = await fetchGet(`basecode/${type}`);
     let result = await response.json();
 
     destroyDataTable();
@@ -68,7 +68,7 @@ async function getCodes() {
             let btn = document.createElement('button');
             btn.setAttribute('type', 'button');
             btn.classList.add('btn', 'btn-outline-secondary', 'btn-sm');
-            btn.setAttribute('onclick', 'openEdit("' + e.id + '")');
+            btn.setAttribute('onclick', `openEdit("${e.id}")`);
             btn.append(i);
             edit.append(btn);
 
@@ -106,7 +106,7 @@ async function getCodes() {
 
 function openEdit(id) {
     let option = "width=1000, height=300";
-    window.open('code/' + id, '', option);
+    window.open(`code/${id}`, '', option);
 }
 
 function openNew() {
@@ -116,5 +116,5 @@ function openNew() {
         return;
     }
     let option = "width=1000, height=300";
-    window.open('code/new/' + type, '', option);
+    window.open(`code/new/${type}`, '', option);
 }

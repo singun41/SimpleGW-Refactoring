@@ -18,7 +18,7 @@ async function saveOptions(docsId) {
         dueDate: ((enabledDueDate && dueDateVal !== '') ? dueDateVal : null)   // 체크되어 있고, 빈 값이 아닌 경우만 등록.
     };
 
-    await fetchPostParams('notice/' + docsId + '/options', params);
+    await fetchPostParams(`notice/${docsId}/options`, params);
 }
 
 let useOpt = false;
@@ -30,14 +30,14 @@ function setDueDate(e) {
 }
 
 async function getOptions() {
-    let response = await fetchGet('notice/' + document.getElementById('docsId').innerText + '/options');
+    let response = await fetchGet(`notice/${docsId}/options`);
     let result = await response.json();
     
     let options = result.obj;
     if(options) {
         if(options.dueDate) {
             document.getElementById('chkDueDate').click();
-            document.getElementById('inputDueDate').value = options.dueDate.replaceAll('-', '. ') + '.';
+            document.getElementById('inputDueDate').value = `${options.dueDate.replaceAll('-', '. ')}.`;
         }
     }
 }

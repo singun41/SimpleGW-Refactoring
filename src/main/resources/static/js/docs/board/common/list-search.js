@@ -32,7 +32,7 @@ async function search() {
     };
 
     let docsType = document.getElementById('docsType').innerText;
-    let response = await fetchGetParams(docsType.toLowerCase() + '/list', params);
+    let response = await fetchGetParams(`${docsType.toLowerCase()}/list`, params);
     let result = await response.json();
 
     destroyDataTable();
@@ -50,7 +50,7 @@ async function search() {
             let btn = document.createElement('button');
             let i = document.createElement('i');
             btn.setAttribute('type', 'button');
-            btn.setAttribute('onclick', ('openPopup("' + e.id + '")'));
+            btn.setAttribute('onclick', `openPopup("${e.id}")`);
             btn.classList.add('btn', 'btn-outline-secondary', 'btn-sm', 'me-3');
             i.classList.add('fa-solid', 'fa-arrow-up-right-from-square');
             btn.append(i);
@@ -63,7 +63,7 @@ async function search() {
 
             id.textContent = e.id;
             title.append(a);
-            writer.textContent = e.writerJobTitle + ' ' + e.writerName;
+            writer.textContent = `${e.writerJobTitle} ${e.writerName}`;
             createdDate.textContent = dayjs(e.createdDate).format('YY. MM. DD.');
 
             title.classList.add('text-start', 'align-middle');

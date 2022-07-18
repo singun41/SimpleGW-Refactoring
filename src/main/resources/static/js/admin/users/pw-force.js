@@ -17,7 +17,7 @@ async function update() {
     let params = {
         pw: document.getElementById('pw').value
     };
-    let response = await fetchPatchParams('user/' + id + '/pw', params);
+    let response = await fetchPatchParams(`user/${id}/pw`, params);
     let result = await response.json();
     alert(result.msg);
 

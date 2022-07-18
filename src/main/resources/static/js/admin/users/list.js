@@ -58,12 +58,12 @@ async function getUsers() {
             let pw = document.createElement('td');
             let btnPw = document.createElement('button');
 
-            btnEdit.setAttribute('onclick', 'openProfile("' + e.id + '")');
+            btnEdit.setAttribute('onclick', `openProfile("${e.id}")`);
             btnEdit.classList.add('btn', 'btn-outline-secondary', 'btn-sm');
             btnEdit.innerHTML = '<i class="fa-solid fa-up-right-from-square"></i>';
             edit.append(btnEdit);
 
-            btnPw.setAttribute('onclick', 'openPw("' + e.id + '")');
+            btnPw.setAttribute('onclick', `openPw("${e.id}")'`);
             btnPw.classList.add('btn', 'btn-outline-secondary', 'btn-sm');
             btnPw.innerHTML = '<i class="fa-solid fa-up-right-from-square"></i>';
             pw.append(btnPw);
@@ -102,7 +102,7 @@ async function getUsers() {
 
 function openProfile(id) {
     let option = "width=1330, height=550";
-    window.open('user/profiles/' + id, '', option);
+    window.open(`user/profiles/${id}`, '', option);
 }
 
 function openNew() {
@@ -112,5 +112,5 @@ function openNew() {
 
 function openPw(id) {
     let option = "width=500, height=250";
-    window.open('user/pw/' + id, '', option);
+    window.open(`user/pw/${id}`, '', option);
 }

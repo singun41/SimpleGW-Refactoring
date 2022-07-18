@@ -49,7 +49,7 @@ async function update() {
         retired: (document.getElementById('retired').value === '1' ? true : false)
     };
 
-    let response = await fetchPatchParams('user/' + id, params);
+    let response = await fetchPatchParams(`user/${id}`, params);
     let result = await response.json();
     alert(result.msg);
 

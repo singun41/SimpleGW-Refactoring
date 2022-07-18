@@ -31,7 +31,7 @@ function receiveMsgFromChild(e) {   // content.js로부터 메시지 수신
 
 const iframePage = document.getElementById('page');
 function page(url) {
-    iframePage.setAttribute('src', '/page/' + url);
+    iframePage.setAttribute('src', `/page/${url}`);
 }
 
 function sendMsgToChild(msg) {   // iFrame으로 띄워져 있는 페이지의 js 함수 호출. 여기서는 content.js
@@ -40,7 +40,7 @@ function sendMsgToChild(msg) {   // iFrame으로 띄워져 있는 페이지의 j
 
 
 function connectSse() {
-    let sse = new EventSource(location.protocol + '//' + location.host + '/sse/connect');
+    let sse = new EventSource(`${location.protocol}//${location.host}/sse/connect`);
     sse.onmessage = (event) => {
         let result = JSON.parse(event.data);
         
@@ -115,7 +115,7 @@ async function showNotifications() {
         notiContent.innerHTML = '';
 
         Array.from(result.obj).forEach(e => {
-            notiContent.innerHTML += e + '<br><br>';
+            notiContent.innerHTML += `${e}<br><br>`;
         });
     }
     notificationModal.show();

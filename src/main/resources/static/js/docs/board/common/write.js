@@ -63,12 +63,12 @@ async function saveTemp() {
 
     if(docsId) {
         saveComplete = true;
-        location.href = '/page/' + docsType.toLowerCase() + '/temp/' + docsId;
+        location.href = `/page/${docsType.toLowerCase()}/temp/${docsId}`;
     }
 }
 
 async function saveTempBoard() {
-    if(!confirm('임시저장 하시겠습니까?' + '\n' + '첨부파일은 저장되지 않습니다.'))
+    if(!confirm(`임시저장 하시겠습니까?\n첨부파일은 저장되지 않습니다.`))
         return 0;
     
     let params = {
@@ -76,7 +76,7 @@ async function saveTempBoard() {
         content: CKEDITOR.instances.ckeditorTextarea.getData()
     };
 
-    let response = await fetchPostParams(docsType.toLowerCase() + '/temp', params);
+    let response = await fetchPostParams(`${docsType.toLowerCase()}/temp`, params);
     let result = await response.json();
     alert(result.msg);
 

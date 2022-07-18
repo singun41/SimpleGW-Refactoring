@@ -14,7 +14,7 @@ const searchDtp = document.getElementById('searchDtp');
 
 async function getData() {
     let dateVal = searchDtp.value.replaceAll(' ', '').split('.');
-    let response = await fetchGet('work-record/team/' + dateVal[0] + '/' + dateVal[1] + '/' + dateVal[2]);
+    let response = await fetchGet(`work-record/team/${dateVal[0]}/${dateVal[1]}/${dateVal[2]}`);
     let result = await response.json();
     
     if(response.ok) {
@@ -31,7 +31,7 @@ async function getData() {
 
             let name = document.createElement('span');
             name.classList.add('text-secondary');
-            name.innerText = e.name + ' ' + e.jobTitle;
+            name.innerText = `${e.name} ${e.jobTitle}`;
 
             nameDiv.append(name);
 

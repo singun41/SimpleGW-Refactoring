@@ -10,7 +10,7 @@ async function save() {
         enabled: (document.getElementById('enabled').value === '1' ? true : false)
     };
 
-    let response = await fetchPostParams('basecode/' + document.getElementById('type').value, params);
+    let response = await fetchPostParams(`basecode/${document.getElementById('type').value}`, params);
     let result = await response.json();
     alert(result.msg);
 

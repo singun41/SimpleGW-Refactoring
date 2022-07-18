@@ -30,7 +30,7 @@ function setLine() {
     Array.from(lineData.approverNames).forEach(e => {
         let p = document.createElement('p');
         p.classList.add('text-center');
-        p.innerText = num + '. ' + e;
+        p.innerText = `${num}. ${e}`;
         approvers.append(p);
         num++;
     });

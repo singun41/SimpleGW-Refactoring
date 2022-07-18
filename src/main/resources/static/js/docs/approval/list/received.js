@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function searchNew(type) {   // received-approver.js, received-referrer.js에서 호출.
-    let response = await fetchGet('approval-list/' + type + '/new');
+    let response = await fetchGet(`approval-list/${type}/new`);
     let result = await response.json();
 
     destroyDataTable();
@@ -25,19 +25,19 @@ async function searchNew(type) {   // received-approver.js, received-referrer.js
 
             id.textContent = e.id;
             type.textContent = e.typeTitle;
-            writer.textContent = e.writerJobTitle + ' ' + e.writerName;
+            writer.textContent = `${e.writerJobTitle} ${e.writerName}`;
 
             let btn = document.createElement('button');
             let i = document.createElement('i');
             btn.setAttribute('type', 'button');
-            btn.setAttribute('onclick', ('openPopup("/page/approval/' + e.type.toLowerCase() + '/' + e.id + '")'));
+            btn.setAttribute('onclick', `openPopup("/page/approval/${e.type.toLowerCase()}/${e.id}")` );
             btn.classList.add('btn', 'btn-outline-secondary', 'btn-sm', 'me-3');
             i.classList.add('fa-solid', 'fa-arrow-up-right-from-square');
             btn.append(i);
             title.append(btn);
 
             let a = document.createElement('a');
-            a.setAttribute('href', '/page/approval/' + e.type.toLowerCase() + '/' + e.id);
+            a.setAttribute('href', `/page/approval/${e.type.toLowerCase()}/${e.id}`);
             a.innerText = e.title;
             a.classList.add('text-decoration-none', 'text-dark');
 
@@ -48,7 +48,7 @@ async function searchNew(type) {   // received-approver.js, received-referrer.js
                                 e.sign === 'CONFIRMED' ? '<i class="fa-solid fa-check text-success"></i>'
                                                         : '<i class="fa-solid fa-ban text-danger"></i>';
 
-            approver.textContent = e.approverJobTitle + ' ' + e.approverName;
+            approver.textContent = `${e.approverJobTitle} ${e.approverName}`;
             createdDate.textContent = dayjs(e.createdDate).format('YY. MM. DD.');
 
             tr.append(id, type, writer, title, status, approver, createdDate);

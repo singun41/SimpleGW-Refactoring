@@ -6,7 +6,7 @@ const docsId = document.getElementById('docsId').innerText;
 const docsType = document.getElementById('docsType').innerText;
 
 async function setApprovalLines() {
-    let response = await fetchGet('approval/line/' + docsId + '/' + docsType);
+    let response = await fetchGet(`approval/line/${docsId}/${docsType.toLowerCase()}`);
     let result = await response.json();
 
     if(response.ok) {
@@ -16,12 +16,12 @@ async function setApprovalLines() {
         let approverIds = [];
         let approverNames = [];
         Array.from(approvers).forEach(e => { approverIds.push(e.memberId); });
-        Array.from(approvers).forEach(e => { approverNames.push(e.jobTitle + ' ' + e.name); });
+        Array.from(approvers).forEach(e => { approverNames.push(`${e.jobTitle} ${e.name}`); });
 
         let referrerIds = [];
         let referrerNames = [];
         Array.from(referrers).forEach(e => { referrerIds.push(e.memberId); });
-        Array.from(referrers).forEach(e => { referrerNames.push(e.jobTitle + ' ' + e.name); });
+        Array.from(referrers).forEach(e => { referrerNames.push(`${e.jobTitle} ${e.name}`); });
 
         let approverLineData = {
             approverIds: approverIds,
@@ -46,7 +46,7 @@ async function updateApprovalDocs(params) {
     params.arrApproverId = approverIds;
     params.arrReferrerId = referrerIds;
 
-    let response = await fetchPatchParams('approval/' + docsType.toLowerCase() + '/' + docsId, params);
+    let response = await fetchPatchParams(`approval/${docsType.toLowerCase()}/${docsId}`, params);
     let result = await response.json();
     
     if(response.ok) {

@@ -10,6 +10,6 @@ async function updateNotice() {
     if(docsId) {
         saveComplete = true;
         await saveOptions(docsId);
-        location.href = '/page/' + docsType.toLowerCase() + '/' + docsId;
+        location.href = `/page/${docsType.toLowerCase()}/${docsId}`;
     }
 }

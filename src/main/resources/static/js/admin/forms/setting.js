@@ -9,7 +9,7 @@ window.addEventListener('beforeunload', event => {
 
 async function getForm() {
     let docs = document.getElementById('forms').value;
-    let response = await fetchGet('docs/form/' + docs);
+    let response = await fetchGet(`docs/form/${docs}`);
     let result = await response.json();
     if(response.ok)
         CKEDITOR.instances.ckeditorTextarea.setData(result.obj);
