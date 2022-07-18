@@ -4,6 +4,9 @@ import org.mapstruct.Mapper;
 
 import com.project.simplegw.document.approval.dtos.receive.details.dayoff.DtorDayoff;
 import com.project.simplegw.document.approval.dtos.receive.details.dayoff.DtorDayoffDetails;
+import com.project.simplegw.document.approval.dtos.send.DtosApprovalDocsCommon;
+import com.project.simplegw.document.approval.dtos.send.details.dayoff.DtosDayoff;
+import com.project.simplegw.document.approval.dtos.send.details.dayoff.DtosDayoffDetails;
 import com.project.simplegw.document.approval.entities.details.Dayoff;
 import com.project.simplegw.document.dtos.receive.DtorDocs;
 
@@ -11,4 +14,7 @@ import com.project.simplegw.document.dtos.receive.DtorDocs;
 public interface DayoffConverter {
     DtorDocs getDtorDocs(DtorDayoff dto);
     Dayoff getEntity(DtorDayoffDetails dto);
+    
+    DtosDayoffDetails getDetails(Dayoff entity);
+    DtosDayoff getDocs(DtosApprovalDocsCommon dto);
 }

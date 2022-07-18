@@ -9,7 +9,9 @@ import com.project.simplegw.code.dtos.send.DtosCodeValue;
 import com.project.simplegw.code.services.BasecodeService;
 import com.project.simplegw.code.vos.BasecodeType;
 import com.project.simplegw.document.approval.dtos.send.DtosApprovalDocsCommon;
+import com.project.simplegw.document.approval.dtos.send.details.dayoff.DtosDayoff;
 import com.project.simplegw.document.approval.services.DefaultReportService;
+import com.project.simplegw.document.approval.services.details.DayoffService;
 import com.project.simplegw.document.dtos.send.DtosDocs;
 import com.project.simplegw.document.services.ArchiveService;
 import com.project.simplegw.document.services.DocsFormService;
@@ -58,6 +60,7 @@ public class ViewService {   // ViewController에서 필요한 데이터들을 �
 
     // Approvals..
     private final DefaultReportService defaultReportService;
+    private final DayoffService dayoffService;
 
     // @Autowired   // framework 버전 업데이트 이후 자동설정되어 선언하지 않아도 됨.
     public ViewService(
@@ -66,7 +69,7 @@ public class ViewService {   // ViewController에서 필요한 데이터들을 �
         BasecodeService basecodeService, DocsFormService formService, AttachmentsService attachmentsService,
         NoticeService noticeService, FreeboardService freeboardService, SuggestionService suggestionService, ArchiveService archiveService,
 
-        DefaultReportService defaultReportService
+        DefaultReportService defaultReportService, DayoffService dayoffService
     ) {
         this.alarmService = alarmService;
 
@@ -84,6 +87,7 @@ public class ViewService {   // ViewController에서 필요한 데이터들을 �
         this.archiveService = archiveService;
 
         this.defaultReportService = defaultReportService;
+        this.dayoffService = dayoffService;
 
         log.info("Component '" + this.getClass().getName() + "' has been created.");
     }
@@ -208,6 +212,13 @@ public class ViewService {   // ViewController에서 필요한 데이터들을 �
 
     public DtosDocs getTempDefaultApproval(DocsType docsType, Long docsId) {
         return defaultReportService.getTemp(docsType, docsId);
+    }
+
+
+
+    
+    public DtosDayoff getDayoffApproval(Long docsId, LoginUser loginUser) {
+        return dayoffService.getDocs(docsId, loginUser);
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- approval ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 }

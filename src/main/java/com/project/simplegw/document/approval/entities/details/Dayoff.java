@@ -78,9 +78,11 @@ public class Dayoff extends DetailsCommon <Dayoff> {
     }
 
     private Dayoff updateCount() {
-        // BasecodeService에서 등록하는 반차 코드, 반차는 하루당 연차 0.5개
-        if(this.code.equals("110") || this.code.equals("120"))
-            this.count = this.count / 2.0;
+        switch(this.code) {
+            case "100" -> {}   // 연차는 updateDuration()에서 계산한 그대로 적용.
+            case "110", "120" -> this.count = this.count / 2.0;   // BasecodeService에서 등록하는 반차 코드, 반차는 하루당 연차 0.5개
+            default -> this.count = this.count * 0;   // 나머지는 계산하지 않음.
+        }
         return this;
     }
 }

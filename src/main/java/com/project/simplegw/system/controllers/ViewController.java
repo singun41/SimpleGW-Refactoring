@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import com.project.simplegw.code.vos.BasecodeType;
 import com.project.simplegw.document.approval.dtos.send.DtosApprovalDocsCommon;
 import com.project.simplegw.document.approval.dtos.send.DtosApprover;
+import com.project.simplegw.document.approval.dtos.send.details.dayoff.DtosDayoff;
 import com.project.simplegw.document.approval.vos.ApprovalRole;
 import com.project.simplegw.document.approval.vos.Sign;
 import com.project.simplegw.document.dtos.send.DtosDocs;
@@ -806,6 +807,30 @@ public class ViewController {
             .addAttribute("codes", service.getDayoffCodes());
 
         return "docs/approval/dayoff/write";
+    }
+
+    @GetMapping("/page/approval/dayoff/{docsId}")
+    public String dayoffApprovalViewPage(@PathVariable Long docsId, Model model, @AuthenticationPrincipal LoginUser loginUser) {
+        DtosDayoff docs = service.getDayoffApproval(docsId, loginUser);
+        Menu menu = Menu.APPROVAL_DAYOFF;
+
+        if( ! approvalDocsReadable(docs, loginUser) )
+            return Constants.ERROR_PAGE_403;
+
+        boolean isOwner = docs.getWriterId().equals(loginUser.getMember().getId());
+        boolean isProceed = isProceed(docs);
+        boolean isUpdatable = isProceed ? false : authority.isUpdatable(menu, loginUser, docs.getWriterId());
+        boolean isDeletable = isProceed ? false : authority.isDeletable(menu, loginUser, docs.getWriterId());
+        boolean isCurrentApprover = isCurrentApprover(docs, loginUser);
+
+        model.addAttribute("docs", docs)
+            .addAttribute("attachmentsList", getAttachmentsList(docsId))
+            .addAttribute("isOwner", isOwner)
+            .addAttribute("isUpdatable", isUpdatable)
+            .addAttribute("isDeletable", isDeletable)
+            .addAttribute("isCurrentApprover", isCurrentApprover);
+
+        return "docs/approval/dayoff/view";
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- dayoff ----- ----- ----- ----- ----- ----- ----- ↑ //
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- approval ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //

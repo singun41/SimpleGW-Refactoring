@@ -179,7 +179,8 @@ public class MenuAuthorityService {
                 repo.saveAll(
                     Arrays.asList(
                         notice, freeboard, suggestion, archive,
-                        workRecord, workRecordTeam, workRecordList, approvalSearch, approvalDefault, approvalCooperation
+                        workRecord, workRecordTeam, workRecordList,
+                        approvalSearch, approvalDefault, approvalCooperation, approvalDayoff
                     )
                 );
             });

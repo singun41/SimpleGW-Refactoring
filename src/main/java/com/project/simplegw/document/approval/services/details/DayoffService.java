@@ -7,7 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.project.simplegw.code.services.BasecodeService;
 import com.project.simplegw.document.approval.dtos.receive.details.dayoff.DtorDayoff;
+import com.project.simplegw.document.approval.dtos.send.details.dayoff.DtosDayoff;
+import com.project.simplegw.document.approval.dtos.send.details.dayoff.DtosDayoffDetails;
 import com.project.simplegw.document.approval.entities.details.Dayoff;
 import com.project.simplegw.document.approval.helpers.details.DayoffConverter;
 import com.project.simplegw.document.approval.repositories.details.DayoffRepo;
@@ -27,13 +30,16 @@ public class DayoffService {
     private final DayoffRepo repo;
     private final DayoffConverter converter;
     private final ApprovalDocsService approvalDocsService;
+    private final BasecodeService basecodeService;
 
     private final DocsType DAYOFF = DocsType.DAYOFF;
 
-    public DayoffService(DayoffRepo repo, DayoffConverter converter, ApprovalDocsService approvalDocsService) {
+    public DayoffService(DayoffRepo repo, DayoffConverter converter, ApprovalDocsService approvalDocsService, BasecodeService basecodeService) {
         this.repo = repo;
         this.converter = converter;
         this.approvalDocsService = approvalDocsService;
+        this.basecodeService = basecodeService;
+
         log.info("Component '" + this.getClass().getName() + "' has been created.");
     }
 
@@ -95,9 +101,23 @@ public class DayoffService {
         }
     }
     
-
-
+    
+    
     // docs가 삭제되면 cascade로 dayoff entity들은 자동 삭제되므로 delete 메서드는 필요하지 않음.
+
+
+    public DtosDayoff getDocs(Long docsId, LoginUser loginUser) {
+        DtosDayoff docs = converter.getDocs( approvalDocsService.getDocs(docsId, DAYOFF, loginUser) );
+        return docs.setDetails(getDetails(docsId));
+    }
+
+    private List<DtosDayoffDetails> getDetails(Long docsId) {
+        return repo.findByDocsId(docsId).stream().map(
+            e -> converter.getDetails(e).setValue(
+                basecodeService.getDayoffCodes().stream().filter( code -> e.getCode().equals(code.getKey()) ).findFirst().get().getValue()
+            )
+        ).collect(Collectors.toList());
+    }
 
 
 
