@@ -9,6 +9,7 @@ import com.project.simplegw.code.vos.BasecodeType;
 import com.project.simplegw.document.approval.dtos.send.DtosApprovalDocsCommon;
 import com.project.simplegw.document.approval.dtos.send.DtosApprover;
 import com.project.simplegw.document.approval.dtos.send.details.dayoff.DtosDayoff;
+import com.project.simplegw.document.approval.dtos.send.details.dayoff.DtosTempDayoff;
 import com.project.simplegw.document.approval.vos.ApprovalRole;
 import com.project.simplegw.document.approval.vos.Sign;
 import com.project.simplegw.document.dtos.send.DtosDocs;
@@ -852,6 +853,24 @@ public class ViewController {
             .addAttribute("codes", service.getDayoffCodes());
         return "docs/approval/dayoff/modify";
     }
+
+
+    // ↓ ----- ----- ----- ----- ----- temp ----- ----- ----- ----- ----- ↓ //
+    @GetMapping("/page/approval/dayoff/temp/{docsId}")
+    public String dayoffApprovalTempViewPage(@PathVariable Long docsId, Model model, @AuthenticationPrincipal LoginUser loginUser) {
+        DtosTempDayoff docs = service.getTempDayoffApproval(docsId);
+        boolean isOwner = loginUser.getMember().getId().equals( docs.getWriterId() );
+
+        if(docs.getId() == null)
+            return Constants.ERROR_PAGE_410;
+        if( ! isOwner )
+            return Constants.ERROR_PAGE_403;
+        
+        model.addAttribute("docs", docs).addAttribute("isOwner", isOwner);
+        return "docs/approval/dayoff/temp/view";
+    }
+    // ↑ ----- ----- ----- ----- ----- temp ----- ----- ----- ----- ----- ↑ //
     // ↑ ----- ----- ----- ----- ----- ----- ----- dayoff ----- ----- ----- ----- ----- ----- ----- ↑ //
+
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- approval ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 }

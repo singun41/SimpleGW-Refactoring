@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.simplegw.document.approval.dtos.receive.details.dayoff.DtorDayoff;
+import com.project.simplegw.document.approval.dtos.receive.details.dayoff.DtorTempDayoff;
 import com.project.simplegw.document.approval.services.details.DayoffService;
 import com.project.simplegw.system.helpers.ResponseConverter;
 import com.project.simplegw.system.security.LoginUser;
@@ -58,4 +59,18 @@ public class DayoffController {
         
         return ResponseConverter.message( service.update(docsId, dto, loginUser), ResponseMsg.UPDATED );
     }
+
+
+
+
+
+    // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- temp docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
+    @PostMapping("/temp")
+    public ResponseEntity<Object> createTemp(@Validated @RequestBody DtorTempDayoff dto, BindingResult result, @AuthenticationPrincipal LoginUser loginUser) {
+        if(result.hasErrors())
+            return ResponseConverter.badRequest(result);
+        
+        return ResponseConverter.message( service.createTemp(dto, loginUser), ResponseMsg.INSERTED );
+    }
+    // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- temp docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 }

@@ -10,6 +10,7 @@ import com.project.simplegw.code.services.BasecodeService;
 import com.project.simplegw.code.vos.BasecodeType;
 import com.project.simplegw.document.approval.dtos.send.DtosApprovalDocsCommon;
 import com.project.simplegw.document.approval.dtos.send.details.dayoff.DtosDayoff;
+import com.project.simplegw.document.approval.dtos.send.details.dayoff.DtosTempDayoff;
 import com.project.simplegw.document.approval.services.DefaultReportService;
 import com.project.simplegw.document.approval.services.details.DayoffService;
 import com.project.simplegw.document.dtos.send.DtosDocs;
@@ -221,6 +222,10 @@ public class ViewService {   // ViewController에서 필요한 데이터들을 �
     
     public DtosDayoff getDayoffApproval(Long docsId, LoginUser loginUser) {
         return dayoffService.getDocs(docsId, loginUser);
+    }
+
+    public DtosTempDayoff getTempDayoffApproval(Long docsId) {
+        return dayoffService.getTempDocs(docsId);
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- approval ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 }

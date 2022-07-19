@@ -7,8 +7,11 @@ import com.project.simplegw.document.approval.dtos.receive.details.dayoff.DtorDa
 import com.project.simplegw.document.approval.dtos.send.DtosApprovalDocsCommon;
 import com.project.simplegw.document.approval.dtos.send.details.dayoff.DtosDayoff;
 import com.project.simplegw.document.approval.dtos.send.details.dayoff.DtosDayoffDetails;
-import com.project.simplegw.document.approval.entities.details.Dayoff;
+import com.project.simplegw.document.approval.dtos.send.details.dayoff.DtosTempDayoff;
+import com.project.simplegw.document.approval.entities.details.dayoff.Dayoff;
+import com.project.simplegw.document.approval.entities.details.dayoff.TempDayoff;
 import com.project.simplegw.document.dtos.receive.DtorDocs;
+import com.project.simplegw.document.dtos.send.DtosDocs;
 
 @Mapper(componentModel = "spring")
 public interface DayoffConverter {
@@ -17,4 +20,8 @@ public interface DayoffConverter {
     
     DtosDayoffDetails getDetails(Dayoff entity);
     DtosDayoff getDocs(DtosApprovalDocsCommon dto);
+
+    TempDayoff getTempEntity(DtorDayoffDetails dto);
+    DtosTempDayoff getDtosTempDayoff(DtosDocs dto);
+    DtosDayoffDetails getDetails(TempDayoff entity);
 }
