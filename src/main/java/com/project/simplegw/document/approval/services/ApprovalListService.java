@@ -72,18 +72,18 @@ public class ApprovalListService {
 
 
 
-    public List<DtosApprovalDocsMin> getDocsForApprover(DocsType type, LocalDate dateStart, LocalDate dateEnd, LoginUser loginUser) {
-        return approverService.getDocsForApprover(type, dateStart, dateEnd, loginUser);
+    public List<DtosApprovalDocsMin> getDocsForApprover(DocsType type, LocalDate dateFrom, LocalDate dateTo, LoginUser loginUser) {
+        return approverService.getDocsForApprover(type, dateFrom, dateTo, loginUser);
     }
 
 
-    public List<DtosApprovalDocsMin> getDocsForReferrer(DocsType type, LocalDate dateStart, LocalDate dateEnd, LoginUser loginUser) {
-        return referrerService.getDocsForReferrer(type, dateStart, dateEnd, loginUser);
+    public List<DtosApprovalDocsMin> getDocsForReferrer(DocsType type, LocalDate dateFrom, LocalDate dateTo, LoginUser loginUser) {
+        return referrerService.getDocsForReferrer(type, dateFrom, dateTo, loginUser);
     }
 
 
-    public List<DtosApprovalDocsMin> getApprovalDocs(Long writerId, DocsType type, LocalDate dateStart, LocalDate dateEnd, LoginUser loginUser) {
-        return approverService.getApprovalDocs(writerId, type, dateStart, dateEnd, loginUser);
+    public List<DtosApprovalDocsMin> getApprovalDocs(Long writerId, DocsType type, LocalDate dateFrom, LocalDate dateTo, LoginUser loginUser) {
+        return approverService.getApprovalDocs(writerId, type, dateFrom, dateTo, loginUser);
     }
 
     
@@ -96,7 +96,7 @@ public class ApprovalListService {
     }
 
 
-    public List<DtosApprovalDocsMin> getFinishedDocs(LocalDate dateStart, LocalDate dateEnd, DocsType type, LoginUser loginUser) {
-        return approvalStatusService.getFinishedDocs(dateStart, dateEnd, type, loginUser);
+    public List<DtosApprovalDocsMin> getFinishedDocs(LocalDate dateFrom, LocalDate dateTo, DocsType type, LoginUser loginUser) {
+        return approvalStatusService.getFinishedDocs(dateFrom, dateTo, type, loginUser);
     }
 }

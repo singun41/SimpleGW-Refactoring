@@ -202,8 +202,9 @@ public class ApprovalDocsService {
 
 
 
-    // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재문서 view page에서 필요한 결재자 및 참조자 정보 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
+    // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재문서 view, modify page에서 필요한 결재자 및 참조자 정보 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
     public DtosApprovalDocsCommon getDocs(Long docsId, DocsType type, LoginUser loginUser) {
+        // modify page에서 결재라인 확인하여 결재가 진행됐는지 판단해야 하므로 view, modify 페이지 둘 다 사용.
         return converter.getDtosApprovalDocs( getDtosDocs(docsId, type) ).setLine( getDtosApprovalLinePack(docsId, type, loginUser) );
     }
 
@@ -211,7 +212,8 @@ public class ApprovalDocsService {
         return docsService.getDtosDocs(docsId, type);
     }
 
-    public DtosApprovalLinePack getDtosApprovalLinePack(Long docsId, DocsType type, LoginUser loginUser) {   // modify page의 결재자/참조자 요청할 때에도 사용해야 하므로 public으로 선언
+    public DtosApprovalLinePack getDtosApprovalLinePack(Long docsId, DocsType type, LoginUser loginUser) {
+        // modify page에서 결재라인을 바인딩하기 위해 별도로 호출.
         Docs docs = docsService.getDocsEntity(docsId, type);
         
         if(docs.getId() == null)
@@ -219,5 +221,5 @@ public class ApprovalDocsService {
 
         return new DtosApprovalLinePack().setApprovers(approverService.getApprovers(docs)).setReferrers(referrerService.getReferrers(docs, loginUser));
     }
-    // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재문서 view page에서 필요한 결재자 및 참조자 정보 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
+    // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재문서 view, modify page에서 필요한 결재자 및 참조자 정보 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 }

@@ -86,8 +86,8 @@ public class NoticeService {
         }).limit(limitSize).map(e -> docsConverter.getDtosDocsTitle(e).updateIsNew()).collect(Collectors.toList());
     }
 
-    public List<DtosDocsMin> getList(LocalDate dateStart, LocalDate dateEnd) {
-        return docsService.getDocs(NOTICE, dateStart, dateEnd);
+    public List<DtosDocsMin> getList(LocalDate dateFrom, LocalDate dateTo) {
+        return docsService.getDocs(NOTICE, dateFrom, dateTo);
     }
 
 

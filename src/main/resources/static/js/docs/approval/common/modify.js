@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // detail이 있는 문서들만 공용으로 사용한다.
+    // default 문서는 url이 다르므로 다른 파일을 사용.
     setApprovalLines();
 });
 

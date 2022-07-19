@@ -39,8 +39,8 @@ public class SuggestionService {
 
 
 
-    public List<DtosDocsMin> getList(LocalDate dateStart, LocalDate dateEnd) {
-        return docsService.getDocs(DocsType.SUGGESTION, dateStart, dateEnd);
+    public List<DtosDocsMin> getList(LocalDate dateFrom, LocalDate dateTo) {
+        return docsService.getDocs(DocsType.SUGGESTION, dateFrom, dateTo);
     }
 
 

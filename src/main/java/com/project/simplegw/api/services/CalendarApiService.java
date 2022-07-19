@@ -78,8 +78,8 @@ public class CalendarApiService {
 
                 DtosHoliday holiday = new DtosHoliday();
                 holiday.setTitle( data.getString("dateName") )
-                        .setDateStart( LocalDate.parse(data.get("locdate").toString(), DateTimeFormatter.ofPattern("yyyyMMdd")) )
-                        .setDateEnd( LocalDate.parse(data.get("locdate").toString(), DateTimeFormatter.ofPattern("yyyyMMdd")) )
+                        .setDateFrom( LocalDate.parse(data.get("locdate").toString(), DateTimeFormatter.ofPattern("yyyyMMdd")) )
+                        .setDateTo( LocalDate.parse(data.get("locdate").toString(), DateTimeFormatter.ofPattern("yyyyMMdd")) )
                         .setHoliday( data.getString("isHoliday").toUpperCase().equals("Y") );
 
                 holidays.add(holiday);
@@ -93,8 +93,8 @@ public class CalendarApiService {
     
                     DtosHoliday holiday = new DtosHoliday();
                     holiday.setTitle( data.getString("dateName") )
-                            .setDateStart( LocalDate.parse(data.get("locdate").toString(), DateTimeFormatter.ofPattern("yyyyMMdd")) )
-                            .setDateEnd( LocalDate.parse(data.get("locdate").toString(), DateTimeFormatter.ofPattern("yyyyMMdd")) )
+                            .setDateFrom( LocalDate.parse(data.get("locdate").toString(), DateTimeFormatter.ofPattern("yyyyMMdd")) )
+                            .setDateTo( LocalDate.parse(data.get("locdate").toString(), DateTimeFormatter.ofPattern("yyyyMMdd")) )
                             .setHoliday( data.getString("isHoliday").toUpperCase().equals("Y") );
     
                     holidays.add(holiday);

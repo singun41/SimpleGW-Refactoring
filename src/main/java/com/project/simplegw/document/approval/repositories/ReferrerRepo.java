@@ -34,10 +34,10 @@ public interface ReferrerRepo extends JpaRepository<Referrer, Long> {
                     where 1=1
                         and a.member_id = :#{#referrer_id}
                         and b.[type] = case when :#{#type.name()} = 'ALL' then b.[type] else :#{#type.name()} end
-                        and b.created_date between :#{#date_start} and :#{#date_end}
+                        and b.created_date between :#{#date_from} and :#{#date_to}
                     order by b.id desc
                 """,
         nativeQuery = true
     )
-    List<Object[]> findForReferrer(@Param("referrer_id") Long referrerId, @Param("type") DocsType type, @Param("date_start") LocalDate dateStart, @Param("date_end") LocalDate dateEnd);
+    List<Object[]> findForReferrer(@Param("referrer_id") Long referrerId, @Param("type") DocsType type, @Param("date_from") LocalDate dateFrom, @Param("date_to") LocalDate dateTo);
 }

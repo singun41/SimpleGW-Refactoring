@@ -138,7 +138,7 @@ public class ReferrerService {
         return repo.findByMemberIdOrderById(loginUser.getMember().getId()).stream().filter(e -> e.getCheckedDatetime() == null).collect(Collectors.toList());
     }
 
-    List<Referrer> getReferrers(LocalDate dateStart, LocalDate dateEnd, LoginUser loginUser) {
+    List<Referrer> getReferrers(LocalDate dateFrom, LocalDate dateTo, LoginUser loginUser) {
         return repo.findByMemberIdOrderById(loginUser.getMember().getId()).stream().collect(Collectors.toList());
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- List search ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
@@ -148,8 +148,8 @@ public class ReferrerService {
 
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 참조자로 받은 결재문서의 기간 검색 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
-    List<DtosApprovalDocsMin> getDocsForReferrer(DocsType type, LocalDate dateStart, LocalDate dateEnd, LoginUser loginUser) {
-        List<Object[]> objList = repo.findForReferrer(loginUser.getMember().getId(), type, dateStart, dateEnd);
+    List<DtosApprovalDocsMin> getDocsForReferrer(DocsType type, LocalDate dateFrom, LocalDate dateTo, LoginUser loginUser) {
+        List<Object[]> objList = repo.findForReferrer(loginUser.getMember().getId(), type, dateFrom, dateTo);
         return objList.stream().map( e -> DtosApprovalDocsMinConverter.fromObjs(e) ).collect(Collectors.toList());
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 참조자로 받은 결재문서의 기간 검색 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //

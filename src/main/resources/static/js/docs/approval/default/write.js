@@ -11,7 +11,7 @@ async function save() {
 
     if(docsId) {
         saveComplete = true;
-        location.href = `page/approval/forms/${docsType.toLowerCase()}/${docsId}`;
+        location.href = `/page/approval/forms/${docsType.toLowerCase()}/${docsId}`;
     }
 }
 

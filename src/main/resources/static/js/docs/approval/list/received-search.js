@@ -30,8 +30,8 @@ async function search() {
 
     let params = {
         type: document.getElementById('type').value,
-        dateStart: dtFrom,
-        dateEnd: dtTo
+        dateFrom: dtFrom,
+        dateTo: dtTo
     };
     let role = document.getElementById('role').value;
     let response = await fetchGetParams(`approval-list/${role}`, params);

@@ -50,33 +50,33 @@ public class ApprovalListController {
 
     @GetMapping(path = "/approver", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<Object> getReceivedListForApprover(@RequestParam DocsType type,
-        @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateStart, @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateEnd,
+        @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateFrom, @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateTo,
         @AuthenticationPrincipal LoginUser loginUser
     ) {
         return ResponseConverter.ok(
-            service.getDocsForApprover(type, dateStart, dateEnd, loginUser)
+            service.getDocsForApprover(type, dateFrom, dateTo, loginUser)
         );
     }
 
 
     @GetMapping(path = "/referrer", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<Object> getReceivedListForReferrer(@RequestParam DocsType type,
-        @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateStart, @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateEnd,
+        @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateFrom, @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateTo,
         @AuthenticationPrincipal LoginUser loginUser
     ) {
         return ResponseConverter.ok(
-            service.getDocsForReferrer(type, dateStart, dateEnd, loginUser)
+            service.getDocsForReferrer(type, dateFrom, dateTo, loginUser)
         );
     }
 
 
     @GetMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<Object> getApprovalDocs(@RequestParam Long writerId, @RequestParam DocsType type,
-        @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateStart, @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateEnd,
+        @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateFrom, @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateTo,
         @AuthenticationPrincipal LoginUser loginUser
     ) {
         return ResponseConverter.ok(
-            service.getApprovalDocs(writerId, type, dateStart, dateEnd, loginUser)
+            service.getApprovalDocs(writerId, type, dateFrom, dateTo, loginUser)
         );
     }
 
@@ -89,9 +89,9 @@ public class ApprovalListController {
 
     @GetMapping("/finished")
     public ResponseEntity<Object> getFinishedDocs(
-        @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateStart, @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateEnd,    
+        @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateFrom, @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateTo,    
         @RequestParam DocsType type, @AuthenticationPrincipal LoginUser loginUser
     ) {
-        return ResponseConverter.ok( service.getFinishedDocs(dateStart, dateEnd, type, loginUser) );
+        return ResponseConverter.ok( service.getFinishedDocs(dateFrom, dateTo, type, loginUser) );
     }
 }

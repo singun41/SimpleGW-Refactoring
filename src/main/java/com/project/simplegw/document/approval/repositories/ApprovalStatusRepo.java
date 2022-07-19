@@ -29,12 +29,12 @@ public interface ApprovalStatusRepo extends JpaRepository<ApprovalStatus, Long> 
                         join docs b on a.docs_id = b.id
                     where 1=1
                         and b.writer_id = :#{#writer_id}
-                        and b.created_date between :#{#date_start} and :#{#date_end}
+                        and b.created_date between :#{#date_from} and :#{#date_to}
                         and a.finished = '1'
                         and b.type = case when :#{#type.name()} = 'ALL' then b.type else :#{#type.name()} end
                     order by b.id desc
                 """,
         nativeQuery = true
     )
-    List<Object[]> findFinished(@Param("writer_id") Long writerId, @Param("date_start") LocalDate dateStart, @Param("date_end") LocalDate dateEnd, @Param("type") DocsType type);
+    List<Object[]> findFinished(@Param("writer_id") Long writerId, @Param("date_from") LocalDate dateFrom, @Param("date_to") LocalDate dateTo, @Param("type") DocsType type);
 }

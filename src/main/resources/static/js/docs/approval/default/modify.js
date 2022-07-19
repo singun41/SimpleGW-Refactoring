@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // default 문서 전용.
+    // detail이 있는 문서는 url이 다르므로 다른 공용 파일을 사용.
     setApprovalLines();
 });
 
@@ -12,7 +14,7 @@ async function update() {
     let docsId = await updateApprovalDocs(params);
     if(docsId) {
         saveComplete = true;
-        location.href = `/page/approval/forms/${docsType.toLowerCase()}/${docsId}`;
+        location.href = `/page/approval/forms/${docsType.toLowerCase()}/${docsId}`;   // common/modify.js와 url이 다르다.
     }
 }
 
@@ -57,7 +59,7 @@ async function updateApprovalDocs(params) {
     params.arrApproverId = approverIds;
     params.arrReferrerId = referrerIds;
 
-    let response = await fetchPatchParams(`approval/forms/${docsType.toLowerCase()}/${docsId}`, params);
+    let response = await fetchPatchParams(`approval/forms/${docsType.toLowerCase()}/${docsId}`, params);   // common/modify.js와 url이 다르다.
     let result = await response.json();
     
     if(response.ok) {

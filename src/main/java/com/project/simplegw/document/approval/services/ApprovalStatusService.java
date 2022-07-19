@@ -64,8 +64,8 @@ public class ApprovalStatusService {
 
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 완결된 결재문서 조회 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
-    List<DtosApprovalDocsMin> getFinishedDocs(LocalDate dateStart, LocalDate dateEnd, DocsType type, LoginUser loginUser) {
-        return repo.findFinished(loginUser.getMember().getId(), dateStart, dateEnd, type).stream()
+    List<DtosApprovalDocsMin> getFinishedDocs(LocalDate dateFrom, LocalDate dateTo, DocsType type, LoginUser loginUser) {
+        return repo.findFinished(loginUser.getMember().getId(), dateFrom, dateTo, type).stream()
             .map( DtosApprovalDocsMinConverter::fromObjs ).collect(Collectors.toList());
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 완결된 결재문서 조회 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //

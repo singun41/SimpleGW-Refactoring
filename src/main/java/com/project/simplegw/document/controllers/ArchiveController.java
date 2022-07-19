@@ -45,8 +45,8 @@ public class ArchiveController {
 
 
     @GetMapping(path = "/list", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<Object> getList(@RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateStart, @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateEnd) {
-        return ResponseConverter.ok(archiveService.getList(dateStart, dateEnd));
+    public ResponseEntity<Object> getList(@RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateFrom, @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateTo) {
+        return ResponseConverter.ok(archiveService.getList(dateFrom, dateTo));
     }
 
 

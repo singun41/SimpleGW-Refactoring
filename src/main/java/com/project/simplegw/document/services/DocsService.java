@@ -63,8 +63,8 @@ public class DocsService {
         return entities.stream().map(docsConverter::getDtosDocsMin).collect(Collectors.toList());
     }
 
-    public List<DtosDocsMin> getDocs(DocsType type, LocalDate dateStart, LocalDate dateEnd) {
-        return getDtosDocsMin( docsRepo.findByTypeAndCreatedDateBetweenOrderByIdDesc( type, dateStart, dateEnd ) );
+    public List<DtosDocsMin> getDocs(DocsType type, LocalDate dateFrom, LocalDate dateTo) {
+        return getDtosDocsMin( docsRepo.findByTypeAndCreatedDateBetweenOrderByIdDesc( type, dateFrom, dateTo ) );
     }
 
     private Docs getDocsEntity(Long docsId) {

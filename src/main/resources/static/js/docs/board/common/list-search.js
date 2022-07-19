@@ -27,8 +27,8 @@ async function search() {
         dtTo = dt[1].substr(0, 10).replaceAll('.', '-');
 
     let params = {
-        dateStart: dtFrom,
-        dateEnd: dtTo
+        dateFrom: dtFrom,
+        dateTo: dtTo
     };
 
     let docsType = document.getElementById('docsType').innerText;

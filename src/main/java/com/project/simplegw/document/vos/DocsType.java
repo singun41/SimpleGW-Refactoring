@@ -16,12 +16,6 @@ public enum DocsType {
     DAYOFF(DocsGroup.APPROVAL, Menu.APPROVAL_DAYOFF, false)
     ;
 
-    // 작업 예정.
-    // DAYOFF(DocsGroup.APPROVAL, "휴가 신청서"),
-    // OVERTIME(DocsGroup.APPROVAL, "연장 근무 신청서"),
-    // PURCHASE(DocsGroup.APPROVAL, "물품 구매 신청서"),
-    // NAMECARD(DocsGroup.APPROVAL, "명함 신청서");
-
     
     private DocsGroup group;
     private Menu menu;

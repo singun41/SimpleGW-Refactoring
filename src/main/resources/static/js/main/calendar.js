@@ -79,7 +79,7 @@ async function getHolidays() {
     let response = await fetchGet(`api/calendar/holidays/${year}/${month}`);
     let result = await response.json();
     if(response.ok)
-        Array.from(result).forEach(e => { addEvent(e.index, e.title, e.dateStart, e.dateEnd, e.holiday); });
+        Array.from(result).forEach(e => { addEvent(e.index, e.title, e.dateFrom, e.dateTo, e.holiday); });
 }
 
 async function updateCalendar() {

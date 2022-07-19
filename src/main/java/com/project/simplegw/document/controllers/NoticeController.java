@@ -51,8 +51,8 @@ public class NoticeController {
 
 
     @GetMapping(path = "/list", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<Object> getList(@RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateStart, @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateEnd) {
-        return ResponseConverter.ok(noticeService.getList(dateStart, dateEnd));
+    public ResponseEntity<Object> getList(@RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateFrom, @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateTo) {
+        return ResponseConverter.ok(noticeService.getList(dateFrom, dateTo));
     }
 
 

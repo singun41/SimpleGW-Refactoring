@@ -215,8 +215,8 @@ public class ApproverService {
 
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재자로 받은 결재문서의 기간 검색 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
-    List<DtosApprovalDocsMin> getDocsForApprover(DocsType type, LocalDate dateStart, LocalDate dateEnd, LoginUser loginUser) {
-        List<Object[]> objList = repo.findForApprover(loginUser.getMember().getId(), type, dateStart, dateEnd);
+    List<DtosApprovalDocsMin> getDocsForApprover(DocsType type, LocalDate dateFrom, LocalDate dateTo, LoginUser loginUser) {
+        List<Object[]> objList = repo.findForApprover(loginUser.getMember().getId(), type, dateFrom, dateTo);
         return objList.stream().map( e -> DtosApprovalDocsMinConverter.fromObjs(e) ).collect(Collectors.toList());
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재자로 받은 결재문서의 기간 검색 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
@@ -226,11 +226,11 @@ public class ApproverService {
 
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- for admin ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
-    List<DtosApprovalDocsMin> getApprovalDocs(Long writerId, DocsType type, LocalDate dateStart, LocalDate dateEnd, LoginUser loginUser) {
+    List<DtosApprovalDocsMin> getApprovalDocs(Long writerId, DocsType type, LocalDate dateFrom, LocalDate dateTo, LoginUser loginUser) {
         if( ! authorityService.isAccessible(Menu.APPROVAL_SEARCH, loginUser) )
             return null;
 
-        List<Object[]> objsList = repo.getApprovalDocs(type, dateStart, dateEnd);
+        List<Object[]> objsList = repo.getApprovalDocs(type, dateFrom, dateTo);
         
         return objsList.stream().filter(
             // 작성자를 선택하지 않았으면 true로 처리해서 모두 집계, 아니면 작성자 일치하는 것만 집계, 일치하는 작성자를 위해서 nativeQuery 맨 끝에 writerId를 추가.

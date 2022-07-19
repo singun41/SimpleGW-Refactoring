@@ -73,8 +73,8 @@ async function search() {
     let params = {
         writerId: user.value,
         type: document.getElementById('type').value,
-        dateStart: dtFrom,
-        dateEnd: dtTo
+        dateFrom: dtFrom,
+        dateTo: dtTo
     };
     let response = await fetchGetParams('approval-list', params);
     let result = await response.json();

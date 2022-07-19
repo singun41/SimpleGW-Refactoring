@@ -30,8 +30,8 @@ async function search() {
 
     let params = {
         type: document.getElementById('type').value,
-        dateStart: dtFrom,
-        dateEnd: dtTo
+        dateFrom: dtFrom,
+        dateTo: dtTo
     };
     let response = await fetchGetParams('approval-list/finished', params);
     let result = await response.json();

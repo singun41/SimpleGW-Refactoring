@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
 public class DtosHoliday {
     private int index;
     private String title;
-    private LocalDate dateStart;
-    private LocalDate dateEnd;
+    private LocalDate dateFrom;
+    private LocalDate dateTo;
     private boolean isHoliday;
 }

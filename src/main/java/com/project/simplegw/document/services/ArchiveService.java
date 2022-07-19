@@ -33,8 +33,8 @@ public class ArchiveService {
     }
 
 
-    public List<DtosDocsMin> getList(LocalDate dateStart, LocalDate dateEnd) {
-        return docsService.getDocs(ARCHIVE, dateStart, dateEnd);
+    public List<DtosDocsMin> getList(LocalDate dateFrom, LocalDate dateTo) {
+        return docsService.getDocs(ARCHIVE, dateFrom, dateTo);
     }
 
 

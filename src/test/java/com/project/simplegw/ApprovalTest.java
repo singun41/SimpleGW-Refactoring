@@ -2,7 +2,6 @@ package com.project.simplegw;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -140,8 +139,8 @@ public class ApprovalTest {
     @WithUserDetails(value = "20131004")
     void approvalDayoffCreate() throws Exception {
         
-        DtorDayoffDetails e1 = new DtorDayoffDetails().setCode(null).setDateStart(LocalDate.parse("2022-07-15", DateTimeFormatter.ISO_DATE)).setDateEnd(LocalDate.parse("2022-07-15", DateTimeFormatter.ISO_DATE));
-        DtorDayoffDetails e2 = new DtorDayoffDetails().setCode("100").setDateStart(LocalDate.parse("2022-08-12", DateTimeFormatter.ISO_DATE)).setDateEnd(LocalDate.parse("2022-08-14", DateTimeFormatter.ISO_DATE));
+        DtorDayoffDetails e1 = new DtorDayoffDetails().setCode(null).setDateFrom(LocalDate.parse("2022-07-15", DateTimeFormatter.ISO_DATE)).setDateTo(LocalDate.parse("2022-07-15", DateTimeFormatter.ISO_DATE));
+        DtorDayoffDetails e2 = new DtorDayoffDetails().setCode("100").setDateFrom(LocalDate.parse("2022-08-12", DateTimeFormatter.ISO_DATE)).setDateTo(LocalDate.parse("2022-08-14", DateTimeFormatter.ISO_DATE));
         List<DtorDayoffDetails> details = Arrays.asList(e1, e2);
 
         Long[] approvers = {122L, 70L};

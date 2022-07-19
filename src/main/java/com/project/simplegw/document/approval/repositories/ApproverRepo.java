@@ -31,12 +31,12 @@ public interface ApproverRepo extends JpaRepository<Approver, Long> {
                     where 1=1
                         and a.member_id = :#{#approver_id}
                         and b.type = case when :#{#type.name()} = 'ALL' then b.type else :#{#type.name()} end
-                        and b.created_date between :#{#date_start} and :#{#date_end}
+                        and b.created_date between :#{#date_from} and :#{#date_to}
                     order by b.id desc
                 """,
         nativeQuery = true
     )
-    List<Object[]> findForApprover(@Param("approver_id") Long approverId, @Param("type") DocsType type, @Param("date_start") LocalDate dateStart, @Param("date_end") LocalDate dateEnd);
+    List<Object[]> findForApprover(@Param("approver_id") Long approverId, @Param("type") DocsType type, @Param("date_from") LocalDate dateFrom, @Param("date_to") LocalDate dateTo);
 
 
 
@@ -54,9 +54,9 @@ public interface ApproverRepo extends JpaRepository<Approver, Long> {
                         join approval_status b on a.id = b.docs_id
                     where 1=1
                         and a.type = case when :#{#type.name()} = 'ALL' then a.type else :#{#type.name()} end
-                        and a.created_date between :#{#date_start} and :#{#date_end}
+                        and a.created_date between :#{#date_from} and :#{#date_to}
                 """,
         nativeQuery = true
     )
-    List<Object[]> getApprovalDocs(@Param("type") DocsType type, @Param("date_start") LocalDate dateStart, @Param("date_end") LocalDate dateEnd);
+    List<Object[]> getApprovalDocs(@Param("type") DocsType type, @Param("date_from") LocalDate dateFrom, @Param("date_to") LocalDate dateTo);
 }
