@@ -40,8 +40,8 @@
                                             <td th:text="${e.seq + 1}"></td>
                                             <td class="detail-code d-none" th:text="${e.code}"></td>
                                             <td th:text="${e.value}"></td>
-                                            <td class="detail-date" th:if="${e.dateStart} == ${e.dateEnd}" th:text="${#temporals.format(e.dateStart, 'yy. MM. dd.')}"></td>
-                                            <td class="detail-date" th:if="${e.dateStart} != ${e.dateEnd}" th:text="|${#temporals.format(e.dateStart, 'yy. MM. dd.')} ~ ${#temporals.format(e.dateEnd, 'yy. MM. dd.')}|"></td>
+                                            <td class="detail-date" th:if="${e.dateFrom} == ${e.dateTo}" th:text="${#temporals.format(e.dateFrom, 'yy. MM. dd.')}"></td>
+                                            <td class="detail-date" th:if="${e.dateFrom} != ${e.dateTo}" th:text="|${#temporals.format(e.dateFrom, 'yy. MM. dd.')} ~ ${#temporals.format(e.dateTo, 'yy. MM. dd.')}|"></td>
                                             <td th:text="${e.duration}"></td>
                                             <td th:text="${e.count}"></td>
                                         </tr>

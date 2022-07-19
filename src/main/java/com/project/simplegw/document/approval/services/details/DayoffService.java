@@ -83,8 +83,6 @@ public class DayoffService {
             try {
                 List<Dayoff> oldEntities = repo.findByDocsId(docsId);
                 repo.deleteAllInBatch(oldEntities);
-
-                // flush를 명시하지 않았기 때문에 saveAll 한 다음에 oldEntities를 삭제.
                 repo.saveAll( createEntities(dto, approvalDocsService.getDocsEntity(docsId, DAYOFF)) );
 
                 return new ServiceMsg().setResult(ServiceResult.SUCCESS).setReturnObj(docsId);
@@ -111,7 +109,7 @@ public class DayoffService {
         return docs.setDetails(getDetails(docsId));
     }
 
-    private List<DtosDayoffDetails> getDetails(Long docsId) {
+    public List<DtosDayoffDetails> getDetails(Long docsId) {
         return repo.findByDocsId(docsId).stream().map(
             e -> converter.getDetails(e).setValue(
                 basecodeService.getDayoffCodes().stream().filter( code -> e.getCode().equals(code.getKey()) ).findFirst().get().getValue()

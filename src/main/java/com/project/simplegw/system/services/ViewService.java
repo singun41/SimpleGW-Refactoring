@@ -207,6 +207,8 @@ public class ViewService {   // ViewController에서 필요한 데이터들을 �
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- approval ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
     public DtosApprovalDocsCommon getDefaultApproval(DocsType docsType, Long docsId, LoginUser loginUser) {
+        // 기본 결재문서 형식 외에 디테일이 있는 결재문서에서도 공통으로 사용함.
+        // 디테일은 별도 api로 호출하고, 결재문서 기본 데이터만 가져오기 위함.
         return defaultReportService.getDocs(docsType, docsId, loginUser);
     }
 

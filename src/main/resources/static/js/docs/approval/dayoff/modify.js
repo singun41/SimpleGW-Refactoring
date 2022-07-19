@@ -1,18 +1,8 @@
 window.addEventListener('DOMContentLoaded', () => {
-    copyCheck();
+    getDetails(docsId);
 });
 
-async function copyCheck() {
-    let docs = JSON.parse(localStorage.getItem('docs'));
-    if(docs) {
-        document.getElementById('title').value = docs.title;
-        document.getElementById('content').value = docs.content;
-        await getDetails(docs.id);
-        localStorage.removeItem('docs');
-    }
-}
-
-async function save() {
+async function update() {
     let arrDayoffCode = [];
     Array.from(document.getElementsByClassName('dayoff-code')).forEach(e => { arrDayoffCode.push(e.value === '' ? null : e.value); });
 
@@ -47,11 +37,9 @@ async function save() {
         details: arrDetail
     };
 
-    let docsId = await saveApprovalDocs(params);
-    if(docsId)
-        location.href = `/page/approval/${docsType.toLowerCase()}/${docsId}`;
-}
-
-async function saveTemp() {
-
+    let docsId = await updateApprovalDocs(params);
+    if(docsId) {
+        saveComplete = true;
+        location.href = `/page/approval/dayoff/${docsId}`;   // common/modify.js와 url이 다르다.
+    }
 }

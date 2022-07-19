@@ -21,9 +21,9 @@ public class DtorDayoffDetails {
 
     @NotNull(message = "시작 날짜를 선택하세요.")
     @DateValid   // null 허용되므로 위에서 null 체크
-    private LocalDate dateStart;
+    private LocalDate dateFrom;
 
     @NotNull(message = "종료 날짜를 선택하세요.")
     @DateValid   // null 허용되므로 위에서 null 체크
-    private LocalDate dateEnd;
+    private LocalDate dateTo;
 }

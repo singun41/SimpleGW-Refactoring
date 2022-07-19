@@ -745,8 +745,9 @@ public class ViewController {
         Menu menu = docsType.getMenu();
 
         DtosApprovalDocsCommon docs = service.getDefaultApproval(docsType, docsId, loginUser);
+        boolean isOwner = loginUser.getMember().getId().equals( docs.getWriterId() );
 
-        if( ! ( authority.isAccessible(menu, loginUser) && authority.isUpdatable(menu, loginUser, docs.getWriterId()) ) )
+        if( ! ( authority.isAccessible(menu, loginUser) && authority.isUpdatable(menu, loginUser, docs.getWriterId()) && isOwner ) )
             return Constants.ERROR_PAGE_403;
 
         if(isProceed(docs))
@@ -831,6 +832,25 @@ public class ViewController {
             .addAttribute("isCurrentApprover", isCurrentApprover);
 
         return "docs/approval/dayoff/view";
+    }
+
+    @GetMapping("/page/approval/dayoff/{docsId}/modify")
+    public String dayoffApprovalModifyPage(@PathVariable Long docsId, Model model, @AuthenticationPrincipal LoginUser loginUser) {
+        Menu menu = Menu.APPROVAL_DAYOFF;
+        DtosApprovalDocsCommon docs = service.getDefaultApproval(DocsType.DAYOFF, docsId, loginUser);
+
+        boolean isOwner = loginUser.getMember().getId().equals( docs.getWriterId() );
+
+        if( ! ( authority.isAccessible(menu, loginUser) && authority.isUpdatable(menu, loginUser, docs.getWriterId()) && isOwner ) )
+            return Constants.ERROR_PAGE_403;
+
+        if(isProceed(docs))
+            return Constants.ERROR_PAGE_403_MODIFY;
+
+        model.addAttribute("pageTitle", menu.getTitle())
+            .addAttribute("docs", docs).addAttribute("attachmentsList", getAttachmentsList(docsId))
+            .addAttribute("codes", service.getDayoffCodes());
+        return "docs/approval/dayoff/modify";
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- dayoff ----- ----- ----- ----- ----- ----- ----- ↑ //
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- approval ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //

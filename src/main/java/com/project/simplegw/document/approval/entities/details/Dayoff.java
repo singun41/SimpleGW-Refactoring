@@ -35,11 +35,11 @@ public class Dayoff extends DetailsCommon <Dayoff> {
     @Column(name = "code", nullable = false, updatable = false, length = Constants.COLUMN_LENGTH_BASECODE_CODE)
     private String code;
 
-    @Column(name = "date_start", nullable = false, updatable = false, columnDefinition = Constants.COLUMN_DEFINE_DATE)
-    private LocalDate dateStart;
+    @Column(name = "date_from", nullable = false, updatable = false, columnDefinition = Constants.COLUMN_DEFINE_DATE)
+    private LocalDate dateFrom;
 
-    @Column(name = "date_end", nullable = false, updatable = false, columnDefinition = Constants.COLUMN_DEFINE_DATE)
-    private LocalDate dateEnd;
+    @Column(name = "date_to", nullable = false, updatable = false, columnDefinition = Constants.COLUMN_DEFINE_DATE)
+    private LocalDate dateTo;
 
     @Column(name = "duration", nullable = false, updatable = false)
     private int duration;
@@ -62,11 +62,11 @@ public class Dayoff extends DetailsCommon <Dayoff> {
     }
 
     public Dayoff updateDuration() {
-        this.duration = Period.between(this.dateStart, this.dateEnd).getDays() + 1;   // end가 제외되어 +1 해준다.
+        this.duration = Period.between(this.dateFrom, this.dateTo).getDays() + 1;   // end가 제외되어 +1 해준다.
         this.count = this.duration;
 
-        LocalDate dt = LocalDate.from(this.dateStart);
-        while(dt.isBefore(this.dateEnd) || dt.isEqual(this.dateEnd)) {   // dateEnd 포함.
+        LocalDate dt = LocalDate.from(this.dateFrom);
+        while(dt.isBefore(this.dateTo) || dt.isEqual(this.dateTo)) {   // dateTo 포함.
             // from ~ to 사이의 주말은 제외한다.
             if(dt.getDayOfWeek() == DayOfWeek.SATURDAY || dt.getDayOfWeek() == DayOfWeek.SUNDAY)
                 this.count--;

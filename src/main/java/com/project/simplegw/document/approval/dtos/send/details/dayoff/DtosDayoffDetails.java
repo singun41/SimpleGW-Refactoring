@@ -15,8 +15,8 @@ public class DtosDayoffDetails {
     private int seq;
     private String code;
     private String value;
-    private LocalDate dateStart;
-    private LocalDate dateEnd;
+    private LocalDate dateFrom;
+    private LocalDate dateTo;
     private int duration;
     private double count;
 }
