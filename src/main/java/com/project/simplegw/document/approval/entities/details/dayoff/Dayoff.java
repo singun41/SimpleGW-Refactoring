@@ -1,4 +1,4 @@
-package com.project.simplegw.document.approval.entities.details;
+package com.project.simplegw.document.approval.entities.details.dayoff;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.Table;
 
+import com.project.simplegw.document.approval.entities.details.DetailsCommon;
 import com.project.simplegw.document.entities.Docs;
 import com.project.simplegw.system.vos.Constants;
 
