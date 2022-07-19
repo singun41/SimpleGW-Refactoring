@@ -5,13 +5,9 @@ import com.project.simplegw.document.approval.dtos.receive.DtorTempDefaultReport
 import com.project.simplegw.document.approval.dtos.send.DtosApprovalDocsCommon;
 import com.project.simplegw.document.dtos.receive.DtorDocs;
 import com.project.simplegw.document.dtos.send.DtosDocs;
-import com.project.simplegw.document.entities.TempDocs;
-import com.project.simplegw.document.services.TempDocsService;
 import com.project.simplegw.document.vos.DocsType;
 import com.project.simplegw.system.security.LoginUser;
-import com.project.simplegw.system.vos.ResponseMsg;
 import com.project.simplegw.system.vos.ServiceMsg;
-import com.project.simplegw.system.vos.ServiceResult;
 
 // import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,12 +21,12 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(rollbackFor = Exception.class, isolation = Isolation.READ_COMMITTED)
 public class DefaultReportService {
     private final ApprovalDocsService approvalDocsService;
-    private final TempDocsService tempDocsService;
+    private final ApprovalDocsTempService tempService;
 
     // @Autowired   // framework 버전 업데이트 이후 자동설정되어 선언하지 않아도 됨.
-    public DefaultReportService(ApprovalDocsService approvalDocsService, TempDocsService tempDocsService) {
+    public DefaultReportService(ApprovalDocsService approvalDocsService, ApprovalDocsTempService tempService) {
         this.approvalDocsService = approvalDocsService;
-        this.tempDocsService = tempDocsService;
+        this.tempService = tempService;
         log.info("Component '" + this.getClass().getName() + "' has been created.");
     }
 
@@ -63,46 +59,22 @@ public class DefaultReportService {
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- temp docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
     public ServiceMsg createTemp(DocsType type, DtorTempDefaultReport dto, LoginUser loginUser) {
-        Long docsId = tempDocsService.create(new DtorDocs().setTitle(dto.getTitle()).setContent(dto.getContent()), type, loginUser).getId();
-
-        if(docsId == null)
-            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg( new StringBuilder(type.getTitle()).append(" 임시저장 에러입니다. 관리자에게 문의하세요.").toString() );
-        
-        else
-            return new ServiceMsg().setResult(ServiceResult.SUCCESS).setReturnObj(docsId);
+        return tempService.createTemp(type, dto, loginUser);
     }
 
 
     public ServiceMsg updateTemp(DocsType type, Long docsId, DtorTempDefaultReport dto, LoginUser loginUser) {
-        TempDocs tempDocs = tempDocsService.getTempDocsEntity(docsId, type);
-
-        if( ! tempDocsService.isOwner(tempDocs, loginUser) )   // 수정은 본인만 가능.
-            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg(ResponseMsg.UNAUTHORIZED.getTitle());
-
-        tempDocsService.update(docsId, new DtorDocs().setTitle(dto.getTitle()).setContent(dto.getContent()), type);
-        return new ServiceMsg().setResult(ServiceResult.SUCCESS);
+        return tempService.updateTemp(type, docsId, dto, loginUser);
     }
 
 
     public ServiceMsg deleteTemp(DocsType type, Long docsId, LoginUser loginUser) {
-        TempDocs tempDocs = tempDocsService.getTempDocsEntity(docsId, type);
-
-        if( type != tempDocs.getType() )
-            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg( new StringBuilder("삭제 대상 문서가 ").append(type.getTitle()).append("문서가 아닙니다.").toString() );
-
-
-        if( tempDocsService.isOwner(tempDocs, loginUser) ) {
-            tempDocsService.delete(tempDocs, loginUser);
-            return new ServiceMsg().setResult(ServiceResult.SUCCESS);
-            
-        } else {
-            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg(ResponseMsg.UNAUTHORIZED.getTitle());
-        }
+        return tempService.deleteTemp(type, docsId, loginUser);
     }
 
 
     public DtosDocs getTemp(DocsType docsType, Long docsId) {
-        return tempDocsService.getDtosDocsFromTempDocs(docsId, docsType);
+        return tempService.getTemp(docsType, docsId);
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- temp docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 }
