@@ -5,6 +5,7 @@ import com.project.simplegw.member.dtos.admin.receive.DtorMemberUpdate;
 import com.project.simplegw.member.dtos.admin.receive.DtorPwForceUpdate;
 import com.project.simplegw.member.dtos.receive.DtorMyDetails;
 import com.project.simplegw.member.dtos.receive.DtorPwChange;
+import com.project.simplegw.member.services.MemberAddOnService;
 import com.project.simplegw.member.services.MemberAdminService;
 import com.project.simplegw.member.services.MemberClientService;
 import com.project.simplegw.member.services.MemberService;
@@ -37,12 +38,14 @@ public class MemberController {
     private final MemberAdminService memberAdminService;
     private final MemberClientService memberClientService;
     private final MemberService memberService;
+    private final MemberAddOnService memberAddOnService;
 
     // @Autowired   // framework 버전 업데이트 이후 자동설정되어 선언하지 않아도 됨.
-    public MemberController(MemberAdminService memberAdminService, MemberClientService memberClientService, MemberService memberService) {
+    public MemberController(MemberAdminService memberAdminService, MemberClientService memberClientService, MemberService memberService, MemberAddOnService memberAddOnService) {
         this.memberAdminService = memberAdminService;
         this.memberClientService = memberClientService;
         this.memberService = memberService;
+        this.memberAddOnService = memberAddOnService;
         
         log.info("Component '" + this.getClass().getName() + "' has been created.");
     }
@@ -135,6 +138,11 @@ public class MemberController {
     @GetMapping("/{team}/without-me")
     public ResponseEntity<Object> getTeamMembersWithoutMe(@PathVariable String team, @AuthenticationPrincipal LoginUser loginUser) {
         return ResponseConverter.ok( memberService.getTeamMembersWithoutMe(team, loginUser) );
+    }
+
+    @GetMapping("/my-dayoff-count")
+    public ResponseEntity<Object> getDayoffCount(@AuthenticationPrincipal LoginUser loginUser) {
+        return ResponseConverter.ok( memberAddOnService.getDayoffCount(loginUser) );
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- common ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 }

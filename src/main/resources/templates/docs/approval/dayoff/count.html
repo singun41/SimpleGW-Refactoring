@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
     <th:block th:fragment="count">
+        <!--
+            아래 스크립트를 포함시켜야 함.
+            <script defer th:src="@{/js/docs/approval/dayoff/count.js}"></script>
+        -->
         <div class="card shadow bg-body rounded-3 mb-5">
             <div class="card-header">
                 <i class="fa-solid fa-circle-check color-bs4-info me-2"></i><span class="card-header-text">연차 카운트</span>
             </div>
             <div class="card-body">
-                <div><span class="custom-fs-8 text-secondary">최종 승인 내역의 합산 결과입니다.</span></div>
+                <div><span class="custom-fs-8 text-secondary">지급일 이후 승인된 휴가신청서 합산 결과입니다.</span></div>
                 <br>
-                <span class="custom-fs-8 text-secondary">합계:</span>
-                <span class="custom-fs-8 text-secondary ms-5">사용:</span>
-                <span class="custom-fs-8 text-secondary ms-5">잔여:</span>
+                <span class="custom-fs-9 text-secondary">전체:<span id="sum" class="ms-2"></span></span>
+                <span class="custom-fs-9 text-secondary ms-5">사용:<span id="use" class="ms-2"></span></span>
+                <span class="custom-fs-9 text-secondary ms-5">남은 연차:<span id="cnt" class="ms-2 text-success fw-bold"></span></span>
             </div>
         </div>
     </th:block>
