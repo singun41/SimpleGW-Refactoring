@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -65,12 +66,30 @@ public class DayoffController {
 
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- temp docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
+    @GetMapping("/details/{docsId}/temp")
+    public ResponseEntity<Object> getTempDetails(@PathVariable Long docsId) {
+        return ResponseConverter.ok( service.getTempDetails(docsId) );
+    }
+    
     @PostMapping("/temp")
     public ResponseEntity<Object> createTemp(@Validated @RequestBody DtorTempDayoff dto, BindingResult result, @AuthenticationPrincipal LoginUser loginUser) {
         if(result.hasErrors())
             return ResponseConverter.badRequest(result);
         
         return ResponseConverter.message( service.createTemp(dto, loginUser), ResponseMsg.INSERTED );
+    }
+
+    @PatchMapping("/temp/{docsId}")
+    public ResponseEntity<Object> updateTemp(@PathVariable Long docsId, @Validated @RequestBody DtorTempDayoff dto, BindingResult result, @AuthenticationPrincipal LoginUser loginUser) {
+        if(result.hasErrors())
+            return ResponseConverter.badRequest(result);
+        
+        return ResponseConverter.message( service.updateTemp(docsId, dto, loginUser), ResponseMsg.UPDATED );
+    }
+
+    @DeleteMapping("/temp/{docsId}")
+    public ResponseEntity<Object> deleteTemp(@PathVariable Long docsId, @AuthenticationPrincipal LoginUser loginUser) {
+        return ResponseConverter.message( service.deleteTemp(docsId, loginUser), ResponseMsg.DELETED );
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- temp docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 }

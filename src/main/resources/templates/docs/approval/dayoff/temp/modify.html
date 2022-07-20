@@ -40,7 +40,7 @@
                                     <div class="col-5">
                                         <select class="form-select dayoff-code">
                                             <option value="" selected disabled>선택...</option>
-                                            <option th:each="code : ${codes}" th:value="${code.getKey()}" th:text="${code.getValue()}"></option>
+                                            <option th:each="code : ${codes}" th:value="${code.key}" th:text="${code.value}"></option>
                                         </select>
                                     </div>
                                     <div class="col-7">
@@ -80,6 +80,7 @@
         <script defer th:src="@{/js/common/fetch-custom.js}"></script>
         <script defer th:src="@{/js/docs/common/attachments.js}"></script>
         <script defer th:src="@{/js/docs/approval/common/approvers-write.js}"></script>
+        <script defer th:src="@{/js/docs/approval/common/temp/modify.js}"></script>
         <script defer th:src="@{/js/docs/approval/dayoff/common.js}"></script>
         <script defer th:src="@{/js/docs/approval/dayoff/temp/modify.js}"></script>
     </body>

@@ -149,7 +149,7 @@ public class DayoffService {
 
 
     private List<TempDayoff> createTempEntities(DtorTempDayoff dto, TempDocs docs) {
-        return dto.getDetails().stream().map(e -> converter.getTempEntity(e).bindDocs(docs).updateSeq(dto.getDetails().indexOf(e))).collect(Collectors.toList());
+        return dto.getDetails().stream().map(e -> converter.getTempEntity(e).bindDocs(docs).updateSeq(dto.getDetails().indexOf(e)).updateDuration()).collect(Collectors.toList());
     }
 
     public ServiceMsg createTemp(DtorTempDayoff dto, LoginUser loginUser) {

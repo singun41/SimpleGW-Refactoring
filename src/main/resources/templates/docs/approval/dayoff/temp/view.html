@@ -31,6 +31,8 @@
                                             <th>No.</th>
                                             <th>구분</th>
                                             <th>일정</th>
+                                            <th>기간</th>
+                                            <th>카운트</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -40,6 +42,8 @@
                                             <td th:text="${e.value}"></td>
                                             <td class="detail-date" th:if="${e.dateFrom} == ${e.dateTo}" th:text="${#temporals.format(e.dateFrom, 'yy. MM. dd.')}"></td>
                                             <td class="detail-date" th:if="${e.dateFrom} != ${e.dateTo}" th:text="|${#temporals.format(e.dateFrom, 'yy. MM. dd.')} ~ ${#temporals.format(e.dateTo, 'yy. MM. dd.')}|"></td>
+                                            <td th:text="${e.duration}"></td>
+                                            <td th:text="${e.count}"></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -54,6 +58,7 @@
 
                 <div class="col-4">
                     <div th:if="${isOwner} == true"><th:block th:replace="docs/common/view/temp/edit :: edit"></th:block></div>
+                    <th:block th:replace="docs/approval/dayoff/count :: count"></th:block>
                 </div>
             </div>
         </div>

@@ -40,7 +40,7 @@
                                     <div class="col-5">
                                         <select class="form-select dayoff-code">
                                             <option value="" selected disabled>선택...</option>
-                                            <option th:each="code : ${codes}" th:value="${code.getKey()}" th:text="${code.getValue()}"></option>
+                                            <option th:each="code : ${codes}" th:value="${code.key}" th:text="${code.value}"></option>
                                         </select>
                                     </div>
                                     <div class="col-7">

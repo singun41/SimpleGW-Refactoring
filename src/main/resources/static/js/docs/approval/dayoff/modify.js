@@ -40,6 +40,6 @@ async function update() {
     let docsId = await updateApprovalDocs(params);
     if(docsId) {
         saveComplete = true;
-        location.href = `/page/approval/dayoff/${docsId}`;   // common/modify.js와 url이 다르다.
+        location.href = `/page/approval/${docsType.toLowerCase()}/${docsId}`;   // common/modify.js와 url이 다르다.
     }
 }
