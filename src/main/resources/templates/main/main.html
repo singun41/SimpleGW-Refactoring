@@ -18,6 +18,18 @@
         <div id="sideNavbar" class="scroll-area">
             <ul class="list-unstyled ps-0 mt-2">
                 <li class="mb-1">
+                    <button class="btn btn-toggle align-items-center rounded" onclick="page('content')">
+                        <div class="nav-icon-area"><i class="fa-solid fa-table"></i></div>Main
+                    </button>
+                </li>
+
+                <li class="mb-1">
+                    <button class="btn btn-toggle align-items-center rounded" onclick="toggleCollapse()">
+                        <div class="nav-icon-area" id="toggleCollapse"><i class="fa-solid fa-toggle-off"></i></div>Open all
+                    </button>
+                </li>
+
+                <li class="mb-1">
                     <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#collapse-account" aria-expanded="false">
                         <div class="nav-icon-area"><i class="fa-solid fa-user-gear"></i></div>Account
                         <div class="collapse-arrow"><i class="fa-solid fa-angle-right"></i></div>
@@ -46,20 +58,20 @@
                 </li>
 
                 <li class="mb-1">
-                    <button class="btn btn-toggle align-items-center rounded collapsed" onclick="page('content')">
-                        <div class="nav-icon-area"><i class="fa-solid fa-table"></i></div>Main
-                    </button>
-                </li>
-
-                <li class="mb-1">
-                    <button class="btn btn-toggle align-items-center rounded collapsed" onclick="openAlarmPage()">
+                    <button class="btn btn-toggle align-items-center rounded" onclick="openAlarmPage()">
                         <div class="nav-icon-area"><i class="fa-solid fa-clock"></i></div>알람 설정
                     </button>
                 </li>
 
                 <li class="mb-1">
-                    <button class="btn btn-toggle align-items-center rounded collapsed" onclick="showNotifications()">
+                    <button class="btn btn-toggle align-items-center rounded" onclick="showNotifications()">
                         <div class="nav-icon-area"><i class="fa-solid fa-bell"></i></div>시스템 알림
+                    </button>
+                </li>
+
+                <li class="mb-1">
+                    <button class="btn btn-toggle align-items-center rounded" onclick="page('docs/temp/list')">
+                        <div class="nav-icon-area"><i class="fa-solid fa-folder-open"></i></div>임시저장
                     </button>
                 </li>
 
@@ -131,7 +143,7 @@
                 </li>
 
                 <li class="mb-1">
-                    <button class="btn btn-toggle align-items-center rounded collapsed" onclick="">
+                    <button class="btn btn-toggle align-items-center rounded" onclick="">
                         <div class="nav-icon-area"><i class="fa-solid fa-calendar-check"></i></div>일정
                     </button>
                 </li>

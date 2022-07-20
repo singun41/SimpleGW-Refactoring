@@ -121,3 +121,22 @@ async function showNotifications() {
     notificationModal.show();
     setTimeout(() => { sendMsgToChild('notification'); }, 1000 * 2);
 }
+
+const collapsedMenus = Array.from(document.getElementsByClassName('collapse'));
+let isCollapsed = true;
+function toggleCollapse() {
+    if(isCollapsed) {
+        document.getElementById('toggleCollapse').innerHTML = '<i class="fa-solid fa-toggle-on"></i>';
+        collapsedMenus.forEach(e => {
+            let bsCollapse = new bootstrap.Collapse(e, { toggle: false });
+            bsCollapse.show();
+        });
+    } else {
+        document.getElementById('toggleCollapse').innerHTML = '<i class="fa-solid fa-toggle-off"></i>';
+        collapsedMenus.forEach(e => {
+            let bsCollapse = new bootstrap.Collapse(e, { toggle: false });
+            bsCollapse.hide();
+        });
+    }
+    isCollapsed = !isCollapsed;
+}
