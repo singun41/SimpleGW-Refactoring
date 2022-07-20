@@ -17,6 +17,7 @@ import com.project.simplegw.document.approval.repositories.ApproverRepo;
 import com.project.simplegw.document.approval.vos.Sign;
 import com.project.simplegw.document.entities.Docs;
 import com.project.simplegw.document.vos.DocsType;
+import com.project.simplegw.member.services.MemberAddOnService;
 import com.project.simplegw.member.services.MemberService;
 import com.project.simplegw.system.security.LoginUser;
 import com.project.simplegw.system.services.MenuAuthorityService;
@@ -44,12 +45,13 @@ public class ApproverService {
     private final ApprovalConverter converter;
 
     private final MenuAuthorityService authorityService;
+    private final MemberAddOnService memberAddOnService;   // 휴가신청서 최종 승인시 연차 카운트 업데이트 작업을 위해 추가.
 
     // @Autowired   // framework 버전 업데이트 이후 자동설정되어 선언하지 않아도 됨.
     public ApproverService(
         ApproverRepo repo, MemberService memberService, OngoingApprovalService ongoingApprovalService,
         ApprovalStatusService statusService, ApprovalCountService countService, ApprovalConverter converter,
-        MenuAuthorityService authorityService
+        MenuAuthorityService authorityService, MemberAddOnService memberAddOnService
     ) {
         this.repo = repo;
         this.memberService = memberService;
@@ -59,6 +61,7 @@ public class ApproverService {
         this.converter = converter;
 
         this.authorityService = authorityService;
+        this.memberAddOnService = memberAddOnService;
 
         log.info("Component '" + this.getClass().getName() + "' has been created.");
     }
@@ -144,11 +147,12 @@ public class ApproverService {
                 ongoingApprovalService.update(docs, DtoApprovers);   // 현재 결재자 정보 업데이트
 
 
-                if(approvers.lastIndexOf(approver) == (approvers.size() - 1))
+                if(approvers.lastIndexOf(approver) == (approvers.size() - 1)) {
                     countService.removeProceedDocsCntCache(SseApprovalType.CONFIRMED, docs);   // 마지막 결재자가 승인을 했다면 최종 승인이므로 결재문서 등록자에게 승인 알림.
-                else
+                    memberAddOnService.updateMemberDayoffCount(docs);
+                } else {
                     countService.removeApproverDocsCntCache(approvers.get( approvers.indexOf(approver) + 1 ).getMemberId(), true);   // 다음 결재자에게 알림 전송.
-
+                }
 
                 countService.removeApproverDocsCntCache( currentUserId, false );   // 승인 처리한 결재자의 카운트 초기화, 알림을 전송하지 않음.
                 return new ServiceMsg().setResult(ServiceResult.SUCCESS);
