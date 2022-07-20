@@ -2,9 +2,9 @@ document.addEventListener('DOMContentLoaded', () => {
     dayjs.locale('ko');
     connectSse();
 
-    alarmApprovalModal = new bootstrap.Modal(document.getElementById('alarmApproval'), { keyboard: false });
-    alarmMessageModal = new bootstrap.Modal(document.getElementById('alarmMessage'), { keyboard: false });
-    notificationModal = new bootstrap.Modal(document.getElementById('notification'), { keyboard: false });
+    alarmApprovalModal = new bootstrap.Modal(document.getElementById('alarmApproval'), { keyboard: true });
+    alarmMessageModal = new bootstrap.Modal(document.getElementById('alarmMessage'), { keyboard: true });
+    notificationModal = new bootstrap.Modal(document.getElementById('notification'), { keyboard: true });
 
     getTodayAlarms();
     setInterval(() => { showAlarm(); }, 1000 * 60);

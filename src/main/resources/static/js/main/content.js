@@ -1,8 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     initializePostIt();
 
-    // notificationModal = new bootstrap.Modal(document.getElementById('notification'), { keyboard: false });
-
     getNotices();
     getFreeBoardList();
     getTempDocsCount();
@@ -11,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
     getReferrerDocsCnt();
     getNotiCount();
 });
-// let notificationModal;
 
 window.addEventListener('message', receiveMsgFromParent);   // 'document'가 아니라 'window'다.
 function receiveMsgFromParent(e) {   // main.js로부터 메시지 수신: server sent event 알림 용도
@@ -47,7 +44,7 @@ function sendMsgToChild(msg) {   // calendar.js에게 메시지 전달
 }
 
 function updateCalendar() {
-    if(confirm('캘린더 api를 수동으로 호출하여 업데이트합니다.\napi 카운트가 감소되므로 데이터가 맞지 않을 경우에만 사용하세요.\n업데이트 하시겠습니까?'))
+    if(confirm('캘린더 api를 다시 호출하여 업데이트 하시겠습니까?'))
         sendMsgToChild('updateCalendar');
 }
 

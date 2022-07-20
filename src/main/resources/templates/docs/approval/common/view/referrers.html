@@ -3,11 +3,14 @@
     <th:block th:fragment="referrers">
         <!--
             아래 스크립트를 포함시켜야 함.
-            <script defer th:src="@{/js/docs/approval/common/referrers.js}"></script>
+            <script defer th:src="@{/js/docs/approval/common/referrers-view.js}"></script>
         -->
         <div class="card shadow bg-body rounded-3 mb-5">
             <div class="card-header">
-                <i class="fa-solid fa-file-circle-check color-bs4-info me-2"></i><span class="card-header-text">참조</span>
+                <div class="card-header-icon"><i class="fa-solid fa-file-circle-check"></i></div><span class="card-header-text">참조</span>
+                <span class="float-end">
+                    <button class="btn btn-outline-success btn-sm btn-icon" onclick="openReferrerAdd()"><i class="fa-solid fa-plus"></i></button>
+                </span>
             </div>
             <div class="card-body">
                 <div class="row">

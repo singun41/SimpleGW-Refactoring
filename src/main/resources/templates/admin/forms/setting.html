@@ -19,7 +19,7 @@
                 <div class="col-8">
                     <div class="card shadow bg-body rounded-3">
                         <div class="card-header">
-                            <div class="card-header-icon-area align-middle"><i class="fa-solid fa-file-pen"></i></div><span class="card-header-text align-middle">문서 양식 설정</span>
+                            <div class="card-header-icon"><i class="fa-solid fa-file-pen"></i></div><span class="card-header-text">문서 양식 설정</span>
                             <span class="float-end"> 
                                 <button type="button" class="btn btn-outline-success btn-sm btn-icon" onclick="saveForm()"><i class="fa-solid fa-check"></i></button>
                             </span>
@@ -36,10 +36,10 @@
                 <div class="col-4">
                     <div class="card shadow bg-body rounded-3 mb-5">
                         <div class="card-header">
-                            <div class="card-header-icon-area"><i class="fa-solid fa-file"></i></div><span class="card-header-text">문서 선택</span>
+                            <div class="card-header-icon"><i class="fa-solid fa-file"></i></div><span class="card-header-text">문서 선택</span>
                         </div>
                         <div class="card-body">
-                            <select class="form-select" id="forms" onchange="getForm()">
+                            <select class="form-select form-select-sm" id="forms" onchange="getForm()">
                                 <option value="" selected disabled>Choose...</option>
                                 <option th:each="form : ${forms}" th:value="${form.name()}" th:text="${form.title}"></option>
                             </select>

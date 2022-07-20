@@ -3,11 +3,11 @@
     <th:block th:fragment="approvers">
         <!--
             아래 스크립트를 포함시켜야 함.
-            <script defer th:src="@{/js/docs/approval/common/approvers.js}"></script>
+            <script defer th:src="@{/js/docs/approval/common/approvers-view.js}"></script>
         -->
         <div class="card shadow bg-body rounded-3 mb-5">
             <div class="card-header">
-                <i class="fa-solid fa-file-signature color-bs4-info me-2"></i><span class="card-header-text">결재</span>
+                <div class="card-header-icon"><i class="fa-solid fa-file-signature"></i></div><span class="card-header-text">결재</span>
                 <span class="float-end" th:if="${isCurrentApprover} == true">
                     <button class="btn btn-outline-success btn-sm btn-icon me-2" onclick="confirmed()"><i class="fa-solid fa-check me-2"></i>승인</button>
                     <button class="btn btn-outline-danger btn-sm btn-icon" onclick="rejected()"><i class="fa-solid fa-ban me-2"></i>반려</button>

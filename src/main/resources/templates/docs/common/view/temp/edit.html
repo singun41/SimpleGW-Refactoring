@@ -3,12 +3,10 @@
     <th:block th:fragment="edit">
         <div class="card shadow bg-body rounded-3 mb-5">
             <div class="card-header">
-                <i class="fa-solid fa-wrench color-bs4-info me-2"></i><span class="card-header-text">편집</span>
-            </div>
-            <div class="card-body">
-                <span class="d-flex justify-content-between">
-                    <button class="btn btn-outline-success btn-sm custom-px-2" th:if="${isOwner} == true" onclick="editTemp()" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="수정"><i class="fa-solid fa-file-pen"></i></button>
-                    <button class="btn btn-outline-danger btn-sm custom-px-2" th:if="${isOwner} == true" onclick="deleteTemp()" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="삭제"><i class="fa-solid fa-trash-can"></i></button>
+                <div class="card-header-icon"><i class="fa-solid fa-wrench"></i></div><span class="card-header-text">편집</span>
+                <span class="float-end">
+                    <button class="btn btn-outline-success btn-sm custom-px-2" th:if="${isOwner} == true" onclick="editTemp()"><i class="fa-solid fa-file-pen"></i></button>
+                    <button class="btn btn-outline-danger btn-sm custom-px-2" th:if="${isOwner} == true" onclick="deleteTemp()"><i class="fa-solid fa-trash-can"></i></button>
                 </span>
             </div>
         </div>

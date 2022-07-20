@@ -36,13 +36,14 @@ body {
     margin-right: 0.75rem;
 }
 
-div.card-header-icon-area {
+div.card-header-icon {
     display: inline-block;
     vertical-align: middle;
     text-align: center;
     color: #17a2b8;
     width: 2.25rem;
     font-size: 1.2rem;
+    vertical-align: middle;
 }
 
 .color-bs4-info {
@@ -51,6 +52,7 @@ div.card-header-icon-area {
 .card-header-text {
     color: rgba(108, 117, 125, 1);
     font-size: 0.9rem;
+    vertical-align: middle;
 }
 
 span.input-group-text-custom, label.input-group-text-custom {
