@@ -19,8 +19,10 @@ import com.project.simplegw.member.dtos.receive.DtorMyDetails;
 import com.project.simplegw.member.dtos.receive.DtorPwChange;
 import com.project.simplegw.member.dtos.send.DtosMyDetails;
 import com.project.simplegw.member.entities.Member;
+import com.project.simplegw.member.entities.MemberAddOn;
 import com.project.simplegw.member.entities.MemberDetails;
 import com.project.simplegw.member.helpers.MemberConverter;
+import com.project.simplegw.member.repositories.MemberAddOnRepo;
 import com.project.simplegw.member.repositories.MemberDetailsRepo;
 import com.project.simplegw.member.repositories.MemberRepo;
 import com.project.simplegw.system.security.LoginUser;
@@ -41,8 +43,9 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Transactional(rollbackFor = Exception.class, isolation = Isolation.READ_COMMITTED)
 public class MemberService {
-    private final MemberRepo memberRepo;
+    private final MemberRepo repo;
     private final MemberDetailsRepo detailsRepo;
+    private final MemberAddOnRepo addOnRepo;
     private final MemberConverter memberConverter;
     private final PwEncoder pwEncoder;
 
@@ -51,10 +54,11 @@ public class MemberService {
 
     // @Autowired   // framework 버전 업데이트 이후 자동설정되어 선언하지 않아도 됨.
     public MemberService(
-        MemberRepo memberRepo, MemberDetailsRepo detailsRepo, MemberConverter memberConverter, PwEncoder pwEncoder
+        MemberRepo repo, MemberDetailsRepo detailsRepo, MemberAddOnRepo addOnRepo, MemberConverter memberConverter, PwEncoder pwEncoder
     ) {
-        this.memberRepo = memberRepo;
+        this.repo = repo;
         this.detailsRepo = detailsRepo;
+        this.addOnRepo = addOnRepo;
         this.memberConverter = memberConverter;
         this.pwEncoder = pwEncoder;
 
@@ -68,12 +72,12 @@ public class MemberService {
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- Set system accounts ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
     private void setSystemAccounts() {
-        Optional<Member> findAdmin = memberRepo.findByUserId("admin");
+        Optional<Member> findAdmin = repo.findByUserId("admin");
         if(findAdmin.isPresent()) {
             log.info("Skip creating an administrator account.");
         
         } else {
-            Member savedAdmin = memberRepo.save(
+            Member savedAdmin = repo.save(
                 Member.builder().userId("admin").password(encodingPassword("admin123**!!")).role(Role.ADMIN).enabled(true).build()
             );
 
@@ -84,12 +88,12 @@ public class MemberService {
         }
 
         // 제안 게시판에 익명 사용자로 게시글 작성할 때 사용.
-        Optional<Member> findAnonymous = memberRepo.findByUserId("anonymous");
+        Optional<Member> findAnonymous = repo.findByUserId("anonymous");
         if(findAnonymous.isPresent()) {
             log.info("Skip creating an anonymous account.");
 
         } else {
-            Member savedAnonymous = memberRepo.save(
+            Member savedAnonymous = repo.save(
                 Member.builder().userId("anonymous").password(encodingPassword(UUID.randomUUID().toString())).role(Role.USER).enabled(true).build()
             );
 
@@ -108,7 +112,7 @@ public class MemberService {
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- MemberData setting ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
     private void setMemberDataStorage() {
         // Member entity를 먼저 1차 캐시로 로드한 뒤 아래 MemberDetails.getMember() 실행하면 개별 쿼리를 날리지 않고 1차 캐시에서 가져옴.
-        memberRepo.findByRetiredMember(false);
+        repo.findByRetiredMember(false);
 
         getMemberDetailsEntities(false).stream().forEach(e -> {   // 시스템 계정도 포함.
             memberDataStorage.put( e.getMember().getId(), memberConverter.getMemberData(e).setId(e.getMember().getId()) );
@@ -125,7 +129,7 @@ public class MemberService {
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- login ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
     Member getMember(String userId) {   // @Id값 Long id가 아닌 userId로 찾기, Login할 때 사용.
         log.info("login id: {}", userId);
-        return memberRepo.findByUserId(userId).orElseGet(Member::new);
+        return repo.findByUserId(userId).orElseGet(Member::new);
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- login ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 
@@ -139,7 +143,7 @@ public class MemberService {
     }
 
     private Member getMember(Long id) {
-        return memberRepo.findById(id).orElseGet(Member::new);
+        return repo.findById(id).orElseGet(Member::new);
     }
 
     private String encodingPassword(String rawPassword) {
@@ -194,7 +198,7 @@ public class MemberService {
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- admin ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
     List<DtosMember> getMembers(boolean retired) {
         List<DtosMember> members = new ArrayList<>();
-        memberRepo.findByRetiredMember(retired);   // Member entity를 1차 캐시에 먼저 로드한다.
+        repo.findByRetiredMember(retired);   // Member entity를 1차 캐시에 먼저 로드한다.
 
         if(retired) {
             getMemberDetailsEntities(retired).forEach(e -> {
@@ -231,17 +235,18 @@ public class MemberService {
 
 
     ServiceMsg create(DtorMemberCreate dto) {
-        Optional<Member> findMember = memberRepo.findByUserId(dto.getId());
+        Optional<Member> findMember = repo.findByUserId(dto.getId());
         if(findMember.isPresent())
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg("중복된 ID입니다.");
         
         try {
-            Member savedMember = memberRepo.save(
+            Member savedMember = repo.save(
                 memberConverter.getMember(dto).updateRole(Role.USER).updatePw(encodingPassword(dto.getPw())).updateEnabled(true)
             );
 
             MemberDetails details = memberConverter.getDetails(dto);
             detailsRepo.save( details.bindMember(savedMember) );
+            addOnRepo.save( MemberAddOn.builder().member(savedMember).build() );
 
             memberDataStorage.put( savedMember.getId(), memberConverter.getMemberData(details).setId(savedMember.getId()) );
 
@@ -263,7 +268,7 @@ public class MemberService {
                 MemberDetails details = findDetails.get();
                 Member member = details.getMember();
     
-                Member savedMember = memberRepo.save(
+                Member savedMember = repo.save(
                     member.updateRole(Role.valueOf(dto.getRole())).updateEnabled(dto.isEnabled())
                 );
 
@@ -292,7 +297,7 @@ public class MemberService {
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg("등록되지 않은 사용자입니다.");
         
         member.updatePw( encodingPassword(dto.getPw()) );
-        memberRepo.save(member);
+        repo.save(member);
         return new ServiceMsg().setResult(ServiceResult.SUCCESS);
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- admin ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
@@ -338,7 +343,7 @@ public class MemberService {
         if(!pwEncoder.matches(dto.getOldPw(), member.getPassword()))
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg("기존 패스워드가 일치하지 않습니다.");
         
-        memberRepo.save( member.updatePw(encodingPassword(dto.getNewPw())) );
+        repo.save( member.updatePw(encodingPassword(dto.getNewPw())) );
         return new ServiceMsg().setResult(ServiceResult.SUCCESS);
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- user ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
