@@ -11,9 +11,9 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-4 mt-2 text-center custom-fs-9 custom-col-padding" th:each="referrer : ${docs.getLine().getReferrers()}">
-                        <span th:text="|${referrer.getJobTitle()} ${referrer.getName()}|"></span>
-                        <i th:if="${referrer.isChecked()}" class="fa-solid fa-check text-secondary"></i>
+                    <div class="col-4 mt-2 text-center custom-fs-9 custom-col-padding" th:each="referrer : ${docs.line.referrers}">
+                        <span th:text="|${referrer.jobTitle} ${referrer.name}|"></span>
+                        <i th:if="${referrer.checked}" class="fa-solid fa-check text-secondary"></i>
                     </div>
                 </div>
             </div>

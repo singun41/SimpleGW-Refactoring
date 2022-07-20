@@ -15,10 +15,10 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-4 mt-2 text-center custom-fs-9 custom-col-padding" th:each="approver : ${docs.getLine().getApprovers()}">
-                        <span th:text="|${approver.getSeq()}. ${approver.getJobTitle()} ${approver.getName()}|"></span>
-                        <i th:if="${approver.getSign().getTitle()} eq '승인'" class="fa-solid fa-check text-success"></i>
-                        <i th:if="${approver.getSign().getTitle()} eq '반려'" class="fa-solid fa-ban text-danger"></i>
+                    <div class="col-4 mt-2 text-center custom-fs-9 custom-col-padding" th:each="approver : ${docs.line.approvers}">
+                        <span th:text="|${approver.seq}. ${approver.jobTitle} ${approver.name}|"></span>
+                        <i th:if="${approver.sign.title} eq '승인'" class="fa-solid fa-check text-success"></i>
+                        <i th:if="${approver.sign.title} eq '반려'" class="fa-solid fa-ban text-danger"></i>
                     </div>
                 </div>
             </div>

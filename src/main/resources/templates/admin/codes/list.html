@@ -26,7 +26,7 @@
                                 <div class="align-middle d-inline-block me-2">
                                     <select class="form-select form-select-sm" id="type" onchange="getCodes()">
                                         <option value="" selected disabled>Types...</option>
-                                        <option th:each="type : ${types}" th:value="${type.name()}" th:text="${type.getTitle()}"></option>
+                                        <option th:each="type : ${types}" th:value="${type.name()}" th:text="${type.title}"></option>
                                     </select>
                                 </div>
                                 

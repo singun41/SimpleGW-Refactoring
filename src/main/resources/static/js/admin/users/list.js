@@ -63,7 +63,7 @@ async function getUsers() {
             btnEdit.innerHTML = '<i class="fa-solid fa-up-right-from-square"></i>';
             edit.append(btnEdit);
 
-            btnPw.setAttribute('onclick', `openPw("${e.id}")'`);
+            btnPw.setAttribute('onclick', `openPw("${e.id}")`);
             btnPw.classList.add('btn', 'btn-outline-secondary', 'btn-sm');
             btnPw.innerHTML = '<i class="fa-solid fa-up-right-from-square"></i>';
             pw.append(btnPw);

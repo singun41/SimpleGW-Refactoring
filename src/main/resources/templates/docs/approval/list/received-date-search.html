@@ -16,12 +16,12 @@
         <span class="float-end">
             <div class="align-middle d-inline-block me-2">
                 <select class="form-select form-select-sm" id="role">
-                    <option th:each="role : ${roles}" th:value="${#strings.toLowerCase(role.name())}" th:text="${role.getTitle()}"></option>
+                    <option th:each="role : ${roles}" th:value="${#strings.toLowerCase(role.name())}" th:text="${role.title}"></option>
                 </select>
             </div>
             <div class="align-middle d-inline-block me-2">
                 <select class="form-select form-select-sm" id="type">
-                    <option th:each="type : ${types}" th:value="${type.name()}" th:text="${type.getTitle()}"></option>
+                    <option th:each="type : ${types}" th:value="${type.name()}" th:text="${type.title}"></option>
                 </select>
             </div>
 

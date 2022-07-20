@@ -41,7 +41,7 @@
                         <div class="card-body">
                             <select class="form-select" id="forms" onchange="getForm()">
                                 <option value="" selected disabled>Choose...</option>
-                                <option th:each="form : ${forms}" th:value="${form.name()}" th:text="${form.getTitle()}"></option>
+                                <option th:each="form : ${forms}" th:value="${form.name()}" th:text="${form.title}"></option>
                             </select>
                         </div>
                     </div>

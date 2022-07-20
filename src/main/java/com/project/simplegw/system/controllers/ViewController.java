@@ -754,8 +754,7 @@ public class ViewController {
         if(isProceed(docs))
             return Constants.ERROR_PAGE_403_MODIFY;
 
-        model.addAttribute("pageTitle", menu.getTitle())
-            .addAttribute("docs", docs).addAttribute("attachmentsList", getAttachmentsList(docsId));
+        model.addAttribute("docs", docs).addAttribute("attachmentsList", getAttachmentsList(docsId));
         return "docs/approval/default/modify";
     }
 
@@ -848,8 +847,7 @@ public class ViewController {
         if(isProceed(docs))
             return Constants.ERROR_PAGE_403_MODIFY;
 
-        model.addAttribute("pageTitle", menu.getTitle())
-            .addAttribute("docs", docs).addAttribute("attachmentsList", getAttachmentsList(docsId))
+        model.addAttribute("docs", docs).addAttribute("attachmentsList", getAttachmentsList(docsId))
             .addAttribute("codes", service.getDayoffCodes());
         return "docs/approval/dayoff/modify";
     }
@@ -868,6 +866,20 @@ public class ViewController {
         
         model.addAttribute("docs", docs).addAttribute("isOwner", isOwner);
         return "docs/approval/dayoff/temp/view";
+    }
+
+    @GetMapping("/page/approval/dayoff/temp/{docsId}/modify")
+    public String dayoffApprovalTempModifyPage(@PathVariable Long docsId, Model model, @AuthenticationPrincipal LoginUser loginUser) {
+        DtosDocs docs = service.getTempDefaultApproval(DocsType.DAYOFF, docsId);   // 수정페이지 진입시에는 디테일은 페이지 로드 후 ajax로 별도 호출.
+        boolean isOwner = loginUser.getMember().getId().equals( docs.getWriterId() );
+
+        if(docs.getId() == null)
+            return Constants.ERROR_PAGE_410;
+        if( ! isOwner )
+            return Constants.ERROR_PAGE_403;
+
+        model.addAttribute("docs", docs).addAttribute("codes", service.getDayoffCodes());
+        return "docs/approval/dayoff/temp/modify";
     }
     // ↑ ----- ----- ----- ----- ----- temp ----- ----- ----- ----- ----- ↑ //
     // ↑ ----- ----- ----- ----- ----- ----- ----- dayoff ----- ----- ----- ----- ----- ----- ----- ↑ //
