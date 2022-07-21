@@ -77,7 +77,7 @@ public class ApprovalDocsService {
         return ongoingApprovalService.isCurrentApprover(docs, loginUser);
     }
 
-    private ServiceMsg approverCommon(Docs docs, LoginUser loginUser, Function<ApproverService, ServiceMsg> function) {
+    private ServiceMsg approverSign(Docs docs, LoginUser loginUser, Function<ApproverService, ServiceMsg> function) {
         if(docs == null || docs.getId() == null)
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg("결재문서가 없습니다.");
 
@@ -92,13 +92,13 @@ public class ApprovalDocsService {
 
     public ServiceMsg confirmed(DocsType type, Long docsId, LoginUser loginUser) {
         Docs docs = docsService.getDocsEntity(docsId, type);
-        return approverCommon(docs, loginUser, t -> t.confirm(docs, loginUser));
+        return approverSign(docs, loginUser, t -> t.confirm(docs, loginUser));
     }
 
 
     public ServiceMsg rejected(DocsType type, Long docsId, LoginUser loginUser) {
         Docs docs = docsService.getDocsEntity(docsId, type);
-        return approverCommon(docs, loginUser, t -> t.reject(docs, loginUser));
+        return approverSign(docs, loginUser, t -> t.reject(docs, loginUser));
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재자 승인/반려 처리 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 
@@ -220,6 +220,15 @@ public class ApprovalDocsService {
             return new DtosApprovalLinePack();
 
         return new DtosApprovalLinePack().setApprovers(approverService.getApprovers(docs)).setReferrers(referrerService.getReferrers(docs, loginUser));
+    }
+
+
+    public ServiceMsg addReferrers(DocsType type, Long docsId, Long[] arrReferrerId, LoginUser loginUser) {
+        Docs docs = docsService.getDocsEntity(docsId, type);
+        if(docs.getId() == null)
+            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg("적용 대상 문서가 없습니다. 관리자에게 문의하세요.");
+        
+        return referrerService.add(docs, arrReferrerId, loginUser);
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재문서 view, modify page에서 필요한 결재자 및 참조자 정보 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 }

@@ -56,17 +56,15 @@ public class ReferrerService {
         try {
             List<Referrer> referrers = new ArrayList<>();
 
-            List<Long> referrerIds = Arrays.asList(arrReferrerId);
-            referrerIds.stream()
+            Arrays.stream(arrReferrerId)
                 .filter(e -> ! e.equals( loginUser.getMember().getId() ))   // 유저가 본인을 등록한 경우 제외한다.
-                .forEach(e -> {
+                .distinct().forEach(e -> {
                     Referrer referrer = Referrer.builder().docs(docs).build().setReferrer( memberService.getMemberData(e) );
                     referrers.add(referrer);
                 });
 
             repo.saveAll(referrers);
-
-            referrerIds.forEach(e -> countService.removeReferrerDocsCntCache(e, true));   // 결재 참조받은 모든 멤버들의 참조 카운트 캐시 업데이트
+            referrers.forEach(e -> countService.removeReferrerDocsCntCache(e.getMemberId(), true));   // 결재 참조받은 모든 멤버들의 참조 카운트 캐시 업데이트
 
             return new ServiceMsg().setResult(ServiceResult.SUCCESS);
 
@@ -98,6 +96,37 @@ public class ReferrerService {
         repo.deleteAllInBatch(referrers);
 
         referrers.stream().mapToLong(Referrer::getMemberId).forEach(e -> countService.removeReferrerDocsCntCache(e, true));   // 결재 참조받은 모든 멤버들의 참조 카운트 캐시 제거
+    }
+
+
+    public ServiceMsg add(Docs docs, Long[] arrReferrerId, LoginUser loginUser) {   
+        try {
+            List<Long> list = Arrays.asList(arrReferrerId);
+            List<Long> savedIds = repo.findByDocsIdOrderById(docs.getId()).stream().mapToLong(Referrer::getMemberId).boxed().collect(Collectors.toList());
+            
+            list.removeAll(savedIds);   // 기존에 저장된 멤버가 중복이면 제거.
+            list = list.stream().distinct().filter(e -> !e.equals(loginUser.getMember().getId())) .collect(Collectors.toList());   // 본인 및 중복 제거한 최종 리스트 만들기.
+
+            repo.saveAll(
+                list.stream().map(e -> Referrer.builder().docs(docs).build().setReferrer( memberService.getMemberData(e) )).collect(Collectors.toList())
+            );
+
+            switch(docs.getType().getGroup()) {
+                case BOARD -> {
+                    if(docs.getType() == DocsType.MEETING) {  }   // 여기에 회의록 공유 알림 전용 코드만 추가할 것.
+                }
+                case APPROVAL -> list.forEach(e -> countService.removeReferrerDocsCntCache(e, true));   // 추가한 멤버들의 결재참조 카운트 캐시 업데이트
+            }
+
+            return new ServiceMsg().setResult(ServiceResult.SUCCESS);
+        
+        } catch(Exception e) {
+            e.printStackTrace();
+            log.warn("addToDocs Exception.");
+            log.warn("parameters: {}, {}, user: {}", docs.toString(), arrReferrerId.toString(), loginUser.getMember().getId());
+
+            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg("참조자 추가 에러입니다. 관리자에게 문의하세요.");
+        }
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재문서의 참조자 등록 및 수정 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 

@@ -79,6 +79,7 @@
         <script defer th:src="@{/js/docs/common/view.js}"></script>
         <script defer th:src="@{/js/docs/common/comments.js}"></script>
         <script defer th:src="@{/js/docs/approval/common/approvers-view.js}" th:if="${isCurrentApprover} == true"></script>
+        <script defer th:src="@{/js/docs/approval/common/referrers-view.js}"></script>
         <script defer th:src="@{/js/docs/approval/common/edit.js}" th:if="${isUpdatable} == true or ${isDeletable} == true"></script>
         <script defer th:src="@{/js/docs/approval/dayoff/copy.js}" th:if="${isOwner} == true"></script>
         <script defer th:src="@{/js/docs/approval/dayoff/view.js}"></script>

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -87,6 +88,17 @@ public class ApprovalDocsController {
     @GetMapping("/line/{docsId}/{type}")
     public ResponseEntity<Object> getDtosApprovalLinePack(@PathVariable Long docsId, @PathVariable String type, @AuthenticationPrincipal LoginUser loginUser) {
         return ResponseConverter.ok( approvalDocsService.getDtosApprovalLinePack(docsId, DocsType.valueOf(type.toUpperCase()), loginUser) );
+    }
+
+
+    // 참조자 추가
+    @PatchMapping("/referrer-add/{type}/{docsId}")
+    public ResponseEntity<Object> addReferrer(
+        @PathVariable String type, @PathVariable Long docsId, @RequestBody Long[] arrReferrerId, @AuthenticationPrincipal LoginUser loginUser
+    ) {
+        return ResponseConverter.message(
+            approvalDocsService.addReferrers(DocsType.valueOf(type.toUpperCase()), docsId, arrReferrerId, loginUser), ResponseMsg.SAVED
+        );
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 모든 결재문서의 modify page에서 결재자/참조자 요청시 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 }

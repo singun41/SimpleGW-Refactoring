@@ -3,6 +3,7 @@ function openLineSearch() {
     window.open('/page/approval/line-set', '', option);
 }
 
+// 결재문서 등록시 서버로 보내기 위한 멤버 id 변수
 let approverIds = [];
 let referrerIds = [];
 

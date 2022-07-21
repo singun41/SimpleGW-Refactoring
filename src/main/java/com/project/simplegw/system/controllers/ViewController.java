@@ -688,16 +688,26 @@ public class ViewController {
 
 
 
-    @GetMapping("/page/approval/line-set")
+    // ↓ ----- ----- ----- ----- ----- ----- ----- line ----- ----- ----- ----- ----- ----- ----- ↓ //
+    @GetMapping("/page/approval/line-set")   // 결재선 지정 페이지
     public String lineSettingPage(Model model) {
         model.addAttribute("teams", service.getTeams());
         return "docs/approval/common/write/line-set";
     }
 
+    @GetMapping("/page/approval/referrer-add")   // 문서 참조자 추가 페이지
+    public String referrerAddPage(Model model) {
+        model.addAttribute("teams", service.getTeams());
+        return "docs/approval/common/view/referrer-add";
+    }
+    // ↑ ----- ----- ----- ----- ----- ----- ----- line ----- ----- ----- ----- ----- ----- ----- ↑ //
+
     
+
+
     // 결재문서는 각 메뉴별 list 페이지를 만들지 않고, 하나의 리스트 페이지에서 모두 보여준다.
 
-
+    
     // ↓ ----- ----- ----- ----- ----- ----- ----- default ----- ----- ----- ----- ----- ----- ----- ↓ //
     // 기본 양식의 결재문서는 DocsType을 문자열로 받은뒤 Enum으로 변환해 서비스로 전달한다.
     @GetMapping("/page/approval/forms/{type}/write")
