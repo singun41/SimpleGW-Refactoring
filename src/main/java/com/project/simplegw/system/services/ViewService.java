@@ -171,34 +171,34 @@ public class ViewService {   // ViewController에서 필요한 데이터들을 �
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- board ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
     public DtosDocs getNotice(Long docsId) {
-        return noticeService.getNotice(docsId);
+        return noticeService.getDocs(docsId);
     }
 
     public DtosDocs getTempNotice(Long docsId) {
-        return noticeService.getTempNotice(docsId);
+        return noticeService.getTempDocs(docsId);
     }
 
 
     public DtosDocs getFreeboard(Long docsId) {
-        return freeboardService.getFreeboard(docsId);
+        return freeboardService.getDocs(docsId);
     }
 
     public DtosDocs getTempFreeboard(Long docsId) {
-        return freeboardService.getTempFreeboard(docsId);
+        return freeboardService.getTempDocs(docsId);
     }
 
 
     public DtosDocs getSuggestion(Long docsId) {
-        return suggestionService.getSuggestion(docsId);
+        return suggestionService.getDocs(docsId);
     }
 
     public DtosDocs getTempSuggestion(Long docsId) {
-        return suggestionService.getTempSuggestion(docsId);
+        return suggestionService.getTempDocs(docsId);
     }
 
 
     public DtosDocs getArchive(Long docsId) {   // 자료실은 임시저장 기능을 제공하지 않는다.
-        return archiveService.getArchive(docsId);
+        return archiveService.getDocs(docsId);
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- board ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 

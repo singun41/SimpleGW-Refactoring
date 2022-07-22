@@ -53,26 +53,21 @@ public class ViewController {
 
     @GetMapping("/main")
     public String defaultPage(Model model, @AuthenticationPrincipal LoginUser loginUser) {
+        model.addAttribute("user", service.getMyInfo(loginUser))   // user 기본 정보: MemberData 클래스
+            
         // 메뉴 오픈 여부 전달
-        boolean workRecord = authority.isAccessible(Menu.WORK_RECORD, loginUser);
-        boolean workRecordTeam = authority.isAccessible(Menu.WORK_RECORD_TEAM, loginUser);
-        boolean workRecordList = authority.isAccessible(Menu.WORK_RECORD_LIST, loginUser);
+            .addAttribute("suggestion", authority.isAccessible(Menu.SUGGESTION, loginUser))
+            .addAttribute("archive", authority.isAccessible(Menu.ARCHIVE, loginUser))
 
-        boolean approvalSearch = authority.isAccessible(Menu.APPROVAL_SEARCH, loginUser);
-        boolean approvalDefault = authority.isAccessible(Menu.APPROVAL_DEFAULT, loginUser);
-        boolean approvalCooperation = authority.isAccessible(Menu.APPROVAL_COOPERATION, loginUser);
-        boolean approvalDayoff = authority.isAccessible(Menu.APPROVAL_DAYOFF, loginUser);
+            .addAttribute("workRecord", authority.isAccessible(Menu.WORK_RECORD, loginUser))
+            .addAttribute("workRecordTeam", authority.isAccessible(Menu.WORK_RECORD_TEAM, loginUser))
+            .addAttribute("workRecordList", authority.isAccessible(Menu.WORK_RECORD_LIST, loginUser))
+            .addAttribute("meetingMinutes", authority.isAccessible(Menu.MEETING_MINUTES, loginUser))
 
-
-        model.addAttribute("user", service.getMyInfo(loginUser))
-            .addAttribute("workRecord", workRecord)
-            .addAttribute("workRecordTeam", workRecordTeam)
-            .addAttribute("workRecordList", workRecordList)
-
-            .addAttribute("approvalSearch", approvalSearch)
-            .addAttribute("approvalDefault", approvalDefault)
-            .addAttribute("approvalCooperation", approvalCooperation)
-            .addAttribute("approvalDayoff", approvalDayoff)
+            .addAttribute("approvalSearch", authority.isAccessible(Menu.APPROVAL_SEARCH, loginUser))
+            .addAttribute("approvalDefault", authority.isAccessible(Menu.APPROVAL_DEFAULT, loginUser))
+            .addAttribute("approvalCooperation", authority.isAccessible(Menu.APPROVAL_COOPERATION, loginUser))
+            .addAttribute("approvalDayoff", authority.isAccessible(Menu.APPROVAL_DAYOFF, loginUser))
             ;
         return "main/main";
     }
@@ -200,7 +195,7 @@ public class ViewController {
 
         boolean isWritable = authority.isWritable(Menu.NOTICE, loginUser);
 
-        model.addAttribute("pageTitle", DocsType.NOTICE.getTitle()).addAttribute("docsType", DocsType.NOTICE)
+        model.addAttribute("docsType", DocsType.NOTICE)
             .addAttribute("isWritable", isWritable);
         return "docs/board/notice/list";
     }
@@ -211,8 +206,7 @@ public class ViewController {
         if( ! ( authority.isAccessible(Menu.NOTICE, loginUser) && authority.isWritable(Menu.NOTICE, loginUser) )  )
             return Constants.ERROR_PAGE_403;
 
-        model.addAttribute("pageTitle", DocsType.NOTICE.getTitle())
-            .addAttribute("docsType", DocsType.NOTICE)
+        model.addAttribute("docsType", DocsType.NOTICE)
             .addAttribute("form", service.getDocsForm(EditorDocs.NOTICE));
         return "docs/board/notice/write";
     }
@@ -304,7 +298,7 @@ public class ViewController {
 
         boolean isWritable = authority.isWritable(Menu.FREEBOARD, loginUser);
 
-        model.addAttribute("pageTitle", DocsType.FREEBOARD.getTitle()).addAttribute("docsType", DocsType.FREEBOARD)
+        model.addAttribute("docsType", DocsType.FREEBOARD)
             .addAttribute("isWritable", isWritable);
         return "docs/board/free/list";
     }
@@ -315,8 +309,7 @@ public class ViewController {
         if( ! ( authority.isAccessible(Menu.FREEBOARD, loginUser) && authority.isWritable(Menu.FREEBOARD, loginUser) ) )
             return Constants.ERROR_PAGE_403;
 
-        model.addAttribute("pageTitle", DocsType.FREEBOARD.getTitle())
-            .addAttribute("docsType", DocsType.FREEBOARD)
+        model.addAttribute("docsType", DocsType.FREEBOARD)
             .addAttribute("form", service.getDocsForm(EditorDocs.FREEBOARD));
         return "docs/board/free/write";
     }
@@ -403,7 +396,7 @@ public class ViewController {
 
         boolean isWritable = authority.isWritable(Menu.SUGGESTION, loginUser);
 
-        model.addAttribute("pageTitle", DocsType.SUGGESTION.getTitle()).addAttribute("docsType", DocsType.SUGGESTION)
+        model.addAttribute("docsType", DocsType.SUGGESTION)
             .addAttribute("isWritable", isWritable);
         return "docs/board/suggestion/list";
     }
@@ -414,8 +407,7 @@ public class ViewController {
         if( ! ( authority.isAccessible(Menu.SUGGESTION, loginUser) && authority.isWritable(Menu.SUGGESTION, loginUser) ) )
             return Constants.ERROR_PAGE_403;
 
-        model.addAttribute("pageTitle", DocsType.SUGGESTION.getTitle())
-            .addAttribute("docsType", DocsType.SUGGESTION)
+        model.addAttribute("docsType", DocsType.SUGGESTION)
             .addAttribute("form", service.getDocsForm(EditorDocs.SUGGESTION));
         return "docs/board/suggestion/write";
     }
@@ -502,7 +494,7 @@ public class ViewController {
 
         boolean isWritable = authority.isWritable(Menu.ARCHIVE, loginUser);
 
-        model.addAttribute("pageTitle", DocsType.ARCHIVE.getTitle()).addAttribute("docsType", DocsType.ARCHIVE)
+        model.addAttribute("docsType", DocsType.ARCHIVE)
             .addAttribute("isWritable", isWritable);
         return "docs/board/archive/list";
     }
@@ -513,8 +505,7 @@ public class ViewController {
         if( ! ( authority.isAccessible(Menu.ARCHIVE, loginUser) && authority.isWritable(Menu.ARCHIVE, loginUser) ) )
             return Constants.ERROR_PAGE_403;
 
-        model.addAttribute("pageTitle", DocsType.ARCHIVE.getTitle())
-            .addAttribute("docsType", DocsType.ARCHIVE)
+        model.addAttribute("docsType", DocsType.ARCHIVE)
             .addAttribute("form", service.getDocsForm(EditorDocs.ARCHIVE));
         return "docs/board/archive/write";
     }
@@ -600,6 +591,19 @@ public class ViewController {
 
         model.addAttribute("teams", service.getTeams());
         return "work/work-record/list";
+    }
+
+
+    @GetMapping("/page/meeting-minutes/list")
+    public String meetingMinutesListPage(Model model, @AuthenticationPrincipal LoginUser loginUser) {
+        if( ! authority.isAccessible(Menu.MEETING_MINUTES, loginUser) )
+            return Constants.ERROR_PAGE_403;
+        
+        boolean isWritable = authority.isWritable(Menu.MEETING_MINUTES, loginUser);
+
+        model.addAttribute("docsType", DocsType.MEETING)
+            .addAttribute("isWritable", isWritable);
+        return "work/meeting-minutes/list";
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- work ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 
@@ -719,8 +723,7 @@ public class ViewController {
         if( ! ( authority.isAccessible(menu, loginUser) && authority.isWritable(menu, loginUser) ) )
             return Constants.ERROR_PAGE_403;
 
-        model.addAttribute("pageTitle", menu.getTitle())
-            .addAttribute("docsType", docsType)
+        model.addAttribute("docsType", docsType)
             .addAttribute("form", service.getDocsForm(editorDocs));
         return "docs/approval/default/write";
     }
@@ -813,8 +816,7 @@ public class ViewController {
         if( ! ( authority.isAccessible(Menu.APPROVAL_DAYOFF, loginUser) && authority.isWritable(Menu.APPROVAL_DAYOFF, loginUser) ) )
             return Constants.ERROR_PAGE_403;
 
-        model.addAttribute("pageTitle", Menu.APPROVAL_DAYOFF.getTitle())
-            .addAttribute("docsType", DocsType.DAYOFF)
+        model.addAttribute("docsType", DocsType.DAYOFF)
             .addAttribute("codes", service.getDayoffCodes());
 
         return "docs/approval/dayoff/write";

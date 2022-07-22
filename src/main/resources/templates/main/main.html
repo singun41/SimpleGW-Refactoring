@@ -84,8 +84,8 @@
                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                             <li><a role="button" onclick="page('notice/list')" class="link-dark align-items-center rounded"><div class="nav-icon-area"><i class="fa-solid fa-clipboard-list"></i></div>공지사항</a></li>
                             <li><a role="button" onclick="page('freeboard/list')" class="link-dark align-items-center rounded"><div class="nav-icon-area"><i class="fa-solid fa-message"></i></div>자유게시판</a></li>
-                            <li><a role="button" onclick="page('suggestion/list')" class="link-dark align-items-center rounded"><div class="nav-icon-area"><i class="fa-solid fa-chalkboard-user"></i></div>제안게시판</a></li>
-                            <li><a role="button" onclick="page('archive/list')" class="link-dark align-items-center rounded"><div class="nav-icon-area"><i class="fa-solid fa-box-archive"></i></div>자료실</a></li>
+                            <li th:if="${suggestion} == true"><a role="button" onclick="page('suggestion/list')" class="link-dark align-items-center rounded"><div class="nav-icon-area"><i class="fa-solid fa-chalkboard-user"></i></div>제안게시판</a></li>
+                            <li th:if="${archive} == true"><a role="button" onclick="page('archive/list')" class="link-dark align-items-center rounded"><div class="nav-icon-area"><i class="fa-solid fa-box-archive"></i></div>자료실</a></li>
                         </ul>
                     </div>
                 </li>
@@ -100,7 +100,7 @@
                             <li th:if="${workRecord} == true"><a role="button" onclick="page('work-record/personal')" class="link-dark align-items-center rounded"><div class="nav-icon-area"><i class="fa-solid fa-list-check"></i></div>업무일지</a></li>
                             <li th:if="${workRecordTeam} == true"><a role="button" onclick="page('work-record/team')" class="link-dark align-items-center rounded"><div class="nav-icon-area"><i class="fa-solid fa-list"></i></div>부서 업무일지</a></li>
                             <li th:if="${workRecordList} == true"><a role="button" onclick="page('work-record/list')" class="link-dark align-items-center rounded"><div class="nav-icon-area"><i class="fa-solid fa-list"></i></div>업무일지 리스트</a></li>
-                            <li><a href="#" class="link-dark align-items-center rounded"><div class="nav-icon-area"><i class="fa-solid fa-file-lines"></i></div>회의록</a></li>
+                            <li th:if="${meetingMinutes} == true"><a role="button" onclick="page('meeting-minutes/list')" class="link-dark align-items-center rounded"><div class="nav-icon-area"><i class="fa-solid fa-file-lines"></i></div>회의록</a></li>
                         </ul>
                     </div>
                 </li>

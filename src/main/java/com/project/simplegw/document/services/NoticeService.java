@@ -39,22 +39,23 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Transactional(rollbackFor = Exception.class, isolation = Isolation.READ_COMMITTED)
 public class NoticeService {
+    private static final DocsType NOTICE = DocsType.NOTICE;
+
     private final DocsService docsService;
     private final TempDocsService tempDocsService;
     private final DocsConverter docsConverter;
-    private final SseDocsService sseDocsService;
-
-    private final MenuAuthorityService authorityService;
+    private final MenuAuthorityService authService;
     
-    private static final DocsType NOTICE = DocsType.NOTICE;
+    private final SseDocsService sseDocsService;
+    
 
     // @Autowired   // framework 버전 업데이트 이후 자동설정되어 선언하지 않아도 됨.
-    public NoticeService(DocsService docsService, TempDocsService tempDocsService, DocsConverter docsConverter, SseDocsService sseDocsService, MenuAuthorityService authorityService) {
+    public NoticeService(DocsService docsService, TempDocsService tempDocsService, DocsConverter docsConverter, SseDocsService sseDocsService, MenuAuthorityService authService) {
         this.docsService = docsService;
         this.tempDocsService = tempDocsService;
         this.docsConverter = docsConverter;
         this.sseDocsService = sseDocsService;
-        this.authorityService = authorityService;
+        this.authService = authService;
 
         log.info("Component '" + this.getClass().getName() + "' has been created.");
     }
@@ -99,7 +100,7 @@ public class NoticeService {
     public ServiceMsg create(DtorDocs dto, LoginUser loginUser) {
         log.info("CacheEvict method 'create()' called. user: {}", loginUser.getMember().getId());
 
-        if( ! authorityService.isWritable(Menu.NOTICE, loginUser) )
+        if( ! authService.isWritable(Menu.NOTICE, loginUser) )
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg( ResponseMsg.UNAUTHORIZED.getTitle() );
 
         Long docsId = docsService.create(dto, NOTICE, loginUser).getId();
@@ -120,7 +121,7 @@ public class NoticeService {
 
         Docs docs = docsService.getDocsEntity(docsId, NOTICE);
 
-        if( ! authorityService.isUpdatable(Menu.NOTICE, loginUser, docs.getWriterId()) )
+        if( ! authService.isUpdatable(Menu.NOTICE, loginUser, docs.getWriterId()) )
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg( ResponseMsg.UNAUTHORIZED.getTitle() );
 
         docsService.update(docsId, dto, NOTICE);
@@ -135,7 +136,7 @@ public class NoticeService {
         
         Docs docs = docsService.getDocsEntity(docsId, NOTICE);
 
-        if( ! authorityService.isDeletable(Menu.NOTICE, loginUser, docs.getWriterId()) )
+        if( ! authService.isDeletable(Menu.NOTICE, loginUser, docs.getWriterId()) )
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg( ResponseMsg.UNAUTHORIZED.getTitle() );
 
         if( NOTICE != docs.getType() )
@@ -148,7 +149,7 @@ public class NoticeService {
 
 
 
-    public DtosDocs getNotice(Long docsId) {
+    public DtosDocs getDocs(Long docsId) {
         return docsService.getDtosDocs(docsId, NOTICE);
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
@@ -176,21 +177,16 @@ public class NoticeService {
     public ServiceMsg createTemp(DtorDocs dto, LoginUser loginUser) {
         Long docsId = tempDocsService.create(dto, NOTICE, loginUser).getId();
 
-        if( ! authorityService.isWritable(Menu.NOTICE, loginUser) )
-            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg( ResponseMsg.UNAUTHORIZED.getTitle() );
-
         if(docsId == null)
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg( new StringBuilder(NOTICE.getTitle()).append(" 임시저장 에러입니다. 관리자에게 문의하세요.").toString() );
         
         else
             return new ServiceMsg().setResult(ServiceResult.SUCCESS).setReturnObj(docsId);
     }
+    
 
     public ServiceMsg updateTemp(Long docsId, DtorDocs dto, LoginUser loginUser) {
         TempDocs tempDocs = tempDocsService.getTempDocsEntity(docsId, NOTICE);
-
-        if( ! authorityService.isUpdatable(Menu.NOTICE, loginUser, tempDocs.getWriterId()) )
-            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg( ResponseMsg.UNAUTHORIZED.getTitle() );
 
         if( ! tempDocsService.isOwner(tempDocs, loginUser) )   // 임시저장 문서는 본인만 수정 가능.
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg(ResponseMsg.UNAUTHORIZED.getTitle());
@@ -203,25 +199,19 @@ public class NoticeService {
     public ServiceMsg deleteTemp(Long docsId, LoginUser loginUser) {
         TempDocs tempDocs = tempDocsService.getTempDocsEntity(docsId, NOTICE);
 
-        if( ! authorityService.isDeletable(Menu.NOTICE, loginUser, tempDocs.getWriterId()) )
-            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg( ResponseMsg.UNAUTHORIZED.getTitle() );
+        if( ! tempDocsService.isOwner(tempDocs, loginUser) )   // 임시저장 문서는 본인만 삭제 가능.
+            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg(ResponseMsg.UNAUTHORIZED.getTitle());
 
         if( NOTICE != tempDocs.getType() )
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg( new StringBuilder("삭제 대상 문서가 ").append(NOTICE.getTitle()).append("문서가 아닙니다.").toString() );
 
-        
-        if( tempDocsService.isOwner(tempDocs, loginUser) ) {   // 임시저장 문서는 본인만 삭제 가능.
-            tempDocsService.delete(tempDocs, loginUser);
-            return new ServiceMsg().setResult(ServiceResult.SUCCESS);
-            
-        } else {
-            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg(ResponseMsg.UNAUTHORIZED.getTitle());
-        }
+        tempDocsService.delete(tempDocs, loginUser);
+        return new ServiceMsg().setResult(ServiceResult.SUCCESS);
     }
 
 
 
-    public DtosDocs getTempNotice(Long docsId) {
+    public DtosDocs getTempDocs(Long docsId) {
         return tempDocsService.getDtosDocsFromTempDocs(docsId, NOTICE);
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- temp docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //

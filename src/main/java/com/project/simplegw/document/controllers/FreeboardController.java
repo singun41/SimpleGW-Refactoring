@@ -32,11 +32,11 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/freeboard")
 public class FreeboardController {
-    private final FreeboardService freeboardService;
+    private final FreeboardService service;
 
     // @Autowired   // framework 버전 업데이트 이후 자동설정되어 선언하지 않아도 됨.
-    public FreeboardController(FreeboardService freeboardService) {
-        this.freeboardService = freeboardService;
+    public FreeboardController(FreeboardService service) {
+        this.service = service;
         log.info("Component '" + this.getClass().getName() + "' has been created.");
     }
 
@@ -45,13 +45,13 @@ public class FreeboardController {
     
     @GetMapping("/main-list")
     public ResponseEntity<Object> getMainPageList() {
-        return ResponseConverter.ok(freeboardService.getMainPageList());
+        return ResponseConverter.ok(service.getMainPageList());
     }
 
 
     @GetMapping(path = "/list", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<Object> getList(@RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateFrom, @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateTo) {
-        return ResponseConverter.ok(freeboardService.getList(dateFrom, dateTo));
+        return ResponseConverter.ok(service.getList(dateFrom, dateTo));
     }
 
 
@@ -65,7 +65,7 @@ public class FreeboardController {
             return ResponseConverter.badRequest(result);
         
         return ResponseConverter.message(
-            freeboardService.create(dto, loginUser), ResponseMsg.INSERTED
+            service.create(dto, loginUser), ResponseMsg.INSERTED
         );
     }
 
@@ -75,14 +75,14 @@ public class FreeboardController {
             return ResponseConverter.badRequest(result);
         
         return ResponseConverter.message(
-            freeboardService.update(docsId, dto, loginUser), ResponseMsg.UPDATED
+            service.update(docsId, dto, loginUser), ResponseMsg.UPDATED
         );
     }
 
     @DeleteMapping("/{docsId}")
     public ResponseEntity<Object> delete(@PathVariable Long docsId, @AuthenticationPrincipal LoginUser loginUser) {
         return ResponseConverter.message(
-            freeboardService.delete(docsId, loginUser), ResponseMsg.DELETED
+            service.delete(docsId, loginUser), ResponseMsg.DELETED
         );
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
@@ -98,7 +98,7 @@ public class FreeboardController {
             return ResponseConverter.badRequest(result);
         
         return ResponseConverter.message(
-            freeboardService.createTemp(dto, loginUser), ResponseMsg.INSERTED
+            service.createTemp(dto, loginUser), ResponseMsg.INSERTED
         );
     }
 
@@ -108,14 +108,14 @@ public class FreeboardController {
             return ResponseConverter.badRequest(result);
         
         return ResponseConverter.message(
-            freeboardService.updateTemp(docsId, dto, loginUser), ResponseMsg.UPDATED
+            service.updateTemp(docsId, dto, loginUser), ResponseMsg.UPDATED
         );
     }
 
     @DeleteMapping("/temp/{docsId}")
     public ResponseEntity<Object> deleteTemp(@PathVariable Long docsId, @AuthenticationPrincipal LoginUser loginUser) {
         return ResponseConverter.message(
-            freeboardService.deleteTemp(docsId, loginUser), ResponseMsg.DELETED
+            service.deleteTemp(docsId, loginUser), ResponseMsg.DELETED
         );
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- temp docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //

@@ -32,11 +32,11 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/suggestion")
 public class SuggestionController {
-    private final SuggestionService suggestionService;
+    private final SuggestionService service;
 
     // @Autowired   // framework 버전 업데이트 이후 자동설정되어 선언하지 않아도 됨.
-    public SuggestionController(SuggestionService suggestionService) {
-        this.suggestionService = suggestionService;
+    public SuggestionController(SuggestionService service) {
+        this.service = service;
         log.info("Component '" + this.getClass().getName() + "' has been created.");
     }
 
@@ -45,7 +45,7 @@ public class SuggestionController {
 
     @GetMapping(path = "/list", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<Object> getList(@RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateFrom, @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateTo) {
-        return ResponseConverter.ok(suggestionService.getList(dateFrom, dateTo));
+        return ResponseConverter.ok(service.getList(dateFrom, dateTo));
     }
 
 
@@ -59,7 +59,7 @@ public class SuggestionController {
             return ResponseConverter.badRequest(result);
         
         return ResponseConverter.message(
-            suggestionService.create(dto, loginUser), ResponseMsg.INSERTED
+            service.create(dto, loginUser), ResponseMsg.INSERTED
         );
     }
 
@@ -69,14 +69,14 @@ public class SuggestionController {
             return ResponseConverter.badRequest(result);
         
         return ResponseConverter.message(
-            suggestionService.update(docsId, dto,loginUser), ResponseMsg.UPDATED
+            service.update(docsId, dto,loginUser), ResponseMsg.UPDATED
         );
     }
 
     @DeleteMapping("/{docsId}")
     public ResponseEntity<Object> delete(@PathVariable Long docsId, @AuthenticationPrincipal LoginUser loginUser) {
         return ResponseConverter.message(
-            suggestionService.delete(docsId, loginUser), ResponseMsg.DELETED
+            service.delete(docsId, loginUser), ResponseMsg.DELETED
         );
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
@@ -92,7 +92,7 @@ public class SuggestionController {
             return ResponseConverter.badRequest(result);
         
         return ResponseConverter.message(
-            suggestionService.createTemp(dto, loginUser), ResponseMsg.INSERTED
+            service.createTemp(dto, loginUser), ResponseMsg.INSERTED
         );
     }
 
@@ -102,14 +102,14 @@ public class SuggestionController {
             return ResponseConverter.badRequest(result);
         
         return ResponseConverter.message(
-            suggestionService.updateTemp(docsId, dto, loginUser), ResponseMsg.UPDATED
+            service.updateTemp(docsId, dto, loginUser), ResponseMsg.UPDATED
         );
     }
 
     @DeleteMapping("/temp/{docsId}")
     public ResponseEntity<Object> deleteTemp(@PathVariable Long docsId, @AuthenticationPrincipal LoginUser loginUser) {
         return ResponseConverter.message(
-            suggestionService.deleteTemp(docsId, loginUser), ResponseMsg.DELETED
+            service.deleteTemp(docsId, loginUser), ResponseMsg.DELETED
         );
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- temp docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //

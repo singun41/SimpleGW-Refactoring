@@ -60,6 +60,7 @@ public class MenuAuthorityService {
                 MenuAuthority workRecord = MenuAuthority.builder().menu(Menu.WORK_RECORD).role(role).build();
                 MenuAuthority workRecordTeam = MenuAuthority.builder().menu(Menu.WORK_RECORD_TEAM).role(role).build();
                 MenuAuthority workRecordList = MenuAuthority.builder().menu(Menu.WORK_RECORD_LIST).role(role).build();
+                MenuAuthority meetingMinutes = MenuAuthority.builder().menu(Menu.MEETING_MINUTES).role(role).build();
                 
                 MenuAuthority approvalSearch = MenuAuthority.builder().menu(Menu.APPROVAL_SEARCH).role(role).build();
                 MenuAuthority approvalDefault = MenuAuthority.builder().menu(Menu.APPROVAL_DEFAULT).role(role).build();
@@ -78,6 +79,7 @@ public class MenuAuthorityService {
                         workRecord.updateAccessible(true).updateRwdRole(AuthorityValue.RW).updateRwdOther(AuthorityValue.NONE);
                         workRecordTeam.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
                         workRecordList.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
+                        meetingMinutes.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
 
                         approvalSearch.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
                         approvalDefault.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
@@ -96,6 +98,7 @@ public class MenuAuthorityService {
                         workRecord.updateAccessible(true).updateRwdRole(AuthorityValue.RW).updateRwdOther(AuthorityValue.NONE);
                         workRecordTeam.updateAccessible(false).updateRwdRole(AuthorityValue.NONE).updateRwdOther(AuthorityValue.NONE);
                         workRecordList.updateAccessible(false).updateRwdRole(AuthorityValue.NONE).updateRwdOther(AuthorityValue.NONE);
+                        meetingMinutes.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
 
                         approvalSearch.updateAccessible(false).updateRwdRole(AuthorityValue.NONE).updateRwdOther(AuthorityValue.NONE);
                         approvalDefault.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
@@ -114,6 +117,7 @@ public class MenuAuthorityService {
                         workRecord.updateAccessible(true).updateRwdRole(AuthorityValue.RW).updateRwdOther(AuthorityValue.NONE);
                         workRecordTeam.updateAccessible(false).updateRwdRole(AuthorityValue.NONE).updateRwdOther(AuthorityValue.NONE);
                         workRecordList.updateAccessible(false).updateRwdRole(AuthorityValue.NONE).updateRwdOther(AuthorityValue.NONE);
+                        meetingMinutes.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
 
                         approvalSearch.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
                         approvalDefault.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
@@ -132,6 +136,7 @@ public class MenuAuthorityService {
                         workRecord.updateAccessible(true).updateRwdRole(AuthorityValue.RW).updateRwdOther(AuthorityValue.NONE);
                         workRecordTeam.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
                         workRecordList.updateAccessible(false).updateRwdRole(AuthorityValue.NONE).updateRwdOther(AuthorityValue.NONE);
+                        meetingMinutes.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
 
                         approvalSearch.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
                         approvalDefault.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
@@ -150,6 +155,7 @@ public class MenuAuthorityService {
                         workRecord.updateAccessible(true).updateRwdRole(AuthorityValue.RW).updateRwdOther(AuthorityValue.NONE);
                         workRecordTeam.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
                         workRecordList.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
+                        meetingMinutes.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
 
                         approvalSearch.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
                         approvalDefault.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
@@ -168,6 +174,7 @@ public class MenuAuthorityService {
                         workRecord.updateAccessible(true).updateRwdRole(AuthorityValue.RW).updateRwdOther(AuthorityValue.NONE);
                         workRecordTeam.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
                         workRecordList.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
+                        meetingMinutes.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
 
                         approvalSearch.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
                         approvalDefault.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
@@ -179,7 +186,7 @@ public class MenuAuthorityService {
                 repo.saveAll(
                     Arrays.asList(
                         notice, freeboard, suggestion, archive,
-                        workRecord, workRecordTeam, workRecordList,
+                        workRecord, workRecordTeam, workRecordList, meetingMinutes,
                         approvalSearch, approvalDefault, approvalCooperation, approvalDayoff
                     )
                 );
@@ -240,11 +247,8 @@ public class MenuAuthorityService {
 
 
     public boolean isAccessible(Menu menu, LoginUser loginUser) {
-        DtosMenuAuthority authority = authorities.stream().filter( e -> e.getMenu() == menu && e.getRole() == loginUser.getMember().getRole() ).findFirst().orElseGet( DtosMenuAuthority::new );
-        return authority.isAccessible();
+        return getAuthority(menu, loginUser).isAccessible();
     }
-
-
 
     private DtosMenuAuthority getAuthority(Menu menu, LoginUser loginUser) {
         return authorities.stream().filter( e -> e.getMenu() == menu && e.getRole() == loginUser.getMember().getRole() ).findFirst().orElseGet( DtosMenuAuthority::new );
@@ -256,9 +260,6 @@ public class MenuAuthorityService {
         DtosMenuAuthority authority = getAuthority(menu, loginUser);
 
         if(loginUser.getMember().getId().equals( ownerId )) {   // Role에 대한 권한
-            if(authority.getRwdRole() == null)
-                return false;
-            
             if(authority.getRwdRole() == AuthorityValue.R || authority.getRwdRole() == AuthorityValue.RW || authority.getRwdRole() == AuthorityValue.RD || authority.getRwdRole() == AuthorityValue.RWD)
                 return true;
 
@@ -267,10 +268,7 @@ public class MenuAuthorityService {
         
         
         } else {   // 타 유저 데이터에 대한 권한
-            if(authority.getRwdOther() == null)
-                return false;
-
-            else if(authority.getRwdOther() == AuthorityValue.R || authority.getRwdOther() == AuthorityValue.RW || authority.getRwdOther() == AuthorityValue.RD || authority.getRwdOther() == AuthorityValue.RWD)
+            if(authority.getRwdOther() == AuthorityValue.R || authority.getRwdOther() == AuthorityValue.RW || authority.getRwdOther() == AuthorityValue.RD || authority.getRwdOther() == AuthorityValue.RWD)
                 return true;
 
             else
@@ -283,9 +281,6 @@ public class MenuAuthorityService {
     // isAccessible과 함께 write.html, modify.html 페이지를 접근할 수 있는 권한 체크에도 사용한다.
     public boolean isWritable(Menu menu, LoginUser loginUser) {
         DtosMenuAuthority authority = getAuthority(menu, loginUser);
-        
-        if(authority.getRwdRole() == null)
-            return false;
         
         if(authority.getRwdRole() == AuthorityValue.RW || authority.getRwdRole() == AuthorityValue.RWD)
             return true;
@@ -303,10 +298,7 @@ public class MenuAuthorityService {
         } else {   // 타 유저 데이터에 대한 권한
             DtosMenuAuthority authority = getAuthority(menu, loginUser);
 
-            if(authority.getRwdOther() == null)
-                return false;
-            
-            else if(authority.getRwdOther() == AuthorityValue.RW || authority.getRwdOther() == AuthorityValue.RWD)
+            if(authority.getRwdOther() == AuthorityValue.RW || authority.getRwdOther() == AuthorityValue.RWD)
                 return true;
 
             else
@@ -320,10 +312,7 @@ public class MenuAuthorityService {
         DtosMenuAuthority authority = getAuthority(menu, loginUser);
 
         if(loginUser.getMember().getId().equals( ownerId )) {   // Role에 대한 권한
-            if(authority.getRwdRole() == null)
-                return false;
-
-            else if(authority.getRwdRole() == AuthorityValue.RD || authority.getRwdRole() == AuthorityValue.RWD)
+            if(authority.getRwdRole() == AuthorityValue.RD || authority.getRwdRole() == AuthorityValue.RWD)
                 return true;
 
             else
@@ -331,10 +320,7 @@ public class MenuAuthorityService {
 
         
         } else {   // 타 유저 데이터에 대한 권한
-            if(authority.getRwdOther() == null)
-                return false;
-
-            else if(authority.getRwdOther() == AuthorityValue.RD || authority.getRwdOther() == AuthorityValue.RWD)
+            if(authority.getRwdOther() == AuthorityValue.RD || authority.getRwdOther() == AuthorityValue.RWD)
                 return true;
 
             else

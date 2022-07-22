@@ -7,7 +7,6 @@ import com.project.simplegw.document.services.ArchiveService;
 import com.project.simplegw.system.helpers.ResponseConverter;
 import com.project.simplegw.system.security.LoginUser;
 import com.project.simplegw.system.vos.ResponseMsg;
-import com.project.simplegw.system.vos.Role;
 
 // import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -33,26 +32,20 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/archive")
 public class ArchiveController {
-    private final ArchiveService archiveService;
+    private final ArchiveService service;
 
     // @Autowired   // framework 버전 업데이트 이후 자동설정되어 선언하지 않아도 됨.
-    public ArchiveController(ArchiveService archiveService) {
-        this.archiveService = archiveService;
+    public ArchiveController(ArchiveService service) {
+        this.service = service;
         log.info("Component '" + this.getClass().getName() + "' has been created.");
     }
 
 
 
-
+    
     @GetMapping(path = "/list", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<Object> getList(@RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateFrom, @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateTo) {
-        return ResponseConverter.ok(archiveService.getList(dateFrom, dateTo));
-    }
-
-
-    private boolean isAuthorized(LoginUser loginUser) {
-        Role role = loginUser.getMember().getRole();
-        return Role.ADMIN == role || Role.MANAGER == role;
+        return ResponseConverter.ok(service.getList(dateFrom, dateTo));
     }
 
 
@@ -64,37 +57,28 @@ public class ArchiveController {
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
     @PostMapping
     public ResponseEntity<Object> create(@Validated @RequestBody DtorDocs dto, BindingResult result, @AuthenticationPrincipal LoginUser loginUser) {
-        if( ! isAuthorized(loginUser) )
-            return ResponseConverter.unauthorized();
-
         if(result.hasErrors())
             return ResponseConverter.badRequest(result);
         
         return ResponseConverter.message(
-            archiveService.create(dto, loginUser), ResponseMsg.INSERTED
+            service.create(dto, loginUser), ResponseMsg.INSERTED
         );
     }
 
     @PatchMapping("/{docsId}")
     public ResponseEntity<Object> update(@PathVariable Long docsId, @Validated @RequestBody DtorDocs dto, BindingResult result, @AuthenticationPrincipal LoginUser loginUser) {
-        if( ! isAuthorized(loginUser) )
-            return ResponseConverter.unauthorized();
-
         if(result.hasErrors())
             return ResponseConverter.badRequest(result);
         
         return ResponseConverter.message(
-            archiveService.update(docsId, dto, loginUser), ResponseMsg.UPDATED
+            service.update(docsId, dto, loginUser), ResponseMsg.UPDATED
         );
     }
 
     @DeleteMapping("/{docsId}")
     public ResponseEntity<Object> delete(@PathVariable Long docsId, @AuthenticationPrincipal LoginUser loginUser) {
-        if( ! isAuthorized(loginUser) )
-            return ResponseConverter.unauthorized();
-            
         return ResponseConverter.message(
-            archiveService.delete(docsId), ResponseMsg.DELETED
+            service.delete(docsId, loginUser), ResponseMsg.DELETED
         );
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //

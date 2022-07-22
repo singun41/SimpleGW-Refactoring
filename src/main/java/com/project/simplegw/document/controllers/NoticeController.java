@@ -33,11 +33,11 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/notice")
 public class NoticeController {
-    private final NoticeService noticeService;
+    private final NoticeService service;
 
     // @Autowired   // framework 버전 업데이트 이후 자동설정되어 선언하지 않아도 됨.
-    public NoticeController(NoticeService noticeService) {
-        this.noticeService = noticeService;
+    public NoticeController(NoticeService service) {
+        this.service = service;
         log.info("Component '" + this.getClass().getName() + "' has been created.");
     }
 
@@ -46,61 +46,44 @@ public class NoticeController {
     
     @GetMapping("/main-list")
     public ResponseEntity<Object> getMainPageList() {
-        return ResponseConverter.ok(noticeService.getMainPageList());
+        return ResponseConverter.ok(service.getMainPageList());
     }
 
 
     @GetMapping(path = "/list", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<Object> getList(@RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateFrom, @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateTo) {
-        return ResponseConverter.ok(noticeService.getList(dateFrom, dateTo));
+        return ResponseConverter.ok(service.getList(dateFrom, dateTo));
     }
 
 
 
-    // NoticeService에서 MenuAuthorityService를 활용하여 체크하도록 전환.
-    // private boolean isAuthorized(LoginUser loginUser) {
-    //     Role role = loginUser.getMember().getRole();
-    //     return role != Role.USER;   // 일반 유저 권한이 아니라면 모두 권한이 있음.
-    // }
-
-
-    
 
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
     @PostMapping
     public ResponseEntity<Object> create(@Validated @RequestBody DtorDocs dto, BindingResult result, @AuthenticationPrincipal LoginUser loginUser) {
-        // if( ! isAuthorized(loginUser) )
-        //     return ResponseConverter.unauthorized();
-
         if(result.hasErrors())
             return ResponseConverter.badRequest(result);
         
         return ResponseConverter.message(
-            noticeService.create(dto, loginUser), ResponseMsg.INSERTED
+            service.create(dto, loginUser), ResponseMsg.INSERTED
         );
     }
 
     @PatchMapping("/{docsId}")
     public ResponseEntity<Object> update(@PathVariable Long docsId, @Validated @RequestBody DtorDocs dto, BindingResult result, @AuthenticationPrincipal LoginUser loginUser) {
-        // if( ! isAuthorized(loginUser) )
-        //     return ResponseConverter.unauthorized();
-
         if(result.hasErrors())
             return ResponseConverter.badRequest(result);
         
         return ResponseConverter.message(
-            noticeService.update(docsId, dto, loginUser), ResponseMsg.UPDATED
+            service.update(docsId, dto, loginUser), ResponseMsg.UPDATED
         );
     }
 
     @DeleteMapping("/{docsId}")
     public ResponseEntity<Object> delete(@PathVariable Long docsId, @AuthenticationPrincipal LoginUser loginUser) {
-        // if( ! isAuthorized(loginUser) )
-        //     return ResponseConverter.unauthorized();
-            
         return ResponseConverter.message(
-            noticeService.delete(docsId, loginUser), ResponseMsg.DELETED
+            service.delete(docsId, loginUser), ResponseMsg.DELETED
         );
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
@@ -112,13 +95,13 @@ public class NoticeController {
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- docs options ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
     @PostMapping("/{docsId}/options")
     public ResponseEntity<Object> updateOptions(@PathVariable Long docsId, @Validated @RequestBody DtorDocsOptions dto, @AuthenticationPrincipal LoginUser loginUser) {
-        noticeService.updateOptions(docsId, dto);
+        service.updateOptions(docsId, dto);
         return ResponseConverter.ok();
     }
 
     @GetMapping("/{docsId}/options")
     public ResponseEntity<Object> getOptions(@PathVariable Long docsId, @AuthenticationPrincipal LoginUser loginUser) {
-        return ResponseConverter.ok( noticeService.getOptions(docsId) );
+        return ResponseConverter.ok( service.getOptions(docsId) );
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- docs options ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 
@@ -129,37 +112,28 @@ public class NoticeController {
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- temp docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
     @PostMapping("/temp")
     public ResponseEntity<Object> createTemp(@Validated @RequestBody DtorDocs dto, BindingResult result, @AuthenticationPrincipal LoginUser loginUser) {
-        // if( ! isAuthorized(loginUser) )
-        //     return ResponseConverter.unauthorized();
-
         if(result.hasErrors())
             return ResponseConverter.badRequest(result);
         
         return ResponseConverter.message(
-            noticeService.createTemp(dto, loginUser), ResponseMsg.INSERTED
+            service.createTemp(dto, loginUser), ResponseMsg.INSERTED
         );
     }
 
     @PatchMapping("/temp/{docsId}")
     public ResponseEntity<Object> updateTemp(@PathVariable Long docsId, @Validated @RequestBody DtorDocs dto, BindingResult result, @AuthenticationPrincipal LoginUser loginUser) {
-        // if( ! isAuthorized(loginUser) )
-        //     return ResponseConverter.unauthorized();
-
         if(result.hasErrors())
             return ResponseConverter.badRequest(result);
         
         return ResponseConverter.message(
-            noticeService.updateTemp(docsId, dto, loginUser), ResponseMsg.UPDATED
+            service.updateTemp(docsId, dto, loginUser), ResponseMsg.UPDATED
         );
     }
 
     @DeleteMapping("/temp/{docsId}")
     public ResponseEntity<Object> deleteTemp(@PathVariable Long docsId, @AuthenticationPrincipal LoginUser loginUser) {
-        // if( ! isAuthorized(loginUser) )
-        //     return ResponseConverter.unauthorized();
-            
         return ResponseConverter.message(
-            noticeService.deleteTemp(docsId, loginUser), ResponseMsg.DELETED
+            service.deleteTemp(docsId, loginUser), ResponseMsg.DELETED
         );
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- temp docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //

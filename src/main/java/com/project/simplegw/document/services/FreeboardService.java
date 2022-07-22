@@ -13,10 +13,11 @@ import com.project.simplegw.document.entities.TempDocs;
 import com.project.simplegw.document.helpers.DocsConverter;
 import com.project.simplegw.document.vos.DocsType;
 import com.project.simplegw.system.security.LoginUser;
+import com.project.simplegw.system.services.MenuAuthorityService;
 import com.project.simplegw.system.services.SseDocsService;
 import com.project.simplegw.system.vos.Constants;
+import com.project.simplegw.system.vos.Menu;
 import com.project.simplegw.system.vos.ResponseMsg;
-import com.project.simplegw.system.vos.Role;
 import com.project.simplegw.system.vos.ServiceResult;
 import com.project.simplegw.system.vos.ServiceMsg;
 
@@ -33,19 +34,23 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Transactional(rollbackFor = Exception.class, isolation = Isolation.READ_COMMITTED)
 public class FreeboardService {
+    private static final DocsType FREEBOARD = DocsType.FREEBOARD;
+
     private final DocsService docsService;
     private final TempDocsService tempDocsService;
     private final DocsConverter docsConverter;
-    private final SseDocsService sseDocsService;
+    private final MenuAuthorityService authService;
 
-    private static final DocsType FREEBOARD = DocsType.FREEBOARD;
+    private final SseDocsService sseDocsService;
+    
 
     // @Autowired   // framework 버전 업데이트 이후 자동설정되어 선언하지 않아도 됨.
-    public FreeboardService(DocsService docsService, TempDocsService tempDocsService, DocsConverter docsConverter, SseDocsService sseDocsService) {
+    public FreeboardService(DocsService docsService, TempDocsService tempDocsService, DocsConverter docsConverter, SseDocsService sseDocsService, MenuAuthorityService authService) {
         this.docsService = docsService;
         this.tempDocsService = tempDocsService;
         this.docsConverter = docsConverter;
         this.sseDocsService = sseDocsService;
+        this.authService = authService;
 
         log.info("Component '" + this.getClass().getName() + "' has been created.");
     }
@@ -67,19 +72,14 @@ public class FreeboardService {
 
 
 
-    private boolean isAuthorized(LoginUser loginUser) {
-        Role role = loginUser.getMember().getRole();
-        return Role.ADMIN == role || Role.MANAGER == role;
-    }
-
-
-
-
     
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
     @CacheEvict(cacheManager = Constants.CACHE_MANAGER, cacheNames = Constants.CACHE_FREEBOARD, allEntries = true)
     public ServiceMsg create(DtorDocs dto, LoginUser loginUser) {
         log.info("CacheEvict method 'create()' called. user: {}", loginUser.getMember().getId());
+        
+        if( ! authService.isWritable(Menu.FREEBOARD, loginUser) )
+            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg( ResponseMsg.UNAUTHORIZED.getTitle() );
 
         Long docsId = docsService.create(dto, FREEBOARD, loginUser).getId();
 
@@ -99,7 +99,7 @@ public class FreeboardService {
 
         Docs docs = docsService.getDocsEntity(docsId, FREEBOARD);
 
-        if( ! docsService.isOwner(docs, loginUser) )   // 수정은 본인만 가능.
+        if( ! authService.isUpdatable(Menu.FREEBOARD, loginUser, docs.getWriterId()) )
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg(ResponseMsg.UNAUTHORIZED.getTitle());
 
         docsService.update(docsId, dto, FREEBOARD);
@@ -114,23 +114,20 @@ public class FreeboardService {
         
         Docs docs = docsService.getDocsEntity(docsId, FREEBOARD);
 
+        if( ! authService.isDeletable(Menu.FREEBOARD, loginUser, docs.getWriterId()) )
+            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg(ResponseMsg.UNAUTHORIZED.getTitle());
+
         if( FREEBOARD != docs.getType() )
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg( new StringBuilder("삭제 대상 문서가 ").append(FREEBOARD.getTitle()).append("문서가 아닙니다.").toString() );
 
-
-        if( isAuthorized(loginUser) || docsService.isOwner(docs, loginUser) ) {   // 자유게시판은 관리자 권한 유저가 다른 유저 게시물 삭제 가능.
-            docsService.delete(docs);
-            sseDocsService.sendFreeboard();
-            return new ServiceMsg().setResult(ServiceResult.SUCCESS);
-            
-        } else {
-            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg(ResponseMsg.UNAUTHORIZED.getTitle());
-        }
+        docsService.delete(docs);
+        sseDocsService.sendFreeboard();
+        return new ServiceMsg().setResult(ServiceResult.SUCCESS);
     }
 
 
 
-    public DtosDocs getFreeboard(Long docsId) {
+    public DtosDocs getDocs(Long docsId) {
         return docsService.getDtosDocs(docsId, FREEBOARD);
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
@@ -154,7 +151,7 @@ public class FreeboardService {
     public ServiceMsg updateTemp(Long docsId, DtorDocs dto, LoginUser loginUser) {
         TempDocs tempDocs = tempDocsService.getTempDocsEntity(docsId, FREEBOARD);
 
-        if( ! tempDocsService.isOwner(tempDocs, loginUser) )   // 수정은 본인만 가능.
+        if( ! tempDocsService.isOwner(tempDocs, loginUser) )   // 임시저장 문서는 본인만 수정 가능.
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg(ResponseMsg.UNAUTHORIZED.getTitle());
 
         tempDocsService.update(docsId, dto, FREEBOARD);
@@ -165,22 +162,19 @@ public class FreeboardService {
     public ServiceMsg deleteTemp(Long docsId, LoginUser loginUser) {
         TempDocs tempDocs = tempDocsService.getTempDocsEntity(docsId, FREEBOARD);
 
+        if( ! tempDocsService.isOwner(tempDocs, loginUser) )   // 임시저장 문서는 본인만 삭제 가능.
+            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg(ResponseMsg.UNAUTHORIZED.getTitle());
+
         if( FREEBOARD != tempDocs.getType() )
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg( new StringBuilder("삭제 대상 문서가 ").append(FREEBOARD.getTitle()).append("문서가 아닙니다.").toString() );
 
-
-        if( tempDocsService.isOwner(tempDocs, loginUser) ) {
-            tempDocsService.delete(tempDocs, loginUser);
-            return new ServiceMsg().setResult(ServiceResult.SUCCESS);
-            
-        } else {
-            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg(ResponseMsg.UNAUTHORIZED.getTitle());
-        }
+        tempDocsService.delete(tempDocs, loginUser);
+        return new ServiceMsg().setResult(ServiceResult.SUCCESS);
     }
 
     
 
-    public DtosDocs getTempFreeboard(Long docsId) {
+    public DtosDocs getTempDocs(Long docsId) {
         return tempDocsService.getDtosDocsFromTempDocs(docsId, FREEBOARD);
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- temp docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
