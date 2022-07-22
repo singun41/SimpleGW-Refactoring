@@ -16,7 +16,19 @@ public interface ReferrerRepo extends JpaRepository<Referrer, Long> {
     List<Referrer> findByDocsIdOrderById(Long docsId);
     List<Referrer> findByMemberIdOrderById(Long memberId);
 
-    long countByMemberIdAndCheckedDatetimeIsNull(Long memberId);   // 참조요청 받은 확인하지 않은 문서 카운트
+    
+    @Query(   // 일반문서 회의록 공유기능이 추가, 회의록은 제외한 결재문서만 카운트
+        value = """
+                    select count(a.id)
+                    from referrer a
+                        join docs b on a.docs_id = b.id
+                    where 1=1
+                        and a.member_id = :#{#member_id} and a.checked_datetime is null
+                        and b.[type] not in ('MINUTES')
+                """,
+        nativeQuery = true
+    )
+    long countByMemberIdAndCheckedDatetimeIsNull(@Param("member_id") Long memberId);   // 참조요청 받은 확인하지 않은 문서 카운트
 
 
     // 결재참조로 받은 문서 기간 검색, 결과를 DtosApprovalDocsMin 클래스로 처리하기 위해서 List<Object[]>로 반환

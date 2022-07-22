@@ -13,9 +13,11 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.project.simplegw.document.approval.dtos.send.DtosApprovalDocsMin;
+import com.project.simplegw.document.approval.entities.Referrer;
 import com.project.simplegw.document.approval.helpers.ApprovalConverter;
 import com.project.simplegw.document.approval.vos.ApprovalRole;
 import com.project.simplegw.document.entities.Docs;
+import com.project.simplegw.document.vos.DocsGroup;
 import com.project.simplegw.document.vos.DocsType;
 import com.project.simplegw.system.security.LoginUser;
 
@@ -56,12 +58,20 @@ public class ApprovalListService {
 
         
         else if(role == ApprovalRole.REFERRER)
-            return referrerService.getUncheckedReferrers(loginUser).stream().map(e -> {
-                Docs docs = e.getDocs();
-                return converter.getDtosApprovalDocsMin(approvalStatusService.getStatus(docs))
-                    .setId(docs.getId()).updateDocsType(docs.getType()).setTitle(docs.getTitle()).setCreatedDate(docs.getCreatedDate())
-                    .setWriterTeam(docs.getWriterTeam()).setWriterJobTitle(docs.getWriterJobTitle()).setWriterName(docs.getWriterName());
-            }).collect(Collectors.toList());
+            return referrerService.getUncheckedReferrers(loginUser).stream()
+                .map(Referrer::getDocs)
+                .filter(e -> e.getType().getGroup() == DocsGroup.APPROVAL)   // 일반문서 공유기능을 같은 Referrer를 이용하기 때문에 결재문서만 필터링한다.
+                .map(e -> converter.getDtosApprovalDocsMin(approvalStatusService.getStatus(e))
+                    .setId(e.getId()).updateDocsType(e.getType()).setTitle(e.getTitle()).setCreatedDate(e.getCreatedDate())
+                    .setWriterTeam(e.getWriterTeam()).setWriterJobTitle(e.getWriterJobTitle()).setWriterName(e.getWriterName())
+                ).collect(Collectors.toList());
+
+            // return referrerService.getUncheckedReferrers(loginUser).stream().map(e -> {
+            //     Docs docs = e.getDocs();
+            //     return converter.getDtosApprovalDocsMin(approvalStatusService.getStatus(docs))
+            //         .setId(docs.getId()).updateDocsType(docs.getType()).setTitle(docs.getTitle()).setCreatedDate(docs.getCreatedDate())
+            //         .setWriterTeam(docs.getWriterTeam()).setWriterJobTitle(docs.getWriterJobTitle()).setWriterName(docs.getWriterName());
+            // }).collect(Collectors.toList());
         
         
         else

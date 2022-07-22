@@ -16,6 +16,7 @@ import com.project.simplegw.document.entities.Docs;
 import com.project.simplegw.document.vos.DocsType;
 import com.project.simplegw.member.services.MemberService;
 import com.project.simplegw.system.security.LoginUser;
+import com.project.simplegw.system.services.BoardSharingNotificationService;
 import com.project.simplegw.system.vos.ServiceMsg;
 import com.project.simplegw.system.vos.ServiceResult;
 
@@ -34,13 +35,18 @@ public class ReferrerService {
     private final MemberService memberService;
     private final ApprovalCountService countService;
     private final ApprovalConverter converter;
+    private final BoardSharingNotificationService boardSharingNotiService;
 
     // @Autowired   // framework 버전 업데이트 이후 자동설정되어 선언하지 않아도 됨.
-    public ReferrerService(ReferrerRepo repo, MemberService memberService, ApprovalCountService countService, ApprovalConverter converter) {
+    public ReferrerService(
+        ReferrerRepo repo, MemberService memberService, ApprovalCountService countService, ApprovalConverter converter,
+        BoardSharingNotificationService boardSharingNotiService
+    ) {
         this.repo = repo;
         this.memberService = memberService;
         this.countService = countService;
         this.converter = converter;
+        this.boardSharingNotiService = boardSharingNotiService;
 
         log.info("Component '" + this.getClass().getName() + "' has been created.");
     }
@@ -113,7 +119,8 @@ public class ReferrerService {
 
             switch(docs.getType().getGroup()) {
                 case BOARD -> {
-                    if(docs.getType() == DocsType.MINUTES) {  }   // 여기에 회의록 공유 알림 전용 코드만 추가할 것.
+                    if(docs.getType() == DocsType.MINUTES)
+                        boardSharingNotiService.create(docs, list);   // 회의록 공유 멤버들에게 시스템 알림 보내기.
                 }
                 case APPROVAL -> list.forEach(e -> countService.removeReferrerDocsCntCache(e, true));   // 추가한 멤버들의 결재참조 카운트 캐시 업데이트
             }
@@ -135,7 +142,7 @@ public class ReferrerService {
 
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 결재문서 view page에서 필요한 참조자 정보 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
-    List<DtosReferrer> getReferrers(Docs docs, LoginUser loginUser) {
+    public List<DtosReferrer> getReferrers(Docs docs, LoginUser loginUser) {   // 문서 공유기능이 필요한 회의록에서도 사용하기 위해 public으로 전환.
         List<Referrer> referrers = repo.findByDocsIdOrderById(docs.getId());
         updateChecked(referrers, loginUser);
 
