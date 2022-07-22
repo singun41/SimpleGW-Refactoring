@@ -27,7 +27,6 @@ public interface ApprovalConverter {
     DtosApprover getDtosApprover(Approver entity);
     DtosReferrer getDtosReferrer(Referrer entity);
 
-    @Mapping(target = "id", ignore = true)
     @Mapping(source = "team", target = "approverTeam")
     @Mapping(source = "jobTitle", target = "approverJobTitle")
     @Mapping(source = "name", target = "approverName")

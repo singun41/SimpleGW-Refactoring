@@ -5,14 +5,12 @@ import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.project.simplegw.system.entities.EntitiesCommon;
 import com.project.simplegw.system.vos.Constants;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -29,16 +27,12 @@ import lombok.ToString;
 
 @Getter
 @Builder
-@ToString(exclude = {"docs", "content"})   // lazy loading 이기 때문에 제외하지 않으면 no session 에러가 난다. content는 내용이 많으므로 제외.
+@ToString(callSuper = true, exclude = {"docs", "content"})   // lazy loading 이기 때문에 제외하지 않으면 no session 에러가 난다. content는 내용이 많으므로 제외.
 @NoArgsConstructor(access = AccessLevel.PUBLIC)   // entity의 기본 생성자는 반드시 public or protected 이어야 한다.
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "docs_content", indexes = @Index(columnList = "docs_id"))
-public class Content {   // 문서의 내용은 대부분 데이터가 크기 때문에 필요할 때에만 가져오도록 하기 위해 별도 클래스로 분리한다.
-    @Id
-    @Column(name = "id", nullable = false, updatable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Content extends EntitiesCommon {   // 문서의 내용은 대부분 데이터가 크기 때문에 필요할 때에만 가져오도록 하기 위해 별도 클래스로 분리한다.
 
     // Member <--> MemberDetails의 관계처럼 Cascade를 설정하지 않는 이유는 Document를 먼저 저장하고 반환된 Entity를 이용해서, 결재문서에도 이용하기 위함이다.
     // OneToOne은 잘못 사용하면 문제가 많기 때문에 가장 안전한 ManyToOne으로 대체한다.

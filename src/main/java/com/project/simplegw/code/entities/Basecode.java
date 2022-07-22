@@ -6,13 +6,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.Table;
 
 import com.project.simplegw.code.vos.BasecodeType;
+import com.project.simplegw.system.entities.EntitiesCommon;
 import com.project.simplegw.system.vos.Constants;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -27,17 +25,13 @@ import lombok.ToString;
 
 @Getter
 @Builder
-@ToString
+@ToString(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PUBLIC)   // entity의 기본 생성자는 반드시 public or protected 이어야 한다.
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "basecode", indexes = @Index(columnList = "type"))
-public class Basecode {
-    @Id
-    @Column(name = "id", nullable = false, updatable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class Basecode extends EntitiesCommon {
+    
     @Column(name = "type", nullable = false, updatable = false, length = Constants.COLUMN_LENGTH_BASECODE_TYPE)
     @Enumerated(EnumType.STRING)
     private BasecodeType type;

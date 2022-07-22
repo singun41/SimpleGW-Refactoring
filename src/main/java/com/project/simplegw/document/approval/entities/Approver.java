@@ -7,9 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -18,6 +15,7 @@ import javax.persistence.Table;
 import com.project.simplegw.document.approval.vos.Sign;
 import com.project.simplegw.document.entities.Docs;
 import com.project.simplegw.member.data.MemberData;
+import com.project.simplegw.system.entities.EntitiesCommon;
 import com.project.simplegw.system.vos.Constants;
 
 import org.hibernate.annotations.OnDelete;
@@ -32,7 +30,7 @@ import lombok.ToString;
 
 @Getter
 @Builder
-@ToString(exclude = {"docs"})   // lazy loading 이기 때문에 제외하지 않으면 no session 에러가 난다.
+@ToString(callSuper = true, exclude = "docs")   // lazy loading 이기 때문에 제외하지 않으면 no session 에러가 난다.
 @NoArgsConstructor(access = AccessLevel.PUBLIC)   // entity의 기본 생성자는 반드시 public or protected 이어야 한다.
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity
@@ -40,12 +38,8 @@ import lombok.ToString;
     @Index(columnList = "docs_id"),
     @Index(columnList = "member_id, docs_id")   // 수신한 결재문서를 날짜로 검색할 때 사용. index 테스트 완료.
 })
-public class Approver {   // 결재라인의 결재자 정보
-    @Id
-    @Column(name = "id", nullable = false, updatable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class Approver extends EntitiesCommon {   // 결재라인의 결재자 정보
+    
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "docs_id", referencedColumnName = "id", nullable = false, updatable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)

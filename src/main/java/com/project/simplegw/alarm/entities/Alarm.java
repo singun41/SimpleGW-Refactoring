@@ -6,14 +6,12 @@ import java.time.LocalTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.project.simplegw.system.entities.EntitiesCommon;
 import com.project.simplegw.system.vos.Constants;
 
 import lombok.AccessLevel;
@@ -25,17 +23,13 @@ import lombok.ToString;
 
 @Getter
 @Builder
-@ToString
+@ToString(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PUBLIC)   // entity의 기본 생성자는 반드시 public or protected 이어야 한다.
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "alarm", indexes = @Index(columnList = "member_id"))
-public class Alarm {
-    @Id
-    @Column(name = "id", nullable = false, updatable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class Alarm extends EntitiesCommon {
+    
     @Column(name = "member_id", nullable = false, updatable = false)
     private Long memberId;
 

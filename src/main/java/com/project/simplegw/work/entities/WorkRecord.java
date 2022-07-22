@@ -4,13 +4,11 @@ import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.Table;
 
 import com.project.simplegw.member.data.MemberData;
+import com.project.simplegw.system.entities.EntitiesCommon;
 import com.project.simplegw.system.vos.Constants;
 
 import lombok.AccessLevel;
@@ -22,16 +20,12 @@ import lombok.ToString;
 
 @Getter
 @Builder
-@ToString
+@ToString(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PUBLIC)   // entity의 기본 생성자는 반드시 public or protected 이어야 한다.
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "work_record", indexes = @Index(columnList = "work_date"))
-public class WorkRecord {
-    @Id
-    @Column(name = "id", nullable = false, updatable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class WorkRecord extends EntitiesCommon {
 
     @Column(name = "work_date", nullable = false, updatable = false, columnDefinition = Constants.COLUMN_DEFINE_DATE)
     private LocalDate workDate;

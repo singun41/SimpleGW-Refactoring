@@ -5,9 +5,6 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -15,6 +12,7 @@ import javax.persistence.Table;
 import com.project.simplegw.document.approval.dtos.send.DtosApprover;
 import com.project.simplegw.document.approval.vos.Sign;
 import com.project.simplegw.document.entities.Docs;
+import com.project.simplegw.system.entities.EntitiesCommon;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -28,12 +26,12 @@ import lombok.ToString;
 
 @Getter
 @Builder
-@ToString(exclude = "docs")   // lazy loading 이기 때문에 제외하지 않으면 no session 에러가 난다.
+@ToString(callSuper = true, exclude = "docs")   // lazy loading 이기 때문에 제외하지 않으면 no session 에러가 난다.
 @NoArgsConstructor(access = AccessLevel.PUBLIC)   // entity의 기본 생성자는 반드시 public or protected 이어야 한다.
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "ongoing_approval")
-public class OngoingApproval {
+public class OngoingApproval extends EntitiesCommon {
     /*
         결재문서 등록자 입장에서 --> 진행중인 결재문서 카운트 및 리스트
         결재자 입장에서 --> 결재 요청 문서 카운트 및 리스트
@@ -52,11 +50,6 @@ public class OngoingApproval {
         그래서 검색 퍼포먼스가 증가하지 않게 된다.
     */
     
-    @Id
-    @Column(name = "id", nullable = false, updatable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false)   // 각 결재문서당 1개의 레코드만 있어야 하므로 unique를 설정한다.
     @JoinColumn(name = "docs_id", referencedColumnName = "id", nullable = false, updatable = false, unique = true)
     @OnDelete(action = OnDeleteAction.CASCADE)

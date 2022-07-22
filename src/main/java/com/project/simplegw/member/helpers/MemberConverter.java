@@ -13,12 +13,10 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface MemberConverter {
-    @Mapping(target = "id", ignore = true)
     @Mapping(target = "userId", source = "id")   // dto의 id가 entity의 userId로 바인딩.
     @Mapping(target = "password", ignore = true)   // MemberService에서 암호화해서 넘긴다.
     Member getMember(DtorMemberCreate dto);
 
-    @Mapping(target = "id", ignore = true)
     MemberDetails getDetails(DtorMemberCreate dto);
 
     DtosMember getDtosMember(Member entity);

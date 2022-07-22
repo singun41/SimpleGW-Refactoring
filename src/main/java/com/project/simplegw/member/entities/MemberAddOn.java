@@ -5,9 +5,6 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -17,6 +14,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import com.project.simplegw.document.approval.entities.details.dayoff.Dayoff;
+import com.project.simplegw.system.entities.EntitiesCommon;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -27,16 +25,12 @@ import lombok.ToString;
 
 @Getter
 @Builder
-@ToString(exclude = "member")   // lazy loading 일 때 제외하지 않으면 no session 에러가 난다.
+@ToString(callSuper = true, exclude = "member")   // lazy loading 일 때 제외하지 않으면 no session 에러가 난다.
 @NoArgsConstructor(access = AccessLevel.PUBLIC)   // entity의 기본 생성자는 반드시 public or protected 이어야 한다.
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "member_add_on", indexes = @Index(columnList = "member_id"))
-public class MemberAddOn {
-    @Id
-    @Column(name = "id", nullable = false, updatable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class MemberAddOn extends EntitiesCommon {
 
     // One to one 설정해서 memberDetails를 저장할 때 member 엔티티도 자동으로 저장하기 위해 cascade를 설정.... 했으나
     // 비즈니스 로직에서 필요할 때마다 이 엔티티를 호출하는데 거기서 계속 발생할 N+1 문제때문에 Many To One으로 변경한다.

@@ -7,9 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -18,6 +15,7 @@ import javax.persistence.Table;
 import com.project.simplegw.document.approval.dtos.send.DtosApprover;
 import com.project.simplegw.document.approval.vos.Sign;
 import com.project.simplegw.document.entities.Docs;
+import com.project.simplegw.system.entities.EntitiesCommon;
 import com.project.simplegw.system.vos.Constants;
 
 import org.hibernate.annotations.OnDelete;
@@ -32,16 +30,12 @@ import lombok.ToString;
 
 @Getter
 @Builder
-@ToString(exclude = {"docs"})   // lazy loading 이기 때문에 제외하지 않으면 no session 에러가 난다.
+@ToString(callSuper = true, exclude = "docs")   // lazy loading 이기 때문에 제외하지 않으면 no session 에러가 난다.
 @NoArgsConstructor(access = AccessLevel.PUBLIC)   // entity의 기본 생성자는 반드시 public or protected 이어야 한다.
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "approval_status", indexes = @Index(columnList = "docs_id"))
-public class ApprovalStatus {   // 결재문서의 최종 상태 엔티티
-    @Id
-    @Column(name = "id", nullable = false, updatable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class ApprovalStatus extends EntitiesCommon {   // 결재문서의 최종 상태 엔티티
     
     @ManyToOne(fetch = FetchType.LAZY, optional = false)   // 각 결재문서당 1개의 레코드만 있어야 하므로 unique를 설정한다.
     @JoinColumn(name = "docs_id", referencedColumnName = "id", nullable = false, updatable = false, unique = true)

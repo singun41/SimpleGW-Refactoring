@@ -6,14 +6,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.Table;
 
 import com.project.simplegw.document.vos.DocsType;
 import com.project.simplegw.member.entities.Member;
+import com.project.simplegw.system.entities.EntitiesCommon;
 import com.project.simplegw.system.vos.Constants;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -27,16 +25,12 @@ import lombok.ToString;
 
 @Getter
 @Builder
-@ToString
+@ToString(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PUBLIC)   // entity의 기본 생성자는 반드시 public or protected 이어야 한다.
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "temp_docs", indexes = @Index(columnList = "writer_id"))
-public class TempDocs {
-    @Id
-    @Column(name = "id", nullable = false, updatable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class TempDocs extends EntitiesCommon {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false, updatable = false, length = Constants.COLUMN_LENGTH_DOCU_TYPE)

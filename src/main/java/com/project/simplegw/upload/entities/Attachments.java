@@ -2,13 +2,11 @@ package com.project.simplegw.upload.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.Table;
 
 import com.project.simplegw.document.entities.Docs;
+import com.project.simplegw.system.entities.EntitiesCommon;
 import com.project.simplegw.system.vos.Constants;
 
 import lombok.AccessLevel;
@@ -20,16 +18,12 @@ import lombok.ToString;
 
 @Getter
 @Builder
-@ToString
+@ToString(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PUBLIC)   // entity의 기본 생성자는 반드시 public or protected 이어야 한다.
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "attachments", indexes = @Index(columnList = "docs_id"))
-public class Attachments {
-    @Id
-    @Column(name = "id", nullable = false, updatable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Attachments extends EntitiesCommon {
     
     // 문서가 삭제되어도 첨부파일 정보는 그대로 유지하기 위해 JoinColumn으로 작성하지 않는다.
     @Column(name = "docs_id", nullable = false, updatable = false)   // nullable = true  -->  false 로 변경
@@ -48,6 +42,7 @@ public class Attachments {
     private String path;
 
 
+    
     public Attachments insertDocsId(Docs docs) {   // 연관관계가 아니기 때문에 bind엔티티명 으로 작성하지 않는다.
         if(docs == null || docs.getId() == null)
             return this;
