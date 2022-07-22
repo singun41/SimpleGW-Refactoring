@@ -4,7 +4,7 @@ public enum Menu {
     // 관리자 전용 메뉴는 여기에 작성하지 않는다. (Users, Auths, Codes, Forms)
 
     NOTICE("공지사항"), FREEBOARD("자유게시판"), SUGGESTION("제안게시판"), ARCHIVE("자료실"),
-    MEETING_MINUTES("회의록"),
+    MINUTES("회의록"),
     WORK_RECORD("업무일지"), WORK_RECORD_TEAM("부서 업무일지"), WORK_RECORD_LIST("업무일지 전체"),
     
     APPROVAL_SEARCH("결재문서 검색"),

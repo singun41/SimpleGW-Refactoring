@@ -113,7 +113,7 @@ public class ReferrerService {
 
             switch(docs.getType().getGroup()) {
                 case BOARD -> {
-                    if(docs.getType() == DocsType.MEETING) {  }   // 여기에 회의록 공유 알림 전용 코드만 추가할 것.
+                    if(docs.getType() == DocsType.MINUTES) {  }   // 여기에 회의록 공유 알림 전용 코드만 추가할 것.
                 }
                 case APPROVAL -> list.forEach(e -> countService.removeReferrerDocsCntCache(e, true));   // 추가한 멤버들의 결재참조 카운트 캐시 업데이트
             }

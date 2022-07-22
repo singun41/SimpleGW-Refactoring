@@ -100,7 +100,7 @@
                             <li th:if="${workRecord} == true"><a role="button" onclick="page('work-record/personal')" class="link-dark align-items-center rounded"><div class="nav-icon-area"><i class="fa-solid fa-list-check"></i></div>업무일지</a></li>
                             <li th:if="${workRecordTeam} == true"><a role="button" onclick="page('work-record/team')" class="link-dark align-items-center rounded"><div class="nav-icon-area"><i class="fa-solid fa-list"></i></div>부서 업무일지</a></li>
                             <li th:if="${workRecordList} == true"><a role="button" onclick="page('work-record/list')" class="link-dark align-items-center rounded"><div class="nav-icon-area"><i class="fa-solid fa-list"></i></div>업무일지 리스트</a></li>
-                            <li th:if="${meetingMinutes} == true"><a role="button" onclick="page('meeting-minutes/list')" class="link-dark align-items-center rounded"><div class="nav-icon-area"><i class="fa-solid fa-file-lines"></i></div>회의록</a></li>
+                            <li th:if="${minutes} == true"><a role="button" onclick="page('minutes/list')" class="link-dark align-items-center rounded"><div class="nav-icon-area"><i class="fa-solid fa-file-lines"></i></div>회의록</a></li>
                         </ul>
                     </div>
                 </li>

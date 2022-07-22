@@ -8,7 +8,7 @@ public enum DocsType {
     ARCHIVE(DocsGroup.BOARD, Menu.ARCHIVE, true),
     SUGGESTION(DocsGroup.BOARD, Menu.SUGGESTION, true),
 
-    MEETING(DocsGroup.BOARD, Menu.MEETING_MINUTES, true),
+    MINUTES(DocsGroup.BOARD, Menu.MINUTES, true),
 
     ALL(DocsGroup.APPROVAL, Menu.APPROVAL_SEARCH, false),
     DEFAULT(DocsGroup.APPROVAL, Menu.APPROVAL_DEFAULT, true),

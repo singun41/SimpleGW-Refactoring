@@ -12,7 +12,7 @@ import com.project.simplegw.document.entities.Docs;
 import com.project.simplegw.document.vos.DocsType;
 
 @Repository
-public interface MeetingMinutesRepo extends JpaRepository<Docs, Long> {
+public interface MinutesRepo extends JpaRepository<Docs, Long> {
     // 회의록 리스트: 내가 작성한 것 or 공유받은 것
     @Query(
         value = """

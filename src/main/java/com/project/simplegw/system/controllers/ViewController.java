@@ -62,7 +62,7 @@ public class ViewController {
             .addAttribute("workRecord", authority.isAccessible(Menu.WORK_RECORD, loginUser))
             .addAttribute("workRecordTeam", authority.isAccessible(Menu.WORK_RECORD_TEAM, loginUser))
             .addAttribute("workRecordList", authority.isAccessible(Menu.WORK_RECORD_LIST, loginUser))
-            .addAttribute("meetingMinutes", authority.isAccessible(Menu.MEETING_MINUTES, loginUser))
+            .addAttribute("minutes", authority.isAccessible(Menu.MINUTES, loginUser))
 
             .addAttribute("approvalSearch", authority.isAccessible(Menu.APPROVAL_SEARCH, loginUser))
             .addAttribute("approvalDefault", authority.isAccessible(Menu.APPROVAL_DEFAULT, loginUser))
@@ -594,16 +594,16 @@ public class ViewController {
     }
 
 
-    @GetMapping("/page/meeting-minutes/list")
-    public String meetingMinutesListPage(Model model, @AuthenticationPrincipal LoginUser loginUser) {
-        if( ! authority.isAccessible(Menu.MEETING_MINUTES, loginUser) )
+    @GetMapping("/page/minutes/list")
+    public String minutesListPage(Model model, @AuthenticationPrincipal LoginUser loginUser) {
+        if( ! authority.isAccessible(Menu.MINUTES, loginUser) )
             return Constants.ERROR_PAGE_403;
         
-        boolean isWritable = authority.isWritable(Menu.MEETING_MINUTES, loginUser);
+        boolean isWritable = authority.isWritable(Menu.MINUTES, loginUser);
 
-        model.addAttribute("docsType", DocsType.MEETING)
+        model.addAttribute("docsType", DocsType.MINUTES)
             .addAttribute("isWritable", isWritable);
-        return "work/meeting-minutes/list";
+        return "work/minutes/list";
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- work ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 

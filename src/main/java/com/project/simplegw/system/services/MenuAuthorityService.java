@@ -60,7 +60,7 @@ public class MenuAuthorityService {
                 MenuAuthority workRecord = MenuAuthority.builder().menu(Menu.WORK_RECORD).role(role).build();
                 MenuAuthority workRecordTeam = MenuAuthority.builder().menu(Menu.WORK_RECORD_TEAM).role(role).build();
                 MenuAuthority workRecordList = MenuAuthority.builder().menu(Menu.WORK_RECORD_LIST).role(role).build();
-                MenuAuthority meetingMinutes = MenuAuthority.builder().menu(Menu.MEETING_MINUTES).role(role).build();
+                MenuAuthority minutes = MenuAuthority.builder().menu(Menu.MINUTES).role(role).build();
                 
                 MenuAuthority approvalSearch = MenuAuthority.builder().menu(Menu.APPROVAL_SEARCH).role(role).build();
                 MenuAuthority approvalDefault = MenuAuthority.builder().menu(Menu.APPROVAL_DEFAULT).role(role).build();
@@ -79,7 +79,7 @@ public class MenuAuthorityService {
                         workRecord.updateAccessible(true).updateRwdRole(AuthorityValue.RW).updateRwdOther(AuthorityValue.NONE);
                         workRecordTeam.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
                         workRecordList.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
-                        meetingMinutes.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
+                        minutes.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
 
                         approvalSearch.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
                         approvalDefault.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
@@ -98,7 +98,7 @@ public class MenuAuthorityService {
                         workRecord.updateAccessible(true).updateRwdRole(AuthorityValue.RW).updateRwdOther(AuthorityValue.NONE);
                         workRecordTeam.updateAccessible(false).updateRwdRole(AuthorityValue.NONE).updateRwdOther(AuthorityValue.NONE);
                         workRecordList.updateAccessible(false).updateRwdRole(AuthorityValue.NONE).updateRwdOther(AuthorityValue.NONE);
-                        meetingMinutes.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
+                        minutes.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
 
                         approvalSearch.updateAccessible(false).updateRwdRole(AuthorityValue.NONE).updateRwdOther(AuthorityValue.NONE);
                         approvalDefault.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
@@ -117,7 +117,7 @@ public class MenuAuthorityService {
                         workRecord.updateAccessible(true).updateRwdRole(AuthorityValue.RW).updateRwdOther(AuthorityValue.NONE);
                         workRecordTeam.updateAccessible(false).updateRwdRole(AuthorityValue.NONE).updateRwdOther(AuthorityValue.NONE);
                         workRecordList.updateAccessible(false).updateRwdRole(AuthorityValue.NONE).updateRwdOther(AuthorityValue.NONE);
-                        meetingMinutes.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
+                        minutes.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
 
                         approvalSearch.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
                         approvalDefault.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
@@ -136,7 +136,7 @@ public class MenuAuthorityService {
                         workRecord.updateAccessible(true).updateRwdRole(AuthorityValue.RW).updateRwdOther(AuthorityValue.NONE);
                         workRecordTeam.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
                         workRecordList.updateAccessible(false).updateRwdRole(AuthorityValue.NONE).updateRwdOther(AuthorityValue.NONE);
-                        meetingMinutes.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
+                        minutes.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
 
                         approvalSearch.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
                         approvalDefault.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
@@ -155,7 +155,7 @@ public class MenuAuthorityService {
                         workRecord.updateAccessible(true).updateRwdRole(AuthorityValue.RW).updateRwdOther(AuthorityValue.NONE);
                         workRecordTeam.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
                         workRecordList.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
-                        meetingMinutes.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
+                        minutes.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
 
                         approvalSearch.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
                         approvalDefault.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
@@ -174,7 +174,7 @@ public class MenuAuthorityService {
                         workRecord.updateAccessible(true).updateRwdRole(AuthorityValue.RW).updateRwdOther(AuthorityValue.NONE);
                         workRecordTeam.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
                         workRecordList.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
-                        meetingMinutes.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
+                        minutes.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
 
                         approvalSearch.updateAccessible(true).updateRwdRole(AuthorityValue.R).updateRwdOther(AuthorityValue.R);
                         approvalDefault.updateAccessible(true).updateRwdRole(AuthorityValue.RWD).updateRwdOther(AuthorityValue.R);
@@ -186,7 +186,7 @@ public class MenuAuthorityService {
                 repo.saveAll(
                     Arrays.asList(
                         notice, freeboard, suggestion, archive,
-                        workRecord, workRecordTeam, workRecordList, meetingMinutes,
+                        workRecord, workRecordTeam, workRecordList, minutes,
                         approvalSearch, approvalDefault, approvalCooperation, approvalDayoff
                     )
                 );

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.project.simplegw.document.services.MeetingMinutesService;
+import com.project.simplegw.document.services.MinutesService;
 import com.project.simplegw.system.helpers.ResponseConverter;
 import com.project.simplegw.system.security.LoginUser;
 
@@ -20,11 +20,11 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
-@RequestMapping(path = {"/meeting", "/meeting-minutes"})
-public class MeetingMinutesController {
-    private final MeetingMinutesService service;
+@RequestMapping("/minutes")
+public class MinutesController {
+    private final MinutesService service;
 
-    public MeetingMinutesController(MeetingMinutesService service) {
+    public MinutesController(MinutesService service) {
         this.service = service;
         log.info("Component '" + this.getClass().getName() + "' has been created.");
     }
