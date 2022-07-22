@@ -7,14 +7,23 @@ import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.simplegw.document.dtos.receive.DtorDocs;
 import com.project.simplegw.document.services.MinutesService;
 import com.project.simplegw.system.helpers.ResponseConverter;
 import com.project.simplegw.system.security.LoginUser;
+import com.project.simplegw.system.vos.ResponseMsg;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,5 +44,46 @@ public class MinutesController {
     public ResponseEntity<Object> getList(@RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateFrom, @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate dateTo, @AuthenticationPrincipal LoginUser loginUser) {
         return ResponseConverter.ok(service.getList(dateFrom, dateTo, loginUser));
     }
+
+
+
+
+
+    // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
+    @PostMapping
+    public ResponseEntity<Object> create(@Validated @RequestBody DtorDocs dto, BindingResult result, @AuthenticationPrincipal LoginUser loginUser) {
+        if(result.hasErrors())
+            return ResponseConverter.badRequest(result);
+        
+        return ResponseConverter.message(
+            service.create(dto, loginUser), ResponseMsg.INSERTED
+        );
+    }
+
+    @PatchMapping("/{docsId}")
+    public ResponseEntity<Object> update(@PathVariable Long docsId, @Validated @RequestBody DtorDocs dto, BindingResult result, @AuthenticationPrincipal LoginUser loginUser) {
+        if(result.hasErrors())
+            return ResponseConverter.badRequest(result);
+        
+        return ResponseConverter.message(
+            service.update(docsId, dto, loginUser), ResponseMsg.UPDATED
+        );
+    }
+
+    @DeleteMapping("/{docsId}")
+    public ResponseEntity<Object> delete(@PathVariable Long docsId, @AuthenticationPrincipal LoginUser loginUser) {
+        return ResponseConverter.message(
+            service.delete(docsId, loginUser), ResponseMsg.DELETED
+        );
+    }
+    // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
+
+
+
+
+    
+    // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- temp docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
+    // Minutes(회의록)은 임시저장 기능을 제공하지 않는다.
+    // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- temp docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 }
  

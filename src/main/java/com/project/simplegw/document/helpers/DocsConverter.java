@@ -2,6 +2,7 @@ package com.project.simplegw.document.helpers;
 
 import com.project.simplegw.document.dtos.send.DtosComment;
 import com.project.simplegw.document.dtos.send.DtosDocs;
+import com.project.simplegw.document.dtos.send.DtosDocsAddReferrer;
 import com.project.simplegw.document.dtos.send.DtosDocsMin;
 import com.project.simplegw.document.dtos.send.DtosDocsOptions;
 import com.project.simplegw.document.dtos.send.DtosDocsTitle;
@@ -26,4 +27,6 @@ public interface DocsConverter {
     DtosDocs getDtosDocs(TempDocs entity);
 
     DtosDocsOptions getDtosDocsOptions(DocsOptions entity);
+
+    DtosDocsAddReferrer getDtosDocsAddReferrer(DtosDocs dto);
 }

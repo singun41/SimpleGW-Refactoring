@@ -124,7 +124,7 @@ function del(e) {
 }
 
 function apply() {
-    if(!confirm('설정한 참조자 리스트를 추가하시겠습니까?'))
+    if(!confirm('선택한 멤버들에게 공유하시겠습니까?'))
         return;
     
     let referrerAddData = {

@@ -14,9 +14,11 @@ import com.project.simplegw.document.approval.dtos.send.details.dayoff.DtosTempD
 import com.project.simplegw.document.approval.services.DefaultReportService;
 import com.project.simplegw.document.approval.services.details.DayoffService;
 import com.project.simplegw.document.dtos.send.DtosDocs;
+import com.project.simplegw.document.dtos.send.DtosDocsAddReferrer;
 import com.project.simplegw.document.services.ArchiveService;
 import com.project.simplegw.document.services.DocsFormService;
 import com.project.simplegw.document.services.FreeboardService;
+import com.project.simplegw.document.services.MinutesService;
 import com.project.simplegw.document.services.NoticeService;
 import com.project.simplegw.document.services.SuggestionService;
 import com.project.simplegw.document.vos.DocsType;
@@ -58,6 +60,7 @@ public class ViewService {   // ViewController에서 필요한 데이터들을 �
     private final FreeboardService freeboardService;
     private final SuggestionService suggestionService;
     private final ArchiveService archiveService;
+    private final MinutesService minutesService;
 
     // Approvals..
     private final DefaultReportService defaultReportService;
@@ -68,7 +71,9 @@ public class ViewService {   // ViewController에서 필요한 데이터들을 �
         AlarmService alarmService,
         MemberService memberService, MemberClientService memberClientService, MemberAdminService memberAdminService,
         BasecodeService basecodeService, DocsFormService formService, AttachmentsService attachmentsService,
+
         NoticeService noticeService, FreeboardService freeboardService, SuggestionService suggestionService, ArchiveService archiveService,
+        MinutesService minutesService,
 
         DefaultReportService defaultReportService, DayoffService dayoffService
     ) {
@@ -86,6 +91,7 @@ public class ViewService {   // ViewController에서 필요한 데이터들을 �
         this.freeboardService = freeboardService;
         this.suggestionService = suggestionService;
         this.archiveService = archiveService;
+        this.minutesService = minutesService;
 
         this.defaultReportService = defaultReportService;
         this.dayoffService = dayoffService;
@@ -199,6 +205,11 @@ public class ViewService {   // ViewController에서 필요한 데이터들을 �
 
     public DtosDocs getArchive(Long docsId) {   // 자료실은 임시저장 기능을 제공하지 않는다.
         return archiveService.getDocs(docsId);
+    }
+
+
+    public DtosDocsAddReferrer getMinutes(Long docsId, LoginUser loginUser) {   // 회의록은 임시저장 기능을 제공하지 않는다.
+        return minutesService.getDocs(docsId, loginUser);
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- board ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 

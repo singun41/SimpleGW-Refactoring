@@ -13,6 +13,7 @@ import com.project.simplegw.document.approval.dtos.send.details.dayoff.DtosTempD
 import com.project.simplegw.document.approval.vos.ApprovalRole;
 import com.project.simplegw.document.approval.vos.Sign;
 import com.project.simplegw.document.dtos.send.DtosDocs;
+import com.project.simplegw.document.dtos.send.DtosDocsAddReferrer;
 import com.project.simplegw.document.vos.EditorDocs;
 import com.project.simplegw.document.vos.DocsGroup;
 import com.project.simplegw.document.vos.DocsType;
@@ -544,13 +545,89 @@ public class ViewController {
         return "docs/board/archive/modify";
     }
 
+    
     // ↓ ----- ----- ----- ----- ----- temp ----- ----- ----- ----- ----- ↓ //
-    // 자료실은 임시저장 문서를 제공하지 않는다.
+    // Archive(자료실)은 임시저장 문서를 제공하지 않는다.
     // ↑ ----- ----- ----- ----- ----- temp ----- ----- ----- ----- ----- ↑ //
     // ↑ ----- ----- ----- ----- ----- ----- ----- archive ----- ----- ----- ----- ----- ----- ----- ↑ //
-    
-    
-    
+
+
+
+    @GetMapping("/page/board/referrer-add")   // 문서 참조자 추가 페이지
+    public String boardReferrerAddPage(Model model) {
+        model.addAttribute("teams", service.getTeams());
+        return "docs/board/common/view/referrer-add";
+    }
+
+
+    // ↓ ----- ----- ----- ----- ----- ----- ----- minutes ----- ----- ----- ----- ----- ----- ----- ↓ //
+    @GetMapping("/page/minutes/list")
+    public String minutesListPage(Model model, @AuthenticationPrincipal LoginUser loginUser) {
+        if( ! authority.isAccessible(Menu.MINUTES, loginUser) )
+            return Constants.ERROR_PAGE_403;
+        
+        boolean isWritable = authority.isWritable(Menu.MINUTES, loginUser);
+
+        model.addAttribute("docsType", DocsType.MINUTES)
+            .addAttribute("isWritable", isWritable);
+        return "docs/board/minutes/list";
+    }
+
+
+    @GetMapping("/page/minutes/write")
+    public String minutesWritePage(Model model, @AuthenticationPrincipal LoginUser loginUser) {
+        if( ! ( authority.isAccessible(Menu.MINUTES, loginUser) && authority.isWritable(Menu.MINUTES, loginUser) ) )
+            return Constants.ERROR_PAGE_403;
+
+        model.addAttribute("docsType", DocsType.MINUTES)
+            .addAttribute("form", service.getDocsForm(EditorDocs.MINUTES));
+        return "docs/board/minutes/write";
+    }
+
+
+    @GetMapping("/page/minutes/{docsId}")
+    public String minutesViewPage(@PathVariable Long docsId, Model model, @AuthenticationPrincipal LoginUser loginUser) {
+        DtosDocsAddReferrer docs = service.getMinutes(docsId, loginUser);
+        if(docs.getId() == null)
+            return Constants.ERROR_PAGE_410;
+
+        if( ! ( authority.isAccessible(Menu.MINUTES, loginUser) && authority.isReadable(Menu.MINUTES, loginUser, docs.getWriterId()) ) )
+            return Constants.ERROR_PAGE_403;
+
+        // 작성자가 아닌 경우 공유된 리스트에 없으면 리턴
+        if( !docs.getWriterId().equals( loginUser.getMember().getId() ) && docs.getReferrers().stream().filter(e -> e.getMemberId().equals( loginUser.getMember().getId() )).findFirst().isEmpty() )
+            return Constants.ERROR_PAGE_403;
+
+        boolean isUpdatable = authority.isUpdatable(Menu.MINUTES, loginUser, docs.getWriterId());
+        boolean isDeletable = authority.isDeletable(Menu.MINUTES, loginUser, docs.getWriterId());
+
+        model.addAttribute("docs", docs)
+            .addAttribute("attachmentsList", getAttachmentsList(docsId))
+            .addAttribute("isUpdatable", isUpdatable)
+            .addAttribute("isDeletable", isDeletable);
+        return "docs/board/minutes/view";
+    }
+
+
+    @GetMapping("/page/minutes/{docsId}/modify")
+    public String minutesModifyPage(@PathVariable Long docsId, Model model, @AuthenticationPrincipal LoginUser loginUser) {
+        if( ! ( authority.isAccessible(Menu.MINUTES, loginUser) && authority.isWritable(Menu.MINUTES, loginUser) ) )
+            return Constants.ERROR_PAGE_403;
+
+        DtosDocs docs = service.getMinutes(docsId, loginUser);
+        if(docs.getId() == null)
+            return Constants.ERROR_PAGE_410;
+
+        model.addAttribute("docs", docs).addAttribute("attachmentsList", getAttachmentsList(docsId));
+        return "docs/board/minutes/modify";
+    }
+    // ↓ ----- ----- ----- ----- ----- temp ----- ----- ----- ----- ----- ↓ //
+    // Minutes(회의록)은 임시저장 문서를 제공하지 않는다.
+    // ↑ ----- ----- ----- ----- ----- temp ----- ----- ----- ----- ----- ↑ //
+    // ↑ ----- ----- ----- ----- ----- ----- ----- minutes ----- ----- ----- ----- ----- ----- ----- ↑ //
+
+
+
 
     // ↓ ----- ----- ----- ----- ----- common temp docs list ----- ----- ----- ----- ----- ↓ //
     @GetMapping("/page/docs/temp/list")
@@ -571,7 +648,7 @@ public class ViewController {
         if( ! authority.isAccessible(Menu.WORK_RECORD, loginUser) )
             return Constants.ERROR_PAGE_403;
 
-        return "work/work-record/personal";
+        return "work-record/personal";
     }
 
 
@@ -580,7 +657,7 @@ public class ViewController {
         if( ! authority.isAccessible(Menu.WORK_RECORD_TEAM, loginUser) )
             return Constants.ERROR_PAGE_403;
 
-        return "work/work-record/team";
+        return "work-record/team";
     }
 
 
@@ -590,20 +667,7 @@ public class ViewController {
             return Constants.ERROR_PAGE_403;
 
         model.addAttribute("teams", service.getTeams());
-        return "work/work-record/list";
-    }
-
-
-    @GetMapping("/page/minutes/list")
-    public String minutesListPage(Model model, @AuthenticationPrincipal LoginUser loginUser) {
-        if( ! authority.isAccessible(Menu.MINUTES, loginUser) )
-            return Constants.ERROR_PAGE_403;
-        
-        boolean isWritable = authority.isWritable(Menu.MINUTES, loginUser);
-
-        model.addAttribute("docsType", DocsType.MINUTES)
-            .addAttribute("isWritable", isWritable);
-        return "work/minutes/list";
+        return "work-record/list";
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- work ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 
@@ -700,7 +764,7 @@ public class ViewController {
     }
 
     @GetMapping("/page/approval/referrer-add")   // 문서 참조자 추가 페이지
-    public String referrerAddPage(Model model) {
+    public String approvalReferrerAddPage(Model model) {
         model.addAttribute("teams", service.getTeams());
         return "docs/approval/common/view/referrer-add";
     }

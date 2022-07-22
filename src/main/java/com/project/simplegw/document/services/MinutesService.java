@@ -8,11 +8,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.project.simplegw.document.approval.services.ReferrerService;
 import com.project.simplegw.document.dtos.receive.DtorDocs;
-import com.project.simplegw.document.dtos.send.DtosDocs;
+import com.project.simplegw.document.dtos.send.DtosDocsAddReferrer;
 import com.project.simplegw.document.dtos.send.DtosDocsMin;
 import com.project.simplegw.document.entities.Docs;
-import com.project.simplegw.document.entities.TempDocs;
 import com.project.simplegw.document.helpers.DocsConverter;
 import com.project.simplegw.document.repositories.MinutesRepo;
 import com.project.simplegw.document.vos.DocsType;
@@ -34,18 +34,18 @@ public class MinutesService {
     private final MinutesRepo repo;
     private final DocsConverter converter;
     private final DocsService docsService;
-    private final TempDocsService tempDocsService;
+    private final ReferrerService referrerService;
     private final MenuAuthorityService authService;
     
-
     public MinutesService(
         MinutesRepo repo, DocsConverter converter,
-        DocsService docsService, TempDocsService tempDocsService, MenuAuthorityService authService
+        DocsService docsService, ReferrerService referrerService,
+        MenuAuthorityService authService
     ) {
         this.repo = repo;
         this.converter = converter;
         this.docsService = docsService;
-        this.tempDocsService = tempDocsService;
+        this.referrerService = referrerService;
         this.authService = authService;
 
         log.info("Component '" + this.getClass().getName() + "' has been created.");
@@ -109,8 +109,14 @@ public class MinutesService {
 
 
 
-    public DtosDocs getDocs(Long docsId) {
-        return docsService.getDtosDocs(docsId, MINUTES);
+    public DtosDocsAddReferrer getDocs(Long docsId, LoginUser loginUser) {
+        return converter.getDtosDocsAddReferrer(
+            docsService.getDtosDocs(docsId, MINUTES)
+        ).setReferrers(
+            referrerService.getReferrers(
+                docsService.getDocsEntity(docsId, MINUTES), loginUser
+            )
+        );
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 
@@ -119,45 +125,6 @@ public class MinutesService {
 
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- temp docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
-    public ServiceMsg createTemp(DtorDocs dto, LoginUser loginUser) {
-        Long docsId = tempDocsService.create(dto, MINUTES, loginUser).getId();
-
-        if(docsId == null)
-            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg( new StringBuilder(MINUTES.getTitle()).append(" 임시저장 에러입니다. 관리자에게 문의하세요.").toString() );
-        
-        else
-            return new ServiceMsg().setResult(ServiceResult.SUCCESS).setReturnObj(docsId);
-    }
-    
-
-    public ServiceMsg updateTemp(Long docsId, DtorDocs dto, LoginUser loginUser) {
-        TempDocs tempDocs = tempDocsService.getTempDocsEntity(docsId, MINUTES);
-
-        if( ! tempDocsService.isOwner(tempDocs, loginUser) )   // 임시저장 문서는 본인만 수정 가능.
-            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg(ResponseMsg.UNAUTHORIZED.getTitle());
-
-        tempDocsService.update(docsId, dto, MINUTES);
-        return new ServiceMsg().setResult(ServiceResult.SUCCESS);
-    }
-
-
-    public ServiceMsg deleteTemp(Long docsId, LoginUser loginUser) {
-        TempDocs tempDocs = tempDocsService.getTempDocsEntity(docsId, MINUTES);
-
-        if( ! tempDocsService.isOwner(tempDocs, loginUser) )   // 임시저장 문서는 본인만 삭제 가능.
-            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg(ResponseMsg.UNAUTHORIZED.getTitle());
-
-        if( MINUTES != tempDocs.getType() )
-            return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg( new StringBuilder("삭제 대상 문서가 ").append(MINUTES.getTitle()).append("문서가 아닙니다.").toString() );
-
-        tempDocsService.delete(tempDocs, loginUser);
-        return new ServiceMsg().setResult(ServiceResult.SUCCESS);
-    }
-
-
-
-    public DtosDocs getTempDocs(Long docsId) {
-        return tempDocsService.getDtosDocsFromTempDocs(docsId, MINUTES);
-    }
+    // Minutes(회의록)은 임시저장 기능을 제공하지 않는다.
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- temp docs ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 }

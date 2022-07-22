@@ -1,6 +1,6 @@
 function openReferrerAdd() {
     let option = "width=800, height=650";
-    window.open('/page/approval/referrer-add', '', option);
+    window.open('/page/board/referrer-add', '', option);
 }
 
 async function addReferrer() {
@@ -8,7 +8,7 @@ async function addReferrer() {
     let ids = Array.from(referrerAddData.arrReferrerId);
     let names = Array.from(referrerAddData.arrReferrerName);
 
-    let response = await fetchPatchParams(`approval/referrer-add/${docsType.toLowerCase()}/${docsId}`, ids);
+    let response = await fetchPatchParams(`board/referrer-add/${docsType.toLowerCase()}/${docsId}`, ids);
     let result = await response.json();
     alert(result.msg);
 

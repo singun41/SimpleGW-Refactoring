@@ -22,11 +22,25 @@ public interface MinutesRepo extends JpaRepository<Docs, Long> {
                         a.writer_id, a.writer_team, a.writer_job_title, a.writer_name,
                         a.created_date, a.created_time, a.updated_datetime
                     from docs a
+                    where 1=1
+                        and a.writer_id = :#{#member_id}
+                        and a.[type] = :#{#type.name()}
+                        and a.created_date between :#{#date_from} and :#{#date_to}
+
+                    union
+
+                    select
+                        a.id,
+                        a.[type], a.title,
+                        a.writer_id, a.writer_team, a.writer_job_title, a.writer_name,
+                        a.created_date, a.created_time, a.updated_datetime
+                    from docs a
                         join referrer b on a.id = b.docs_id
                     where 1=1
                         and b.member_id = :#{#member_id}
                         and a.[type] = :#{#type.name()}
                         and a.created_date between :#{#date_from} and :#{#date_to}
+
                     order by a.id desc
                 """,
         nativeQuery = true
