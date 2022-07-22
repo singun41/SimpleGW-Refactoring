@@ -39,13 +39,13 @@ public class CommentController {
         return ResponseConverter.ok(service.getComments(docsId));
     }
 
-    @PostMapping("/{docsType}/{docsId}")
-    public ResponseEntity<Object> save(@PathVariable DocsType docsType, @PathVariable Long docsId, @Validated @RequestBody DtorCommentSave dto, BindingResult result, @AuthenticationPrincipal LoginUser loginUser) {
+    @PostMapping("/{type}/{docsId}")
+    public ResponseEntity<Object> save(@PathVariable String type, @PathVariable Long docsId, @Validated @RequestBody DtorCommentSave dto, BindingResult result, @AuthenticationPrincipal LoginUser loginUser) {
         if(result.hasErrors())
             return ResponseConverter.badRequest(result);
         
         return ResponseConverter.message(
-            service.save(docsType, docsId, dto, loginUser), ResponseMsg.INSERTED
+            service.save(DocsType.valueOf(type.toUpperCase()), docsId, dto, loginUser), ResponseMsg.INSERTED
         );
     }
 

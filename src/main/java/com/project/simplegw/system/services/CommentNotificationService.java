@@ -25,7 +25,7 @@ public class CommentNotificationService {
     @Async
     public void create(Docs docs) {
         String content =
-            new StringBuilder("새 댓글이 있습니다. ")
+            new StringBuilder("새 댓글이 달렸습니다. ")
             .append("(")
             .append(docs.getType().getTitle()).append(", ").append(docs.getTitle())
             .append(")").toString();
