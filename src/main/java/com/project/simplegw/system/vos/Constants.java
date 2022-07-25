@@ -137,6 +137,7 @@ public class Constants {
     public static final int PW_UPDATE_AT_LEAST_LENGTH = 8;
     public static final String REGEXP_PW = "((?=.*[a-z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{" + PW_UPDATE_AT_LEAST_LENGTH + ",})";
 
+    public static final String REGEXP_NAME_ENG = "^[a-z\\sA-Z]*$";   // 영문자 대, 소, 공백만 허용.
     public static final String REGEXP_MOBILE_NO = "\\d{3}-\\d{3,4}-\\d{4}";   // format: 000-0000-0000
     public static final String REGEXP_EMAIL = "\\w+@\\w+\\.\\w+(\\.\\w+)*";
     public static final String REGEXP_TIME = "([01]?[0-9]|2[0-3]):[0-5][0-9]";   // 00:00 ~ 23:59

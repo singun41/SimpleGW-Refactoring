@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     notificationModal = new bootstrap.Modal(document.getElementById('notification'), { keyboard: true });
     profileModal = new bootstrap.Modal(document.getElementById('profile'), { keyboard: true });
 
+    getProfile();
     getTodayAlarms();
     setInterval(() => { showAlarm(); }, 1000 * 60);
     setInterval(() => { document.getElementById('datetimeText').innerHTML = dayjs().format('YY. MM. DD. (ddd) a hh:mm:ss'); }, 1000);
@@ -14,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
 let alarmApprovalModal;
 let alarmMessageModal;
 let notificationModal;
+let profileModal;
 
 window.addEventListener('beforeunload', event => {   // document가 아니라 window에서 처리해야 함.
     // 페이지를 나갈 때 sse 연결을 끊어서 서버에서 불필요한 데이터 전송을 막는다.
@@ -125,7 +127,7 @@ async function showNotifications() {
     setTimeout(() => { sendMsgToChild('notification'); }, 1000 * 2);
 }
 
-async function showProfile() {
+async function getProfile() {
     let response = await fetchGet('profile');
     let result = await response.json();
 
@@ -141,6 +143,10 @@ async function showProfile() {
         document.getElementById('profileDuration').value = profile.duration;
         document.getElementById('profileHireDate').value = dayjs(profile.dateHire).format('YY. MM. DD.');
     }
+}
+
+async function showProfile() {
+    await getProfile();
     profileModal.show();
 }
 

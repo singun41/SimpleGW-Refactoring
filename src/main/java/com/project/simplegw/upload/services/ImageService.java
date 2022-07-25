@@ -209,18 +209,10 @@ public class ImageService {
             return IOUtils.toByteArray(imgByteStream);
 
         } catch(FileNotFoundException e) {
-            // EmployeeService 클래스에서 컬렉션을 이용해 호출하므로 로그가 많이 발생하므로 주석.
-            // 위에 LoginUser 파라미터를 받는 메서드에서 로그를 남기면 된다.
-
-            // log.warn("getPortrait() FileNotFoundException.");
-            // log.warn("{}", e.getMessage());
-            // log.warn("member: {}", memberId);
+            // 위에 LoginUser 파라미터를 받는 메서드에서 로그를 남기면 되므로 여기에선 로그를 남기지 않는다.
             return null;
 
         } catch(IOException e) {
-            // log.warn("getPortrait() IOException.");
-            // log.warn("{}", e.getMessage());
-            // log.warn("member: {}", memberId);
             return null;
         }
     }
@@ -252,7 +244,7 @@ public class ImageService {
         } catch(Exception e) {
             e.printStackTrace();
             log.warn("uploadPortrait() exception.");
-            log.warn("member: {}", loginUser.getMember().getId());
+            log.warn("member: {}", memberId);
 
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg("사진 업로드 에러입니다. 관리자에게 문의하세요.");
         }

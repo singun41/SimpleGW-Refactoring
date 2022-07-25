@@ -21,6 +21,7 @@ public class DtorProfile {
 
     // null 허용
     @Size(max = Constants.COLUMN_LENGTH_NAME, message = "영문 이름을 " + Constants.COLUMN_LENGTH_NAME + " 자 이하로 작성하세요.")
+    @Pattern(regexp = Constants.REGEXP_NAME_ENG, message = "영문 이름을 다시 작성하세요.")
     private String nameEng;
 
     @NotBlank(message = "핸드폰 번호를 입력하세요.")
