@@ -24,15 +24,19 @@ public class CacheConfig {
 
         ConcurrentMapCacheManager cacheManager = new ConcurrentMapCacheManager();
 
-        cacheManager.setAllowNullValues(false);
-        cacheManager.setCacheNames(Arrays.asList(
+        cacheManager.setAllowNullValues(true);
+        cacheManager.setCacheNames(
+            Arrays.asList(
                 Constants.CACHE_BASECODE, Constants.CACHE_JOB_TITLES, Constants.CACHE_DAYOFF_CODES,
+                
+                Constants.CACHE_USER_PROFILES, Constants.CACHE_IMG_USER_PORTRAIT,
 
                 Constants.CACHE_NOTICE, Constants.CACHE_FREEBOARD, Constants.CACHE_POST_IT, Constants.CACHE_TEMPDOCS_COUNT,
                 Constants.CACHE_HOLIDAYS, Constants.CACHE_ALARMS, Constants.CACHE_EDITOR_FORMS,
 
                 Constants.CACHE_APPROVAL_PROCEED_COUNT, Constants.CACHE_APPROVAL_APPROVER_COUNT, Constants.CACHE_APPROVAL_REFERRER_COUNT
-        ));
+            )
+        );
 
         return cacheManager;
     }

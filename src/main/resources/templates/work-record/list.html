@@ -19,7 +19,7 @@
                 <div class="col-12">
                     <div class="card shadow bg-body rounded-3">
                         <div class="card-header">
-                            <div class="card-header-icon"><i class="fa-solid fa-list"></i></div><span class="text-secondary align-middle">업무일지 리스트</span>
+                            <div class="card-header-icon"><i class="fa-solid fa-list"></i></div><span class="text-secondary align-middle" th:text="${pageTitle}"></span>
                             <span class="float-end">
                                 <button type="button" class="btn btn-outline-primary btn-sm btn-icon" onclick="prev()" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="1일 전"><i class="fa-solid fa-chevron-left"></i></button>
                                 <button type="button" class="btn btn-outline-primary btn-sm btn-icon me-2" onclick="today()" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="오늘"><i class="fa-solid fa-calendar-day"></i></button>

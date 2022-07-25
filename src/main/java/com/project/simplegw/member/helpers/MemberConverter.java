@@ -4,7 +4,8 @@ import com.project.simplegw.member.data.MemberData;
 import com.project.simplegw.member.dtos.admin.receive.DtorMemberCreate;
 import com.project.simplegw.member.dtos.admin.send.DtosMember;
 import com.project.simplegw.member.dtos.admin.send.DtosMemberDetails;
-import com.project.simplegw.member.dtos.send.DtosMyDetails;
+import com.project.simplegw.member.dtos.send.DtosEmployeesProfile;
+import com.project.simplegw.member.dtos.send.DtosProfile;
 import com.project.simplegw.member.entities.Member;
 import com.project.simplegw.member.entities.MemberDetails;
 
@@ -22,9 +23,10 @@ public interface MemberConverter {
     DtosMember getDtosMember(Member entity);
     DtosMember getDtosMember(MemberData memberData);
 
-    DtosMyDetails getDtosMyDetails(MemberDetails entity);
+    DtosProfile getDtosProfile(MemberDetails entity);
     DtosMemberDetails getDtosMemberDetails(MemberDetails entity);
 
     MemberData getMemberData(MemberDetails entity);
 
+    DtosEmployeesProfile getEmployeesProfile(DtosProfile dto);
 }

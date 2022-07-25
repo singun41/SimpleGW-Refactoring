@@ -143,7 +143,7 @@ function initializePostIt() {
 }
 
 function popupAlarmPage() {
-    sendMsgToParent('openAlarm');
+    sendMsgToParent('alarm');
 }
 
 async function getProceedDocsCnt() {
@@ -174,6 +174,10 @@ async function getNotiCount() {
         document.getElementById('cntNotification').innerText = result.obj === 0 ? '' : result.obj;
 }
 
-function popupNotiModal() {
-    sendMsgToParent('openNoti');
+function showNotification() {
+    sendMsgToParent('notification');
+}
+
+function showProfile() {
+    sendMsgToParent('profile');
 }

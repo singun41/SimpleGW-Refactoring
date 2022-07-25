@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.simplegw.member.dtos.admin.receive.DtorMemberCreate;
 import com.project.simplegw.member.dtos.admin.receive.DtorMemberUpdate;
 import com.project.simplegw.member.dtos.admin.receive.DtorPwForceUpdate;
-import com.project.simplegw.member.dtos.receive.DtorMyDetails;
+import com.project.simplegw.member.dtos.receive.DtorProfile;
 import com.project.simplegw.member.dtos.receive.DtorPwChange;
 import com.project.simplegw.system.vos.Role;
 
@@ -93,7 +93,7 @@ public class MemberTests {
 
     @Test
     @WithUserDetails(value = "developer")
-    void getMyDetails() throws Exception {
+    void getProfile() throws Exception {
         mvc
         .perform(MockMvcRequestBuilders.get("/member/details"))
         .andDo(MockMvcResultHandlers.print())
@@ -104,8 +104,8 @@ public class MemberTests {
 
     @Test
     @WithUserDetails(value = "developer")
-    void updateMyDetails() throws Exception {
-        DtorMyDetails dto = new DtorMyDetails().setNameEng("hee cheol SHIN").setBirthday("1990-01-23").setMobile("010-1234-1234");
+    void updateProfile() throws Exception {
+        DtorProfile dto = new DtorProfile().setNameEng("hee cheol SHIN").setBirthday("1990-01-23").setMobile("010-1234-1234");
 
         String params = new ObjectMapper().writeValueAsString(dto);
 

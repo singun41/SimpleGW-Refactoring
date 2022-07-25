@@ -3,7 +3,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 async function getCount() {
-    let response = await fetchGet('user/my-dayoff-count');
+    let response = await fetchGet('/dayoff-count');
     let result = await response.json();
     if(response.ok) {
         let cnt = result.obj;

@@ -26,7 +26,7 @@ import com.project.simplegw.document.vos.EditorDocs;
 import com.project.simplegw.member.data.MemberData;
 import com.project.simplegw.member.dtos.admin.send.DtosMember;
 import com.project.simplegw.member.dtos.admin.send.DtosMemberDetails;
-import com.project.simplegw.member.dtos.send.DtosMyDetails;
+import com.project.simplegw.member.dtos.send.DtosProfile;
 import com.project.simplegw.member.services.MemberAdminService;
 import com.project.simplegw.member.services.MemberClientService;
 import com.project.simplegw.member.services.MemberService;
@@ -116,8 +116,8 @@ public class ViewService {   // ViewController에서 필요한 데이터들을 �
         return memberService.getMemberData(loginUser);
     }
 
-    public DtosMyDetails getMyDetails(LoginUser loginUser) {
-        return memberClientService.getMyDetails(loginUser);
+    public DtosProfile getProfile(LoginUser loginUser) {
+        return memberClientService.getProfile(loginUser);
     }    
 
 

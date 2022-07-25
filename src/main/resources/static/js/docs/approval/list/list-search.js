@@ -35,7 +35,7 @@ function writerSearch() {
 }
 
 async function getTeamMember() {
-    let response = await fetchGet(`user/${team.value}`);
+    let response = await fetchGet(`${team.value}`);
     let result = await response.json();
 
     if(response.ok) {

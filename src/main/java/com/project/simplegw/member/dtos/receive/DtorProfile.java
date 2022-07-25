@@ -16,7 +16,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 @ToString
-public class DtorMyDetails {
+public class DtorProfile {
     // 유저가 개인정보 수정시 사용.
 
     // null 허용

@@ -98,7 +98,7 @@ function buildDatatable() {
 
 async function getTeamMembers() {
     let team = document.getElementById('team').value;
-    let response = await fetchGet(`user/${team}/without-me`);
+    let response = await fetchGet(`${team}/without-me`);
     let result = await response.json();
     
     destroyDataTable();

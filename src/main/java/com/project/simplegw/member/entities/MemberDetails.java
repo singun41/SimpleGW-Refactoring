@@ -12,7 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.project.simplegw.member.dtos.admin.receive.DtorMemberUpdate;
-import com.project.simplegw.member.dtos.receive.DtorMyDetails;
+import com.project.simplegw.member.dtos.receive.DtorProfile;
 import com.project.simplegw.system.entities.EntitiesCommon;
 import com.project.simplegw.system.vos.Constants;
 
@@ -110,7 +110,7 @@ public class MemberDetails extends EntitiesCommon {
             .updateRetired(dto.isRetired());
     }
 
-    public MemberDetails updateDetails(DtorMyDetails dto) {   // 사용자가 수정할 때
+    public MemberDetails updateDetails(DtorProfile dto) {   // 사용자가 수정할 때
         return updateNameEng(dto.getNameEng())
             .updateMobile(dto.getMobile())
             .updateBirthday(dto.getBirthday());

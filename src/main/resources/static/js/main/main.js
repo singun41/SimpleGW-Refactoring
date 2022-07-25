@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     alarmApprovalModal = new bootstrap.Modal(document.getElementById('alarmApproval'), { keyboard: true });
     alarmMessageModal = new bootstrap.Modal(document.getElementById('alarmMessage'), { keyboard: true });
     notificationModal = new bootstrap.Modal(document.getElementById('notification'), { keyboard: true });
+    profileModal = new bootstrap.Modal(document.getElementById('profile'), { keyboard: true });
 
     getTodayAlarms();
     setInterval(() => { showAlarm(); }, 1000 * 60);
@@ -22,10 +23,12 @@ window.addEventListener('beforeunload', event => {   // document가 아니라 wi
 
 window.addEventListener('message', receiveMsgFromChild);
 function receiveMsgFromChild(e) {   // content.js로부터 메시지 수신
-    if(e.data === 'openAlarm') {
+    if(e.data === 'alarm') {
         openAlarmPage()
-    } else if(e.data === 'openNoti') {
+    } else if(e.data === 'notification') {
         showNotifications();
+    } else if(e.data === 'profile') {
+        showProfile();
     }
 }
 
@@ -120,6 +123,45 @@ async function showNotifications() {
     }
     notificationModal.show();
     setTimeout(() => { sendMsgToChild('notification'); }, 1000 * 2);
+}
+
+async function showProfile() {
+    let response = await fetchGet('profile');
+    let result = await response.json();
+
+    if(response.ok) {
+        let profile = result.obj;
+        document.getElementById('profileName').value = profile.name;
+        document.getElementById('profileNameEng').value = profile.nameEng;
+        document.getElementById('profileJobTitle').value = profile.jobTitle;
+        document.getElementById('profileTeam').value = profile.team;
+        document.getElementById('profileTel').value = profile.tel;
+        document.getElementById('profileEmail').value = profile.email;
+        document.getElementById('profileMobile').value = profile.mobile;
+        document.getElementById('profileDuration').value = profile.duration;
+        document.getElementById('profileHireDate').value = dayjs(profile.dateHire).format('YY. MM. DD.');
+    }
+    profileModal.show();
+}
+
+async function updateProfile() {
+    let portraitInput = document.getElementById('portraitInput');
+    if(portraitInput.files[0] !== undefined && portraitInput.files[0] !== null) {
+        let formData = new FormData;
+        formData.append('img', portraitInput.files[0]);
+
+        let response = await fetchFormData('portrait', formData);
+        if(response.ok)
+            document.getElementById('userPortrait').setAttribute('src', '/portrait');
+    }
+
+    let params = {
+        nameEng: document.getElementById('profileNameEng').value,
+        mobile: document.getElementById('profileMobile').value
+    };
+    let response = await fetchPatchParams('profile', params);
+    let result = await response.json();
+    alert(result.msg);
 }
 
 const collapsedMenus = Array.from(document.getElementsByClassName('collapse'));

@@ -7,6 +7,7 @@ import com.project.simplegw.member.dtos.admin.receive.DtorMemberUpdate;
 import com.project.simplegw.member.dtos.admin.receive.DtorPwForceUpdate;
 import com.project.simplegw.member.dtos.admin.send.DtosMember;
 import com.project.simplegw.member.dtos.admin.send.DtosMemberDetails;
+import com.project.simplegw.system.security.LoginUser;
 import com.project.simplegw.system.vos.ServiceMsg;
 
 // import org.springframework.beans.factory.annotation.Autowired;
@@ -42,15 +43,15 @@ public class MemberAdminService {
         return memberService.getDtosMember(memberId);
     }
 
-    public ServiceMsg create(DtorMemberCreate dto) {
-        return memberService.create(dto);
+    public ServiceMsg create(DtorMemberCreate dto, LoginUser loginUser) {
+        return memberService.create(dto, loginUser);
     }
 
-    public ServiceMsg update(Long memberId, DtorMemberUpdate dto) {
-        return memberService.update(memberId, dto);
+    public ServiceMsg update(Long memberId, DtorMemberUpdate dto, LoginUser loginUser) {
+        return memberService.update(memberId, dto, loginUser);
     }
 
-    public ServiceMsg updateMemberPw(Long memberId, DtorPwForceUpdate dto) {
-        return memberService.updateMemberPw(memberId, dto);
+    public ServiceMsg updateMemberPw(Long memberId, DtorPwForceUpdate dto, LoginUser loginUser) {
+        return memberService.updateMemberPw(memberId, dto, loginUser);
     }
 }

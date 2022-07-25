@@ -30,6 +30,8 @@ import com.project.simplegw.upload.vos.UploadType;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 // import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -161,12 +163,12 @@ public class ImageService {
             return IOUtils.toByteArray(imgByteStream);
 
         } catch(FileNotFoundException e) {
-            log.warn("getImageByteStream FileNotFoundException.");
+            log.warn("getImageByteStream() FileNotFoundException.");
             log.warn("{}", e.getMessage());
             return null;
 
         } catch(IOException e) {
-            log.warn("getImageByteStream IOException.");
+            log.warn("getImageByteStream() IOException.");
             log.warn("{}", e.getMessage());
             return null;
         }
@@ -175,35 +177,65 @@ public class ImageService {
 
 
 
-
+    @Cacheable(cacheManager = Constants.CACHE_MANAGER, cacheNames = Constants.CACHE_IMG_USER_PORTRAIT, key = "#loginUser.getMember().getId()")
     public byte[] getPortrait(LoginUser loginUser) {
+        log.info("Cacheable method 'getPortrait()' called. user: {}", loginUser.getMember().getId());
+
         String imgPath = new StringBuilder(Constants.MEMBER_PORTRAIT_PATH).append(loginUser.getMember().getId().toString()).append(Constants.PORTRAIT_IMAGE_EXTENSION).toString();
-        
-        try ( InputStream imgByteStream = new FileInputStream(imgPath) ) {
+
+        try( InputStream imgByteStream = new FileInputStream(imgPath) ) {
             return IOUtils.toByteArray(imgByteStream);
 
         } catch(FileNotFoundException e) {
-            log.warn("getPortrait FileNotFoundException.");
+            log.warn("getPortrait() FileNotFoundException.");
             log.warn("{}", e.getMessage());
-            log.warn("member: {}", loginUser.getMember().toString());
+            log.warn("member: {}", loginUser.getMember().getId());
             return null;
 
         } catch(IOException e) {
-            log.warn("getPortrait IOException.");
+            log.warn("getPortrait() IOException.");
             log.warn("{}", e.getMessage());
-            log.warn("member: {}", loginUser.getMember().toString());
+            log.warn("member: {}", loginUser.getMember().getId());
+            return null;
+        }
+    }
+
+    @Cacheable(cacheManager = Constants.CACHE_MANAGER, cacheNames = Constants.CACHE_IMG_USER_PORTRAIT, key = "#memberId")
+    public byte[] getPortrait(Long memberId) {
+        // 임직원 정보(employees profile)에서 캐싱한 데이터를 공통으로 사용하기 위해 추가한 메서드.
+        String imgPath = new StringBuilder(Constants.MEMBER_PORTRAIT_PATH).append(memberId.toString()).append(Constants.PORTRAIT_IMAGE_EXTENSION).toString();
+
+        try( InputStream imgByteStream = new FileInputStream(imgPath) ) {
+            return IOUtils.toByteArray(imgByteStream);
+
+        } catch(FileNotFoundException e) {
+            // EmployeeService 클래스에서 컬렉션을 이용해 호출하므로 로그가 많이 발생하므로 주석.
+            // 위에 LoginUser 파라미터를 받는 메서드에서 로그를 남기면 된다.
+
+            // log.warn("getPortrait() FileNotFoundException.");
+            // log.warn("{}", e.getMessage());
+            // log.warn("member: {}", memberId);
+            return null;
+
+        } catch(IOException e) {
+            // log.warn("getPortrait() IOException.");
+            // log.warn("{}", e.getMessage());
+            // log.warn("member: {}", memberId);
             return null;
         }
     }
 
 
+
+    @CacheEvict(cacheManager = Constants.CACHE_MANAGER, cacheNames = Constants.CACHE_IMG_USER_PORTRAIT, key = "#loginUser.getMember().getId()")
     public ServiceMsg uploadPortrait(MultipartHttpServletRequest req, LoginUser loginUser) {
+        log.info("CacheEvict method 'uploadPortrait()' called. user: {}", loginUser.getMember().getId());
+
         MultipartFile imgFile = req.getFile("img");
         
         if(imgFile == null)   // 파일이 없으면 종료
             return new ServiceMsg().setResult(ServiceResult.SUCCESS);
 
-        
         String memberId = loginUser.getMember().getId().toString();
         String imgExtension = Constants.PORTRAIT_IMAGE_EXTENSION;
         String conversionName = new StringBuilder(memberId).append(imgExtension).toString();
@@ -211,18 +243,16 @@ public class ImageService {
         if(imgFile.getSize() > Constants.IMAGE_UPLOAD_MAX_SIZE)
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg("파일이 업로드 제한 용량을 초과하여 업로드 실패하였습니다.");
         
-
         try {
             Path imgDir = Paths.get(Constants.MEMBER_PORTRAIT_PATH);
             compressAndSave(imgFile, imgDir, conversionName);
             
             return new ServiceMsg().setResult(ServiceResult.SUCCESS);
             
-
         } catch(Exception e) {
             e.printStackTrace();
-            log.warn("uploadPortrait exception.");
-            log.warn("member: {}", loginUser.getMember().toString());
+            log.warn("uploadPortrait() exception.");
+            log.warn("member: {}", loginUser.getMember().getId());
 
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg("사진 업로드 에러입니다. 관리자에게 문의하세요.");
         }

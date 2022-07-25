@@ -644,19 +644,21 @@ public class ViewController {
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- work ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
     @GetMapping("/page/work-record/personal")
-    public String workRecordPersonalPage(@AuthenticationPrincipal LoginUser loginUser) {
+    public String workRecordPersonalPage(Model model, @AuthenticationPrincipal LoginUser loginUser) {
         if( ! authority.isAccessible(Menu.WORK_RECORD, loginUser) )
             return Constants.ERROR_PAGE_403;
 
+        model.addAttribute("pageTitle", "업무일지");
         return "work-record/personal";
     }
 
 
     @GetMapping("/page/work-record/team")
-    public String workRecordTeamPage(@AuthenticationPrincipal LoginUser loginUser) {
+    public String workRecordTeamPage(Model model, @AuthenticationPrincipal LoginUser loginUser) {
         if( ! authority.isAccessible(Menu.WORK_RECORD_TEAM, loginUser) )
             return Constants.ERROR_PAGE_403;
 
+        model.addAttribute("pageTitle", "부서 업무일지");
         return "work-record/team";
     }
 
@@ -666,7 +668,7 @@ public class ViewController {
         if( ! authority.isAccessible(Menu.WORK_RECORD_LIST, loginUser) )
             return Constants.ERROR_PAGE_403;
 
-        model.addAttribute("teams", service.getTeams());
+        model.addAttribute("teams", service.getTeams()).addAttribute("pageTitle", "업무일지 리스트");
         return "work-record/list";
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- work ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
@@ -961,4 +963,16 @@ public class ViewController {
     // ↑ ----- ----- ----- ----- ----- ----- ----- dayoff ----- ----- ----- ----- ----- ----- ----- ↑ //
 
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- approval ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
+
+
+
+
+
+    // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 임직원 정보 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
+    @GetMapping("/page/employees")
+    public String employeesPage(Model model) {
+        model.addAttribute("teams", service.getTeams()).addAttribute("pageTitle", "임직원 정보");
+        return "employees/list";
+    }
+    // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 임직원 정보 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 }

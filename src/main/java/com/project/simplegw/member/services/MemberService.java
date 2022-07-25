@@ -15,9 +15,9 @@ import com.project.simplegw.member.dtos.admin.receive.DtorMemberUpdate;
 import com.project.simplegw.member.dtos.admin.receive.DtorPwForceUpdate;
 import com.project.simplegw.member.dtos.admin.send.DtosMember;
 import com.project.simplegw.member.dtos.admin.send.DtosMemberDetails;
-import com.project.simplegw.member.dtos.receive.DtorMyDetails;
+import com.project.simplegw.member.dtos.receive.DtorProfile;
 import com.project.simplegw.member.dtos.receive.DtorPwChange;
-import com.project.simplegw.member.dtos.send.DtosMyDetails;
+import com.project.simplegw.member.dtos.send.DtosProfile;
 import com.project.simplegw.member.entities.Member;
 import com.project.simplegw.member.entities.MemberAddOn;
 import com.project.simplegw.member.entities.MemberDetails;
@@ -32,6 +32,8 @@ import com.project.simplegw.system.vos.Role;
 import com.project.simplegw.system.vos.ServiceResult;
 import com.project.simplegw.system.vos.ServiceMsg;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 // import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -234,11 +236,15 @@ public class MemberService {
     }
 
 
-    ServiceMsg create(DtorMemberCreate dto) {
+    ServiceMsg create(DtorMemberCreate dto, LoginUser loginUser) {
+        log.info("create() method called by admin({}). user profile: {}", loginUser.getMember().getId(), dto.toString());
+
         Optional<Member> findMember = repo.findByUserId(dto.getId());
-        if(findMember.isPresent())
+        if(findMember.isPresent()) {
+            log.warn("duplicated ID. create failed.");
             return new ServiceMsg().setResult(ServiceResult.FAILURE).setMsg("중복된 ID입니다.");
-        
+        }
+
         try {
             Member savedMember = repo.save(
                 memberConverter.getMember(dto).updateRole(Role.USER).updatePw(encodingPassword(dto.getPw())).updateEnabled(true)
@@ -260,7 +266,10 @@ public class MemberService {
         }
     }
 
-    ServiceMsg update(Long memberId, DtorMemberUpdate dto) {
+    @CacheEvict(cacheManager = Constants.CACHE_MANAGER, cacheNames = Constants.CACHE_USER_PROFILES, allEntries = false, key = "#memberId")
+    public ServiceMsg update(Long memberId, DtorMemberUpdate dto, LoginUser loginUser) {   // CacheEvict 사용을 위해 public으로 전환
+        log.info("CacheEvict method 'update()' called by admin({}). target user: {}", loginUser.getMember().getId(), memberId);
+
         try {
             Optional<MemberDetails> findDetails = detailsRepo.findByMemberId(memberId);
             
@@ -290,7 +299,7 @@ public class MemberService {
         }
     }
 
-    ServiceMsg updateMemberPw(Long memberId, DtorPwForceUpdate dto) {
+    ServiceMsg updateMemberPw(Long memberId, DtorPwForceUpdate dto, LoginUser loginUser) {
         Member member = getMember(memberId);
 
         if(member == null || member.getId() == null)
@@ -307,16 +316,22 @@ public class MemberService {
 
 
     // ↓ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- user ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↓ //
-    DtosMyDetails getMyDetails(LoginUser loginUser) {
-        return memberConverter.getDtosMyDetails(getDetails(loginUser.getMember().getId()));
+    @Cacheable(cacheManager = Constants.CACHE_MANAGER, cacheNames = Constants.CACHE_USER_PROFILES, key = "#loginUser.getMember().getId()")
+    public DtosProfile getProfile(LoginUser loginUser) {   // Cacheable 사용을 위해 public으로 전환
+        log.info("Cacheable method 'getProfile()' called. user: {}", loginUser.getMember().getId());
+        return memberConverter.getDtosProfile(getDetails(loginUser.getMember().getId()));
     }
 
-    boolean isOldPasswordMatched(String oldPw, LoginUser loginUser) {
-        return pwEncoder.matches(oldPw, loginUser.getPassword());
+    @Cacheable(cacheManager = Constants.CACHE_MANAGER, cacheNames = Constants.CACHE_USER_PROFILES, key = "#memberId")
+    public DtosProfile getProfile(Long memberId) {   // Cacheable 사용을 위해 public으로 전환
+        // 임직원 정보(employee profiles) 에서 캐시를 공통으로 사용하기 위해 추가한 메서드.
+        return memberConverter.getDtosProfile(getDetails(memberId));
     }
 
-    
-    ServiceMsg updateMyDetails(DtorMyDetails dto, LoginUser loginUser) {
+    @CacheEvict(cacheManager = Constants.CACHE_MANAGER, cacheNames = Constants.CACHE_USER_PROFILES, allEntries = false, key = "#loginUser.getMember().getId()")
+    public ServiceMsg updateProfile(DtorProfile dto, LoginUser loginUser) {   // CacheEvict 사용을 위해 public으로 전환
+        log.info("CacheEvict method 'updateProfile()' called. user: {}", loginUser.getMember().getId());
+
         try {
             Optional<MemberDetails> target = detailsRepo.findByMemberId(loginUser.getMember().getId());
 
@@ -337,6 +352,8 @@ public class MemberService {
         }
     }
 
+
+
     ServiceMsg updateMyPassword(DtorPwChange dto, LoginUser loginUser) {
         Member member = loginUser.getMember();
 
@@ -345,6 +362,10 @@ public class MemberService {
         
         repo.save( member.updatePw(encodingPassword(dto.getNewPw())) );
         return new ServiceMsg().setResult(ServiceResult.SUCCESS);
+    }
+
+    boolean isOldPasswordMatched(String oldPw, LoginUser loginUser) {
+        return pwEncoder.matches(oldPw, loginUser.getPassword());
     }
     // ↑ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- user ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ↑ //
 }

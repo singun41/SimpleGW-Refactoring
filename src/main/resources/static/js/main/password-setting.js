@@ -23,7 +23,7 @@ async function checkOld(e) {
         return;
     }
     let params = { oldPw: e.value };
-    let response = await fetchGetParams('user/old-pw-matched', params);
+    let response = await fetchGetParams('old-pw-matched', params);
     let result = await response.json();
 
     if(result.obj) {
@@ -143,7 +143,7 @@ async function savePw() {
             oldPw: document.getElementById('oldPw').value,
             newPw: document.getElementById('newPw').value
         };
-        let response = await fetchPatchParams('user/password', params);
+        let response = await fetchPatchParams('/password', params);
         let result = await response.json();
         alert(result.msg);
 

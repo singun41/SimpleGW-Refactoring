@@ -1,8 +1,8 @@
 package com.project.simplegw.member.services;
 
-import com.project.simplegw.member.dtos.receive.DtorMyDetails;
+import com.project.simplegw.member.dtos.receive.DtorProfile;
 import com.project.simplegw.member.dtos.receive.DtorPwChange;
-import com.project.simplegw.member.dtos.send.DtosMyDetails;
+import com.project.simplegw.member.dtos.send.DtosProfile;
 import com.project.simplegw.system.security.LoginUser;
 import com.project.simplegw.system.vos.ServiceMsg;
 
@@ -29,12 +29,12 @@ public class MemberClientService {
         return memberService.isOldPasswordMatched(oldPw, loginUser);
     }
 
-    public DtosMyDetails getMyDetails(LoginUser loginUser) {
-        return memberService.getMyDetails(loginUser);
+    public DtosProfile getProfile(LoginUser loginUser) {
+        return memberService.getProfile(loginUser).calcDuration();   // MemberService 클래스에서 캐싱하므로 여기서 계산해서 리턴.
     }
 
-    public ServiceMsg updateMyDetails(DtorMyDetails dto, LoginUser loginUser) {
-        return memberService.updateMyDetails(dto, loginUser);
+    public ServiceMsg updateProfile(DtorProfile dto, LoginUser loginUser) {
+        return memberService.updateProfile(dto, loginUser);
     }
 
     public ServiceMsg updateMyPassword(DtorPwChange dto, LoginUser loginUser) {

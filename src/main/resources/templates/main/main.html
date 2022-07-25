@@ -36,6 +36,9 @@
                     </button>
                     <div class="collapse" id="collapse-account">
                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                            <li><a role="button" onclick="openAlarmPage()" class="link-dark align-items-center rounded"><div class="nav-icon-area"><i class="fa-solid fa-clock"></i></div>Alarms</a></li>
+                            <li><a role="button" onclick="showNotifications()" class="link-dark align-items-center rounded"><div class="nav-icon-area"><i class="fa-solid fa-bell"></i></div>Notifications</a></li>
+                            <li><a role="button" class="link-dark align-items-center rounded" data-bs-target="#profile" data-bs-toggle="modal"><div class="nav-icon-area"><i class="fa-solid fa-address-card"></i></div>Profile</a></li>
                             <li><a role="button" class="link-dark align-items-center rounded" data-bs-target="#passwordSetting" data-bs-toggle="modal"><div class="nav-icon-area"><i class="fa-solid fa-key"></i></div>Password</a></li>
                             <li><a href="logout" class="link-dark align-items-center rounded"><div class="nav-icon-area"><i class="fa-solid fa-right-from-bracket"></i></div>Logout</a></li>
                         </ul>
@@ -55,18 +58,6 @@
                             <li><a role="button" onclick="page('admin/forms')" class="link-dark align-items-center rounded"><div class="nav-icon-area"><i class="fa-brands fa-wpforms"></i></div>Forms</a></li>
                         </ul>
                     </div>
-                </li>
-
-                <li class="mb-1">
-                    <button class="btn btn-toggle align-items-center rounded" onclick="openAlarmPage()">
-                        <div class="nav-icon-area"><i class="fa-solid fa-clock"></i></div>알람 설정
-                    </button>
-                </li>
-
-                <li class="mb-1">
-                    <button class="btn btn-toggle align-items-center rounded" onclick="showNotifications()">
-                        <div class="nav-icon-area"><i class="fa-solid fa-bell"></i></div>시스템 알림
-                    </button>
                 </li>
 
                 <li class="mb-1">
@@ -147,6 +138,12 @@
                         <div class="nav-icon-area"><i class="fa-solid fa-calendar-check"></i></div>일정
                     </button>
                 </li>
+
+                <li class="mb-1">
+                    <button class="btn btn-toggle align-items-center rounded" onclick="page('employees')">
+                        <div class="nav-icon-area"><i class="fa-solid fa-users"></i></div>임직원 정보
+                    </button>
+                </li>
             </ul>
         </div>
 
@@ -159,6 +156,7 @@
         <th:block th:replace="main/modal/password-setting :: password-setting"></th:block>
         <th:block th:replace="main/modal/alarm-message :: alarm-message"></th:block>
         <th:block th:replace="main/modal/notification :: notification"></th:block>
+        <th:block th:replace="main/modal/profile :: profile"></th:block>
         <th:block th:replace="main/modal/notification-approval :: notification-approval"></th:block>
 
         
